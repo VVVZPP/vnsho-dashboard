@@ -763,54 +763,56 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
     const segBrands = getSegmentBrands(activeBrandFilter);
     const limited = segBrands.slice(0, brandLimitN);
     return (
-      <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
+      <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
           * { box-sizing: border-box; }
           body { margin: 0; background: transparent; }
         `}</style>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: BLUE, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>World Mobility Forum</div>
+        <div style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', padding: '16px 16px 12px 16px', borderBottom: `1px solid ${BORDER}` }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: INK, margin: 0 }}>EV Brand Rankings — {activeBrandFilter.toUpperCase()}</h3>
+            <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
+              {['top10','top20','all'].map(f => (
+                <button key={f} onClick={() => setBrandLimit(f)} style={{ padding: '6px 12px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, background: brandLimit === f ? NAVY : 'transparent', color: brandLimit === f ? '#fff' : SECONDARY }}>{f === 'top10' ? 'Top 10' : f === 'top20' ? 'Top 20' : 'All'}</button>
+              ))}
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
-            {['top10','top20','all'].map(f => (
-              <button key={f} onClick={() => setBrandLimit(f)} style={{ padding: '6px 12px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, background: brandLimit === f ? NAVY : 'transparent', color: brandLimit === f ? '#fff' : SECONDARY }}>{f === 'top10' ? 'Top 10' : f === 'top20' ? 'Top 20' : 'All'}</button>
+
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+            {[{ id: 'cars', label: 'Cars' }, { id: 'motorcycle', label: 'Motorcycle' }, { id: 'lgv', label: 'LGV' }, { id: 'hgv', label: 'HGV' }, { id: 'vhgv', label: 'VHGV' }, { id: 'bus', label: 'Bus' }].map(t => (
+              <button key={t.id} onClick={() => setActiveBrandFilter(t.id)} style={{ padding: '6px 14px', borderRadius: 8, border: `1px solid ${activeBrandFilter === t.id ? BLUE : BORDER}`, cursor: 'pointer', fontSize: 12, fontWeight: 600, background: activeBrandFilter === t.id ? BLUE_LIGHT : CARD, color: activeBrandFilter === t.id ? NAVY : SECONDARY }}>{t.label}</button>
             ))}
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 16 }}>
-          {[{ id: 'cars', label: 'Cars' }, { id: 'motorcycle', label: 'Motorcycle' }, { id: 'lgv', label: 'LGV' }, { id: 'hgv', label: 'HGV' }, { id: 'vhgv', label: 'VHGV' }, { id: 'bus', label: 'Bus' }].map(t => (
-            <button key={t.id} onClick={() => setActiveBrandFilter(t.id)} style={{ padding: '6px 14px', borderRadius: 8, border: `1px solid ${activeBrandFilter === t.id ? BLUE : BORDER}`, cursor: 'pointer', fontSize: 12, fontWeight: 600, background: activeBrandFilter === t.id ? BLUE_LIGHT : CARD, color: activeBrandFilter === t.id ? NAVY : SECONDARY }}>{t.label}</button>
-          ))}
-        </div>
+        <div style={{ padding: 16 }}>
+          {limited.length === 0 ? (
+            <div style={{ background: YELLOW_LIGHT, borderRadius: 12, padding: 20, fontSize: 13, color: INK }}>No brand-level data published by LTA for this category.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={Math.max(260, limited.length * 34)}>
+              <BarChart data={limited} layout="vertical" margin={{ left: 8, right: 64 }}>
+                <CartesianGrid stroke={BORDER} horizontal={false} strokeDasharray="3 6"/>
+                <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
+                <YAxis type="category" dataKey="brand" stroke={INK} tick={{ fontSize: 12, fontWeight: 600 }} width={90} axisLine={false} tickLine={false}/>
+                <Tooltip content={<GoogleTooltip/>} cursor={{ fill: BLUE_LIGHT }}/>
+                <Bar dataKey="unit" name="Jan-Jul 2026 units" radius={[0,8,8,0]} fill={BLUE}>
+                  <LabelList dataKey="unit" position="right" formatter={(v) => v.toLocaleString()} style={{ fontSize: 12, fontWeight: 700, fill: INK }}/>
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
 
-        {limited.length === 0 ? (
-          <div style={{ background: YELLOW_LIGHT, borderRadius: 12, padding: 20, fontSize: 13, color: INK }}>No brand-level data published by LTA for this category.</div>
-        ) : (
-          <ResponsiveContainer width="100%" height={Math.max(260, limited.length * 34)}>
-            <BarChart data={limited} layout="vertical" margin={{ left: 8, right: 64 }}>
-              <CartesianGrid stroke={BORDER} horizontal={false} strokeDasharray="3 6"/>
-              <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
-              <YAxis type="category" dataKey="brand" stroke={INK} tick={{ fontSize: 12, fontWeight: 600 }} width={90} axisLine={false} tickLine={false}/>
-              <Tooltip content={<GoogleTooltip/>} cursor={{ fill: BLUE_LIGHT }}/>
-              <Bar dataKey="unit" name="Jan-Jul 2026 units" radius={[0,8,8,0]} fill={BLUE}>
-                <LabelList dataKey="unit" position="right" formatter={(v) => v.toLocaleString()} style={{ fontSize: 12, fontWeight: 700, fill: INK }}/>
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-
-        <div style={{ marginTop: 14, paddingTop: 10, borderTop: `1px solid ${BORDER}`, fontSize: 10, color: SECONDARY, textAlign: 'right' }}>
-          Source: LTA M03/M08 · <a href="https://vnsho-dashboard-ev.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: BLUE, textDecoration: 'none', fontWeight: 600 }}>Full dashboard →</a>
+          <div style={{ marginTop: 14, paddingTop: 10, borderTop: `1px solid ${BORDER}`, fontSize: 10, color: SECONDARY, textAlign: 'right' }}>
+            Source: LTA M03/M08 · <a href="https://vnsho-dashboard-ev.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: BLUE, textDecoration: 'none', fontWeight: 600 }}>Full dashboard →</a>
+          </div>
         </div>
       </div>
     );
   }
 
+  
   // ============ STANDALONE EMBED: /embed/brand-rankings-full ============
   // The ENTIRE Brand Rankings experience — highlight boxes, segment tabs, 3 key stats,
   // Top10/20/All + range selector, monthly line chart, monthly table, and labeled bar chart.
