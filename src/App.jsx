@@ -815,10 +815,27 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   // The ENTIRE Brand Rankings experience — highlight boxes, segment tabs, 3 key stats,
   // Top10/20/All + range selector, monthly line chart, monthly table, and labeled bar chart.
   // Mirrors the main dashboard's Brand Rankings tab exactly — no nav, no auth gate.
-  if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-full') {
+ if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-full') {
     const segBrands = getSegmentBrands(activeBrandFilter);
+
+    // Notify the parent window (e.g. a Wix "Embed Code" element) of this page's actual
+    // rendered height, so the parent can resize its container to match exactly —
+    // avoids double scrollbars when filters change how much content is shown.
+    const wmfEmbedRef = useRef(null);
+    useEffect(() => {
+      const el = wmfEmbedRef.current;
+      if (!el || typeof window === 'undefined' || typeof ResizeObserver === 'undefined') return;
+      const sendHeight = () => {
+        window.parent.postMessage({ type: 'wmf-resize', height: el.scrollHeight }, '*');
+      };
+      sendHeight();
+      const ro = new ResizeObserver(sendHeight);
+      ro.observe(el);
+      return () => ro.disconnect();
+    }, []);
+
     return (
-      <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 20 }}>
+      <div ref={wmfEmbedRef} style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 20 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
           * { box-sizing: border-box; }
