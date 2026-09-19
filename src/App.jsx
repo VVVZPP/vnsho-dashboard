@@ -757,7 +757,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   const compareSlotColors = [BLUE, GREEN, YELLOW];
   const compareSlotBgs = [BLUE_LIGHT, GREEN_LIGHT, YELLOW_LIGHT];
 
-  // ============ STANDALONE EMBED: /embed/brand-rankings ============
+    // ============ STANDALONE EMBED: /embed/brand-rankings ============
   // Lightweight widget version for embedding in Wix/WordPress via iframe — no nav, no auth gate.
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings') {
     const segBrands = getSegmentBrands(activeBrandFilter);
@@ -771,18 +771,17 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
         `}</style>
 
         <div style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', padding: '16px 16px 12px 16px', borderBottom: `1px solid ${BORDER}` }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
-            <h3 style={{ fontSize: 18, fontWeight: 700, color: INK, margin: 0 }}>EV Brand Rankings — {activeBrandFilter.toUpperCase()}</h3>
-            <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
-              {['top10','top20','all'].map(f => (
-                <button key={f} onClick={() => setBrandLimit(f)} style={{ padding: '6px 12px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, background: brandLimit === f ? NAVY : 'transparent', color: brandLimit === f ? '#fff' : SECONDARY }}>{f === 'top10' ? 'Top 10' : f === 'top20' ? 'Top 20' : 'All'}</button>
-              ))}
-            </div>
-          </div>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: INK, margin: '0 0 12px' }}>EV Brand Rankings — {activeBrandFilter.toUpperCase()}</h3>
 
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 12 }}>
             {[{ id: 'cars', label: 'Cars' }, { id: 'motorcycle', label: 'Motorcycle' }, { id: 'lgv', label: 'LGV' }, { id: 'hgv', label: 'HGV' }, { id: 'vhgv', label: 'VHGV' }, { id: 'bus', label: 'Bus' }].map(t => (
               <button key={t.id} onClick={() => setActiveBrandFilter(t.id)} style={{ padding: '6px 14px', borderRadius: 8, border: `1px solid ${activeBrandFilter === t.id ? BLUE : BORDER}`, cursor: 'pointer', fontSize: 12, fontWeight: 600, background: activeBrandFilter === t.id ? BLUE_LIGHT : CARD, color: activeBrandFilter === t.id ? NAVY : SECONDARY }}>{t.label}</button>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}`, alignSelf: 'flex-start', width: 'fit-content' }}>
+            {['top10','top20','all'].map(f => (
+              <button key={f} onClick={() => setBrandLimit(f)} style={{ padding: '6px 12px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, background: brandLimit === f ? NAVY : 'transparent', color: brandLimit === f ? '#fff' : SECONDARY }}>{f === 'top10' ? 'Top 10' : f === 'top20' ? 'Top 20' : 'All'}</button>
             ))}
           </div>
         </div>
@@ -804,7 +803,9 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
             </ResponsiveContainer>
           )}
 
-         
+          <div style={{ marginTop: 14, paddingTop: 10, borderTop: `1px solid ${BORDER}`, fontSize: 10, color: SECONDARY, textAlign: 'right' }}>
+            Source: LTA M03/M08 · <a href="https://vnsho-dashboard-ev.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: BLUE, textDecoration: 'none', fontWeight: 600 }}>Full dashboard →</a>
+          </div>
         </div>
       </div>
     );
