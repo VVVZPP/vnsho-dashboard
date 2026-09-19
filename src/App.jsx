@@ -987,6 +987,298 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
     );
   }
 
+    // ============ STANDALONE EMBED: /embed/brand-rankings-header ============
+  if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-header') {
+    return (
+      <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+          * { box-sizing: border-box; }
+          body { margin: 0; background: transparent; }
+        `}</style>
+        <h2 style={{ fontSize: 22, fontWeight: 800, color: INK, margin: 0 }}>EV brand performance by vehicle type.</h2>
+        <p style={{ fontSize: 13, color: SECONDARY, margin: '4px 0 0' }}>Source: LTA M03 / M08 - New registrations, Jan-Jul 2026</p>
+      </div>
+    );
+  }
+
+  // ============ STANDALONE EMBED: /embed/brand-rankings-stats ============
+  if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-stats') {
+    return (
+      <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+          * { box-sizing: border-box; }
+          body { margin: 0; background: transparent; }
+        `}</style>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 10 }}>
+          {newRegByType.map(v => {
+            const pct = ((v.ev / v.totalNew) * 100).toFixed(1);
+            return (
+              <div key={v.type} style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 14, padding: '14px 16px' }}>
+                <div style={{ fontSize: 11, color: SECONDARY, fontWeight: 600, marginBottom: 6 }}>{v.type}</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: INK, fontFamily: "'Google Sans Flex',sans-serif" }}>{v.ev.toLocaleString()} units</div>
+                <div style={{ fontSize: 11, color: BLUE, fontWeight: 700, marginTop: 4 }}>{pct}% of all new registrations</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // ============ STANDALONE EMBED: /embed/brand-rankings-metrics ============
+  // Fixed height regardless of filter choice — segment tabs + Top10/20/All + date range + 3 metric cards.
+  if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-metrics') {
+    const segBrands = getSegmentBrands(activeBrandFilter);
+    return (
+      <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+          * { box-sizing: border-box; }
+          body { margin: 0; background: transparent; }
+        `}</style>
+
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', background: SURFACE, borderRadius: 12, padding: 4, border: `1px solid ${BORDER}`, marginBottom: 16 }}>
+          {[
+            { id: 'cars', label: 'Cars' }, { id: 'motorcycle', label: 'Motorcycle' },
+            { id: 'lgv', label: 'LGV' }, { id: 'hgv', label: 'HGV' }, { id: 'vhgv', label: 'VHGV' }, { id: 'bus', label: 'Bus' },
+          ].map(t => (
+            <button key={t.id} onClick={() => setActiveBrandFilter(t.id)} style={{ padding: '8px 14px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: activeBrandFilter === t.id ? BLUE : 'transparent', color: activeBrandFilter === t.id ? NAVY : SECONDARY }}>{t.label}</button>
+          ))}
+        </div>
+
+        {segBrands.length === 0 ? (
+          <div style={{ background: YELLOW_LIGHT, borderRadius: 16, padding: 24, fontSize: 13, color: INK }}>
+            LTA does not publish brand-level registration data for this vehicle category.
+          </div>
+        ) : (() => {
+          const monthOrder = ['jan','feb','mar','apr','may','jun','jul'];
+          const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul'];
+          const fromIdx = monthOrder.indexOf(brandRangeFrom);
+          const toIdx = monthOrder.indexOf(brandRangeTo);
+          const lo = Math.min(fromIdx, toIdx), hi = Math.max(fromIdx, toIdx);
+          const rangeMonths = monthOrder.slice(lo, hi + 1);
+          const rangeLabels = monthLabels.slice(lo, hi + 1);
+          const rangeLabel = rangeLabels.length > 1 ? `${rangeLabels[0]}\u2013${rangeLabels[rangeLabels.length-1]}` : rangeLabels[0];
+
+          const rankedByRange = segBrands
+            .map(b => ({ ...b, rangeUnit: rangeMonths.reduce((s, m) => s + (b[m] || 0), 0) }))
+            .sort((a, b) => b.rangeUnit - a.rangeUnit);
+          const limited = rankedByRange.slice(0, brandLimitN);
+
+          const topBrand = limited[0];
+          const fastestGrowing = rangeMonths.length > 1
+            ? [...rankedByRange].sort((a,b) => (b[rangeMonths[rangeMonths.length-1]] - b[rangeMonths[0]]) - (a[rangeMonths[rangeMonths.length-1]] - a[rangeMonths[0]]))[0]
+            : null;
+
+          return (
+            <>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
+                <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
+                  {[{id:'top10',l:'Top 10'},{id:'top20',l:'Top 20'},{id:'all',l:'All'}].map(f => (
+                    <button key={f.id} onClick={() => setBrandLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: brandLimit === f.id ? NAVY : 'transparent', color: brandLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
+                  <select value={brandRangeFrom} onChange={e => setBrandRangeFrom(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
+                  </select>
+                  <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
+                  <select value={brandRangeTo} onChange={e => setBrandRangeTo(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+                <MetricCard label={`Total EV - ${activeBrandFilter.toUpperCase()}`} value={limited.reduce((s,b)=>s+b.rangeUnit,0).toLocaleString()} delta={`${rangeLabel} 2026`} sub="New registrations" color={BLUE} bg={BLUE_LIGHT} icon="STAT"/>
+                <MetricCard label="Top brand" value={topBrand ? topBrand.brand : '-'} delta={topBrand ? `${topBrand.rangeUnit.toLocaleString()} units` : ''} sub={`Ranked by ${rangeLabel} total`} color={NAVY} bg={NAVY_LIGHT} icon="TOP"/>
+                <MetricCard label="Fastest growing" value={fastestGrowing ? fastestGrowing.brand : '-'} delta={fastestGrowing && rangeMonths.length > 1 ? `+${(fastestGrowing[rangeMonths[rangeMonths.length-1]] - fastestGrowing[rangeMonths[0]])} units (${rangeLabel})` : 'Select a range > 1 month'} sub="Within selected range" color={SLATE} bg={NAVY_LIGHT} icon="UP"/>
+              </div>
+            </>
+          );
+        })()}
+      </div>
+    );
+  }
+
+  // ============ STANDALONE EMBED: /embed/brand-rankings-trend ============
+  // Fixed height regardless of filter choice — line chart height (280) doesn't grow with brand count.
+  if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-trend') {
+    const segBrands = getSegmentBrands(activeBrandFilter);
+    return (
+      <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+          * { box-sizing: border-box; }
+          body { margin: 0; background: transparent; }
+        `}</style>
+
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', background: SURFACE, borderRadius: 12, padding: 4, border: `1px solid ${BORDER}`, marginBottom: 16 }}>
+          {[
+            { id: 'cars', label: 'Cars' }, { id: 'motorcycle', label: 'Motorcycle' },
+            { id: 'lgv', label: 'LGV' }, { id: 'hgv', label: 'HGV' }, { id: 'vhgv', label: 'VHGV' }, { id: 'bus', label: 'Bus' },
+          ].map(t => (
+            <button key={t.id} onClick={() => setActiveBrandFilter(t.id)} style={{ padding: '8px 14px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: activeBrandFilter === t.id ? BLUE : 'transparent', color: activeBrandFilter === t.id ? NAVY : SECONDARY }}>{t.label}</button>
+          ))}
+        </div>
+
+        {segBrands.length === 0 ? (
+          <div style={{ background: YELLOW_LIGHT, borderRadius: 16, padding: 24, fontSize: 13, color: INK }}>
+            LTA does not publish brand-level registration data for this vehicle category.
+          </div>
+        ) : (() => {
+          const monthOrder = ['jan','feb','mar','apr','may','jun','jul'];
+          const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul'];
+          const fromIdx = monthOrder.indexOf(brandRangeFrom);
+          const toIdx = monthOrder.indexOf(brandRangeTo);
+          const lo = Math.min(fromIdx, toIdx), hi = Math.max(fromIdx, toIdx);
+          const rangeMonths = monthOrder.slice(lo, hi + 1);
+          const rangeLabels = monthLabels.slice(lo, hi + 1);
+          const rangeLabel = rangeLabels.length > 1 ? `${rangeLabels[0]}\u2013${rangeLabels[rangeLabels.length-1]}` : rangeLabels[0];
+
+          const rankedByRange = segBrands
+            .map(b => ({ ...b, rangeUnit: rangeMonths.reduce((s, m) => s + (b[m] || 0), 0) }))
+            .sort((a, b) => b.rangeUnit - a.rangeUnit);
+          const limited = rankedByRange.slice(0, brandLimitN);
+
+          return (
+            <>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
+                <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
+                  {[{id:'top10',l:'Top 10'},{id:'top20',l:'Top 20'},{id:'all',l:'All'}].map(f => (
+                    <button key={f.id} onClick={() => setBrandLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: brandLimit === f.id ? NAVY : 'transparent', color: brandLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
+                  <select value={brandRangeFrom} onChange={e => setBrandRangeFrom(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
+                  </select>
+                  <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
+                  <select value={brandRangeTo} onChange={e => setBrandRangeTo(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ background: CARD, borderRadius: 20, padding: 24, border: `1px solid ${BORDER}` }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 16px' }}>Monthly registration trend {'\u2014'} {rangeLabel} 2026</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <LineChart data={rangeMonths.map((m,idx) => {
+                    const row = { month: rangeLabels[idx] };
+                    limited.forEach(b => { row[b.brand] = b[m]; });
+                    return row;
+                  })}>
+                    <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
+                    <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
+                    <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
+                    <Tooltip content={<GoogleTooltip/>}/>
+                    {limited.map((b,i) => (
+                      <Line key={b.brand} type="monotone" dataKey={b.brand} stroke={[BLUE,NAVY,SLATE,DEEP_CYAN,'#6B93B0','#1A8A94',GREEN,YELLOW,'#8B5CF6','#E36414','#5B7DB1','#2E8B7A','#B0416E','#4A6741','#9B59B6','#16A085','#D35400','#7F8C8D','#2980B9','#C0392B'][i % 20]} strokeWidth={2} dot={{ r: 2 }}/>
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </>
+          );
+        })()}
+      </div>
+    );
+  }
+
+  // ============ STANDALONE EMBED: /embed/brand-rankings-table ============
+  // Outer box stays a FIXED height no matter how many brand rows there are —
+  // the table itself scrolls internally within maxHeight: 420, so the embed never
+  // needs to grow or produce an outer scrollbar.
+  if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-table') {
+    const segBrands = getSegmentBrands(activeBrandFilter);
+    return (
+      <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+          * { box-sizing: border-box; }
+          body { margin: 0; background: transparent; }
+        `}</style>
+
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', background: SURFACE, borderRadius: 12, padding: 4, border: `1px solid ${BORDER}`, marginBottom: 16 }}>
+          {[
+            { id: 'cars', label: 'Cars' }, { id: 'motorcycle', label: 'Motorcycle' },
+            { id: 'lgv', label: 'LGV' }, { id: 'hgv', label: 'HGV' }, { id: 'vhgv', label: 'VHGV' }, { id: 'bus', label: 'Bus' },
+          ].map(t => (
+            <button key={t.id} onClick={() => setActiveBrandFilter(t.id)} style={{ padding: '8px 14px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: activeBrandFilter === t.id ? BLUE : 'transparent', color: activeBrandFilter === t.id ? NAVY : SECONDARY }}>{t.label}</button>
+          ))}
+        </div>
+
+        {segBrands.length === 0 ? (
+          <div style={{ background: YELLOW_LIGHT, borderRadius: 16, padding: 24, fontSize: 13, color: INK }}>
+            LTA does not publish brand-level registration data for this vehicle category.
+          </div>
+        ) : (() => {
+          const monthOrder = ['jan','feb','mar','apr','may','jun','jul'];
+          const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul'];
+          const fromIdx = monthOrder.indexOf(brandRangeFrom);
+          const toIdx = monthOrder.indexOf(brandRangeTo);
+          const lo = Math.min(fromIdx, toIdx), hi = Math.max(fromIdx, toIdx);
+          const rangeMonths = monthOrder.slice(lo, hi + 1);
+          const rangeLabels = monthLabels.slice(lo, hi + 1);
+          const rangeLabel = rangeLabels.length > 1 ? `${rangeLabels[0]}\u2013${rangeLabels[rangeLabels.length-1]}` : rangeLabels[0];
+
+          const rankedByRange = segBrands
+            .map(b => ({ ...b, rangeUnit: rangeMonths.reduce((s, m) => s + (b[m] || 0), 0) }))
+            .sort((a, b) => b.rangeUnit - a.rangeUnit);
+          const limited = rankedByRange.slice(0, brandLimitN);
+
+          return (
+            <>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
+                <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
+                  {[{id:'top10',l:'Top 10'},{id:'top20',l:'Top 20'},{id:'all',l:'All'}].map(f => (
+                    <button key={f.id} onClick={() => setBrandLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: brandLimit === f.id ? NAVY : 'transparent', color: brandLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
+                  <select value={brandRangeFrom} onChange={e => setBrandRangeFrom(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
+                  </select>
+                  <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
+                  <select value={brandRangeTo} onChange={e => setBrandRangeTo(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ background: CARD, borderRadius: 20, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+                <div style={{ padding: '16px 20px', borderBottom: `1px solid ${BORDER}`, background: SURFACE }}>
+                  <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: 0 }}>Monthly breakdown by brand {'\u2014'} {rangeLabel} 2026</h3>
+                </div>
+                <div style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: 420 }}>
+                  <table style={{ width: '100%', minWidth: 500 + rangeMonths.length * 70, borderCollapse: 'collapse', fontSize: 13 }}>
+                    <thead><tr style={{ background: SURFACE }}>{['#','Brand', ...rangeLabels, 'Total'].map((h,i) => (<th key={h+i} style={{ padding: '10px 14px', textAlign: i>1?'right':'left', fontSize: 11, fontWeight: 600, color: SECONDARY, borderBottom: `2px solid ${BORDER}` }}>{h}</th>))}</tr></thead>
+                    <tbody>
+                      {limited.map((b,i) => (
+                        <tr key={b.brand} style={{ borderBottom: `1px solid ${BORDER}`, background: i%2?SURFACE:CARD }}>
+                          <td style={{ padding: '9px 14px', color: SECONDARY, fontWeight: 600 }}>{i+1}</td>
+                          <td style={{ padding: '9px 14px', fontWeight: 600, color: INK }}>{b.brand}</td>
+                          {rangeMonths.map(m => (<td key={m} style={{ padding: '9px 14px', textAlign: 'right', color: INK }}>{b[m]}</td>))}
+                          <td style={{ padding: '9px 14px', textAlign: 'right', fontWeight: 700, color: BLUE }}>{b.rangeUnit.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          );
+        })()}
+      </div>
+    );
+  }
+
+
   // ============ STANDALONE EMBED: /embed/charging-network ============
   // Lightweight widget version of the Charging Network operator breakdown — no nav, no auth gate.
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/charging-network') {
