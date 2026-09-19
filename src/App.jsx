@@ -35,7 +35,7 @@ function FitToWidth({ designWidth = 700, children, maxScale = 1.35 }) {
   }, [designWidth, maxScale]);
 
   return (
-    <div ref={outerRef} style={{ width: '100%', height, overflow: 'hidden' }}>
+    <div ref={outerRef} style={{ width: '100%', height, overflow: 'visible' }}>
       <div ref={innerRef} style={{ width: designWidth, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
         {children}
       </div>
@@ -1025,7 +1025,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   // ============ STANDALONE EMBED: /embed/brand-rankings-header ============
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-header') {
     return (
-      <FitToWidth designWidth={500}>
+      <FitToWidth designWidth={500}>   {/* fine as-is, nothing to wrap */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1042,7 +1042,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   // ============ STANDALONE EMBED: /embed/brand-rankings-stats ============
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-stats') {
     return (
-      <FitToWidth designWidth={700}>
+      <FitToWidth designWidth={950}>   {/* was 700 — now fits all 6 cards in one row */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1071,7 +1071,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-metrics') {
     const segBrands = getSegmentBrands(activeBrandFilter);
     return (
-      <FitToWidth designWidth={700}>
+      <FitToWidth designWidth={700}>   {/* fine as-is — 3 cards already fit in one row at 700 */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1150,7 +1150,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-trend') {
     const segBrands = getSegmentBrands(activeBrandFilter);
     return (
-      <FitToWidth designWidth={700}>
+      <FitToWidth designWidth={700}>   {/* fine as-is, nothing to wrap */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1239,7 +1239,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-table') {
     const segBrands = getSegmentBrands(activeBrandFilter);
     return (
-      <FitToWidth designWidth={800}>
+      <FitToWidth designWidth={800}>   {/* fine as-is */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
