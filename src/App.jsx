@@ -14,14 +14,22 @@ function FitToWidth({ designWidth = 700, children }) {
   const innerRef = useRef(null);
   const [scale, setScale] = useState(1);
   const [height, setHeight] = useState('auto');
+  const [isNarrow, setIsNarrow] = useState(true);
 
   useEffect(() => {
     const recalc = () => {
       if (!outerRef.current || !innerRef.current) return;
       const containerWidth = outerRef.current.offsetWidth;
-      const s = containerWidth > 0 ? Math.min(1, containerWidth / designWidth) : 1;
-      setScale(s);
-      setHeight(innerRef.current.offsetHeight * s);
+      const narrow = containerWidth < designWidth;
+      setIsNarrow(narrow);
+      if (narrow) {
+        const s = containerWidth > 0 ? containerWidth / designWidth : 1;
+        setScale(s);
+        setHeight(innerRef.current.offsetHeight * s);
+      } else {
+        setScale(1);
+        setHeight('auto');
+      }
     };
     recalc();
     window.addEventListener('resize', recalc);
@@ -34,8 +42,15 @@ function FitToWidth({ designWidth = 700, children }) {
   }, [designWidth]);
 
   return (
-    <div ref={outerRef} style={{ width: '100%', height, overflow: 'hidden' }}>
-      <div ref={innerRef} style={{ width: designWidth, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+    <div ref={outerRef} style={{ width: '100%', height: isNarrow ? height : 'auto', overflow: 'hidden' }}>
+      <div
+        ref={innerRef}
+        style={
+          isNarrow
+            ? { width: designWidth, transform: `scale(${scale})`, transformOrigin: 'top left' }
+            : { width: '100%' }
+        }
+      >
         {children}
       </div>
     </div>
