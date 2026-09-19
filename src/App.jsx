@@ -9,6 +9,39 @@ import { Zap, Battery, TrendingUp, Car, Truck, Bus, Clock, Award,
   Globe, ArrowRight, Search, ShoppingCart, Lock, Mail, Shield, CheckCircle,
   Download, Share2, Maximize2, Table2 } from 'lucide-react';
 
+function FitToWidth({ designWidth = 700, children }) {
+  const outerRef = useRef(null);
+  const innerRef = useRef(null);
+  const [scale, setScale] = useState(1);
+  const [height, setHeight] = useState('auto');
+
+  useEffect(() => {
+    const recalc = () => {
+      if (!outerRef.current || !innerRef.current) return;
+      const containerWidth = outerRef.current.offsetWidth;
+      const s = containerWidth > 0 ? Math.min(1, containerWidth / designWidth) : 1;
+      setScale(s);
+      setHeight(innerRef.current.offsetHeight * s);
+    };
+    recalc();
+    window.addEventListener('resize', recalc);
+    const ro = new ResizeObserver(recalc);
+    if (innerRef.current) ro.observe(innerRef.current);
+    return () => {
+      window.removeEventListener('resize', recalc);
+      ro.disconnect();
+    };
+  }, [designWidth]);
+
+  return (
+    <div ref={outerRef} style={{ width: '100%', height, overflow: 'hidden' }}>
+      <div ref={innerRef} style={{ width: designWidth, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // ============ STANDALONE COMPONENT: Charging Density Map (Leaflet, loaded via CDN) ============
 // Rendered only at /embed/charging-density-map — no nav, no auth gate.
 // Leaflet is loaded dynamically since this is the only part of the app that needs it.
@@ -988,9 +1021,10 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
     );
   }
 
-    // ============ STANDALONE EMBED: /embed/brand-rankings-header ============
+  // ============ STANDALONE EMBED: /embed/brand-rankings-header ============
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-header') {
     return (
+      <FitToWidth designWidth={500}>
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1000,12 +1034,14 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
         <h2 style={{ fontSize: 22, fontWeight: 800, color: INK, margin: 0 }}>EV brand performance by vehicle type.</h2>
         <p style={{ fontSize: 13, color: SECONDARY, margin: '4px 0 0' }}>Source: LTA M03 / M08 - New registrations, Jan-Jul 2026</p>
       </div>
+      </FitToWidth>
     );
   }
 
   // ============ STANDALONE EMBED: /embed/brand-rankings-stats ============
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-stats') {
     return (
+      <FitToWidth designWidth={700}>
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1025,14 +1061,16 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           })}
         </div>
       </div>
+      </FitToWidth>
     );
   }
 
-  // ============ STANDALONE EMBED: /embed/brand-rankings-metrics ============
+   // ============ STANDALONE EMBED: /embed/brand-rankings-metrics ============
   // Fixed height regardless of filter choice — segment tabs + Top10/20/All + date range + 3 metric cards.
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-metrics') {
     const segBrands = getSegmentBrands(activeBrandFilter);
     return (
+      <FitToWidth designWidth={700}>
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1070,46 +1108,14 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
 
           const topBrand = limited[0];
           const fastestGrowing = rangeMonths.length > 1
-            ? [...rankedByRange].sort((a,b) => (b[rangeMonths[rangeMonths.length-1]] - b[rangeMonths[0]]) - (a[rangeMonths[rangeMonths.length-1]] - a[rangeMonths[0]]))[0]
-            : null;
+            ? [...rankedByRange].sort((a,b) => (b[rangeMonths[rangeMonths.length-1]] - b[rangeMonths[0]]) - (a[rangeMonths[rangeMonths.length-1]] -
 
-          return (
-            <>
-              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
-                <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
-                  {[{id:'top10',l:'Top 10'},{id:'top20',l:'Top 20'},{id:'all',l:'All'}].map(f => (
-                    <button key={f.id} onClick={() => setBrandLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: brandLimit === f.id ? NAVY : 'transparent', color: brandLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
-                  <select value={brandRangeFrom} onChange={e => setBrandRangeFrom(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
-                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
-                  </select>
-                  <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
-                  <select value={brandRangeTo} onChange={e => setBrandRangeTo(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
-                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
-                <MetricCard label={`Total EV - ${activeBrandFilter.toUpperCase()}`} value={limited.reduce((s,b)=>s+b.rangeUnit,0).toLocaleString()} delta={`${rangeLabel} 2026`} sub="New registrations" color={BLUE} bg={BLUE_LIGHT} icon="STAT"/>
-                <MetricCard label="Top brand" value={topBrand ? topBrand.brand : '-'} delta={topBrand ? `${topBrand.rangeUnit.toLocaleString()} units` : ''} sub={`Ranked by ${rangeLabel} total`} color={NAVY} bg={NAVY_LIGHT} icon="TOP"/>
-                <MetricCard label="Fastest growing" value={fastestGrowing ? fastestGrowing.brand : '-'} delta={fastestGrowing && rangeMonths.length > 1 ? `+${(fastestGrowing[rangeMonths[rangeMonths.length-1]] - fastestGrowing[rangeMonths[0]])} units (${rangeLabel})` : 'Select a range > 1 month'} sub="Within selected range" color={SLATE} bg={NAVY_LIGHT} icon="UP"/>
-              </div>
-            </>
-          );
-        })()}
-      </div>
-    );
-  }
-
-  // ============ STANDALONE EMBED: /embed/brand-rankings-trend ============
+   // ============ STANDALONE EMBED: /embed/brand-rankings-trend ============
   // Fixed height regardless of filter choice — line chart height (280) doesn't grow with brand count.
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-trend') {
     const segBrands = getSegmentBrands(activeBrandFilter);
     return (
+      <FitToWidth designWidth={700}>
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1187,9 +1193,10 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           );
         })()}
       </div>
+      </FitToWidth>
     );
   }
-
+        
   // ============ STANDALONE EMBED: /embed/brand-rankings-table ============
   // Outer box stays a FIXED height no matter how many brand rows there are —
   // the table itself scrolls internally within maxHeight: 420, so the embed never
@@ -1197,6 +1204,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-table') {
     const segBrands = getSegmentBrands(activeBrandFilter);
     return (
+      <FitToWidth designWidth={800}>
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1276,6 +1284,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           );
         })()}
       </div>
+      </FitToWidth>
     );
   }
 
