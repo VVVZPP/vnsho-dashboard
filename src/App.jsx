@@ -9,27 +9,20 @@ import { Zap, Battery, TrendingUp, Car, Truck, Bus, Clock, Award,
   Globe, ArrowRight, Search, ShoppingCart, Lock, Mail, Shield, CheckCircle,
   Download, Share2, Maximize2, Table2 } from 'lucide-react';
 
-function FitToWidth({ designWidth = 700, children }) {
+function FitToWidth({ designWidth = 700, children, maxScale = 1.35 }) {
   const outerRef = useRef(null);
   const innerRef = useRef(null);
   const [scale, setScale] = useState(1);
   const [height, setHeight] = useState('auto');
-  const [isNarrow, setIsNarrow] = useState(true);
 
   useEffect(() => {
     const recalc = () => {
       if (!outerRef.current || !innerRef.current) return;
       const containerWidth = outerRef.current.offsetWidth;
-      const narrow = containerWidth < designWidth;
-      setIsNarrow(narrow);
-      if (narrow) {
-        const s = containerWidth > 0 ? containerWidth / designWidth : 1;
-        setScale(s);
-        setHeight(innerRef.current.offsetHeight * s);
-      } else {
-        setScale(1);
-        setHeight('auto');
-      }
+      const raw = containerWidth > 0 ? containerWidth / designWidth : 1;
+      const s = Math.min(maxScale, raw); // shrink freely, grow only up to maxScale
+      setScale(s);
+      setHeight(innerRef.current.offsetHeight * s);
     };
     recalc();
     window.addEventListener('resize', recalc);
@@ -39,18 +32,11 @@ function FitToWidth({ designWidth = 700, children }) {
       window.removeEventListener('resize', recalc);
       ro.disconnect();
     };
-  }, [designWidth]);
+  }, [designWidth, maxScale]);
 
   return (
-    <div ref={outerRef} style={{ width: '100%', height: isNarrow ? height : 'auto', overflow: 'hidden' }}>
-      <div
-        ref={innerRef}
-        style={
-          isNarrow
-            ? { width: designWidth, transform: `scale(${scale})`, transformOrigin: 'top left' }
-            : { width: '100%' }
-        }
-      >
+    <div ref={outerRef} style={{ width: '100%', height, overflow: 'hidden' }}>
+      <div ref={innerRef} style={{ width: designWidth, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
         {children}
       </div>
     </div>
