@@ -1065,7 +1065,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
     );
   }
 
-   // ============ STANDALONE EMBED: /embed/brand-rankings-metrics ============
+  // ============ STANDALONE EMBED: /embed/brand-rankings-metrics ============
   // Fixed height regardless of filter choice — segment tabs + Top10/20/All + date range + 3 metric cards.
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-metrics') {
     const segBrands = getSegmentBrands(activeBrandFilter);
@@ -1108,7 +1108,41 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
 
           const topBrand = limited[0];
           const fastestGrowing = rangeMonths.length > 1
-            ? [...rankedByRange].sort((a,b) => (b[rangeMonths[rangeMonths.length-1]] - b[rangeMonths[0]]) - (a[rangeMonths[rangeMonths.length-1]] -
+            ? [...rankedByRange].sort((a,b) => (b[rangeMonths[rangeMonths.length-1]] - b[rangeMonths[0]]) - (a[rangeMonths[rangeMonths.length-1]] - a[rangeMonths[0]]))[0]
+            : null;
+
+          return (
+            <>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
+                <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
+                  {[{id:'top10',l:'Top 10'},{id:'top20',l:'Top 20'},{id:'all',l:'All'}].map(f => (
+                    <button key={f.id} onClick={() => setBrandLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: brandLimit === f.id ? NAVY : 'transparent', color: brandLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
+                  <select value={brandRangeFrom} onChange={e => setBrandRangeFrom(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
+                  </select>
+                  <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
+                  <select value={brandRangeTo} onChange={e => setBrandRangeTo(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 16 }}>
+                <MetricCard label={`Total EV - ${activeBrandFilter.toUpperCase()}`} value={limited.reduce((s,b)=>s+b.rangeUnit,0).toLocaleString()} delta={`${rangeLabel} 2026`} sub="New registrations" color={BLUE} bg={BLUE_LIGHT} icon="STAT"/>
+                <MetricCard label="Top brand" value={topBrand ? topBrand.brand : '-'} delta={topBrand ? `${topBrand.rangeUnit.toLocaleString()} units` : ''} sub={`Ranked by ${rangeLabel} total`} color={NAVY} bg={NAVY_LIGHT} icon="TOP"/>
+                <MetricCard label="Fastest growing" value={fastestGrowing ? fastestGrowing.brand : '-'} delta={fastestGrowing && rangeMonths.length > 1 ? `+${(fastestGrowing[rangeMonths[rangeMonths.length-1]] - fastestGrowing[rangeMonths[0]])} units (${rangeLabel})` : 'Select a range > 1 month'} sub="Within selected range" color={SLATE} bg={NAVY_LIGHT} icon="UP"/>
+              </div>
+            </>
+          );
+        })()}
+      </div>
+      </FitToWidth>
+    );
+  }
 
    // ============ STANDALONE EMBED: /embed/brand-rankings-trend ============
   // Fixed height regardless of filter choice — line chart height (280) doesn't grow with brand count.
