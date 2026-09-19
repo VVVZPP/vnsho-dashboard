@@ -897,7 +897,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
 
           return (
             <>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 16, marginBottom: 20 }}>
                 <MetricCard label={`Total EV - ${activeBrandFilter.toUpperCase()}`} value={limited.reduce((s,b)=>s+b.rangeUnit,0).toLocaleString()} delta={`${rangeLabel} 2026`} sub="New registrations" color={BLUE} bg={BLUE_LIGHT} icon="STAT"/>
                 <MetricCard label="Top brand" value={topBrand ? topBrand.brand : '-'} delta={topBrand ? `${topBrand.rangeUnit.toLocaleString()} units` : ''} sub={`Ranked by ${rangeLabel} total`} color={NAVY} bg={NAVY_LIGHT} icon="TOP"/>
                 <MetricCard label="Fastest growing" value={fastestGrowing ? fastestGrowing.brand : '-'} delta={fastestGrowing && rangeMonths.length > 1 ? `+${(fastestGrowing[rangeMonths[rangeMonths.length-1]] - fastestGrowing[rangeMonths[0]])} units (${rangeLabel})` : 'Select a range > 1 month'} sub="Within selected range" color={SLATE} bg={NAVY_LIGHT} icon="UP"/>
