@@ -1,0 +1,696 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EV Specifications — World Mobility Forum</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+
+:root{
+  --blue:#22C8C8; --blue-light:#E3FAFA; --deep-cyan:#00A9B8;
+  --navy:#08244B; --navy-light:#EAF0F6; --slate:#345A7D;
+  --yellow:#FFB648; --yellow-light:#FFF6E8; --green:#32D17B; --green-light:#EAFBF1;
+  --red:#E5484D; --red-light:#FDEBEC;
+  --ink:#111827; --secondary:#5B6470;
+  --surface:#F7F8FA; --card:#FFFFFF; --border:#E5E8EC;
+  --chrome-bg:#0E1A2B; --chrome-fg:#C8D4E2; --chrome-line:#24374F;
+  --font:'Inter','Google Sans Flex',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);font-family:var(--font);color:var(--ink);-webkit-font-smoothing:antialiased}
+.wrap{padding:0 0 40px;max-width:1180px;margin:0 auto}
+.chrome-head{color:var(--chrome-fg);margin-bottom:18px}
+.chrome-head h1{font-size:19px;font-weight:700;color:#fff;margin:0 0 6px;letter-spacing:-.01em}
+.chrome-head p{font-size:13px;margin:0 0 4px;line-height:1.6}
+.chrome-head code{background:#1B2B40;padding:2px 6px;border-radius:5px;font-size:12px;color:#8FE3E3}
+.srcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:16px 0 20px}
+.src{background:#152438;border:1px solid var(--chrome-line);border-radius:12px;padding:12px 14px}
+.src .n{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:.09em;text-transform:uppercase}
+.src .t{font-size:12.5px;font-weight:600;color:#fff;margin-top:5px;line-height:1.35}
+.src .d{font-size:11.5px;color:#93A5BC;margin-top:4px;line-height:1.45}
+
+/* ---- the page itself ---- */
+.page{background:var(--surface)}
+.inner{max-width:1100px;margin:0 auto;padding:40px 24px 56px}
+.seclabel{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.seclabel i{width:24px;height:2px;background:var(--blue);display:block}
+.seclabel span{font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1.2px;text-transform:uppercase}
+h2.big{font-size:clamp(1.75rem,3.4vw,2.75rem);font-weight:700;color:var(--ink);line-height:1.15;margin:4px 0 12px;letter-spacing:-.4px;text-wrap:balance}
+p.sub{font-size:16px;color:var(--secondary);line-height:1.6;max-width:660px;margin:0}
+.scope{font-size:12.5px;color:var(--secondary);margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+
+h3{font-size:19px;font-weight:700;margin:0 0 4px;letter-spacing:-.2px}
+.h3sub{font-size:13.5px;color:var(--secondary);margin:0 0 18px;line-height:1.55;max-width:720px}
+section{margin-top:40px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.mc{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:12px;padding:20px 22px}
+.mc .l{font-size:11px;color:var(--secondary);font-weight:600;letter-spacing:.3px;text-transform:uppercase;margin-bottom:9px}
+.mc .v{font-size:31px;font-weight:700;line-height:1.08;letter-spacing:-.6px}
+.mc .d{font-size:12.5px;font-weight:600;margin-top:7px}
+.mc .s{font-size:11.5px;color:var(--secondary);margin-top:3px;line-height:1.4}
+
+/* priority selector — a question with a visible answer beside it */
+.prioq{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:13px;align-items:flex-start;border:2px solid var(--border);border-radius:13px;padding:14px 16px;cursor:pointer;background:var(--card);transition:.13s;text-align:left;font-family:inherit;width:100%}
+.opt:hover{border-color:var(--blue)}
+.opt.on{border-color:var(--blue);background:var(--blue-light)}
+.opt .radio{width:19px;height:19px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:3px;position:relative;background:#fff;transition:.13s}
+.opt.on .radio{border-color:var(--blue)}
+.opt.on .radio::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--blue)}
+.opt .body{flex:1;min-width:0}
+.opt .row1{display:flex;align-items:center;gap:9px}
+.opt .e{font-size:18px;line-height:1}
+.opt .t{font-size:14.5px;font-weight:700;color:var(--ink)}
+.opt .s{font-size:12px;color:var(--secondary);margin-top:4px;line-height:1.45}
+.ans-eyebrow{display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;color:var(--blue);letter-spacing:.9px;text-transform:uppercase;margin-bottom:12px}
+.ans-name{font-size:19px;font-weight:700;color:var(--ink);letter-spacing:-.2px;margin-bottom:2px}
+.ans-value{font-size:38px;font-weight:700;letter-spacing:-1px;line-height:1.05;color:var(--ink)}
+.ans-value span{font-size:15px;font-weight:600;color:var(--secondary);letter-spacing:0}
+.ans-sub{font-size:13px;color:var(--secondary);margin-top:8px;line-height:1.5}
+.ans-facts{display:flex;flex-direction:column;gap:0;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.ans-fact{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:6px 0;color:var(--secondary)}
+.ans-fact b{color:var(--ink);font-weight:700}
+.ans-runner{margin-top:13px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:12px;color:var(--secondary);line-height:1.5}
+.ans-runner b{color:var(--ink)}
+
+/* chart C — headline + histogram, BCG-pyramid style */
+.chead{text-align:center;padding:6px 0 26px;border-bottom:1px solid var(--border);margin-bottom:26px}
+.chead-eyebrow{font-size:10.5px;font-weight:700;color:var(--secondary);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.chead-big{font-size:clamp(1.35rem,2.6vw,1.9rem);font-weight:700;color:var(--ink);line-height:1.3;letter-spacing:-.3px;max-width:640px;margin:0 auto}
+.chead-sub{font-size:13px;color:var(--secondary);line-height:1.6;max-width:560px;margin:12px auto 0}
+.chead-sub b{color:var(--ink);font-weight:700}
+.histo{display:flex;flex-direction:column;gap:13px}
+.hrow{display:grid;grid-template-columns:132px 1fr 84px;align-items:center;gap:14px}
+.hrow-lab{font-size:12.5px;font-weight:600;color:var(--secondary);text-align:right}
+.hrow-track{background:var(--surface);border-radius:8px;height:30px;overflow:hidden}
+.hrow-fill{height:100%;border-radius:8px;transition:width .25s;min-width:3px}
+.hrow-n{font-size:13px;font-weight:700;color:var(--ink)}
+.hrow-n span{font-size:11px;font-weight:500;color:var(--secondary)}
+.extremes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px;padding-top:22px;border-top:1px solid var(--border)}
+.ext{background:var(--surface);border-left:3px solid var(--border);border-radius:10px;padding:15px 17px}
+.ext-k{font-size:10px;font-weight:700;letter-spacing:.7px}
+.ext-v{font-size:15px;font-weight:700;color:var(--ink);margin-top:5px}
+.ext-d{font-size:12px;color:var(--secondary);margin-top:5px;line-height:1.5}
+.ext-d b{color:var(--ink)}
+@media(max-width:600px){.hrow{grid-template-columns:96px 1fr 60px;gap:9px}.hrow-lab{font-size:11px}}
+
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+.ctl .lab{font-size:11px;font-weight:700;color:var(--secondary);letter-spacing:.7px;text-transform:uppercase;margin-right:2px}
+
+/* labelled control panel */
+.ctlcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:14px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:24px}
+.field .fl{font-size:10.5px;font-weight:700;color:var(--secondary);letter-spacing:.9px;text-transform:uppercase;margin-bottom:9px}
+.seg{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:9px 6px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--secondary);cursor:pointer;transition:.13s;line-height:1.2}
+.seg button:hover{color:var(--ink);background:#EDEFF3}
+.seg button.on{background:var(--navy);color:#fff;box-shadow:0 1px 3px rgba(8,36,75,.22)}
+.seg button.on:hover{background:var(--navy)}
+.seg button small{display:block;font-size:10px;font-weight:500;opacity:.7;margin-top:3px;letter-spacing:.1px}
+.fh{font-size:11.5px;color:var(--secondary);margin-top:9px;line-height:1.45;min-height:32px}
+.summary{display:flex;align-items:flex-start;gap:10px;margin-top:18px;padding-top:15px;border-top:1px solid var(--border);font-size:13.5px;color:var(--secondary);line-height:1.55}
+.summary b{color:var(--ink);font-weight:700}
+.summary i{width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:7px;display:block}
+
+/* power picker */
+.picker{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:14px}
+.pkgrid{display:grid;grid-template-columns:var(--pkcols,1.1fr 1fr);gap:30px;align-items:start}
+@media(max-width:780px){.pkgrid{grid-template-columns:1fr !important;gap:22px}}
+.slab{font-size:10.5px;font-weight:700;color:var(--secondary);letter-spacing:.9px;text-transform:uppercase;margin-bottom:6px}
+.shelp{font-size:12px;color:var(--secondary);line-height:1.5;margin-bottom:16px}
+input[type=range]{--pct:30%;width:100%;height:26px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;margin:0;display:block}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:50px;background:linear-gradient(90deg,var(--navy) 0 var(--pct),var(--border) var(--pct) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-8px;border-radius:50%;background:#fff;border:3px solid var(--navy);box-shadow:0 2px 7px rgba(8,36,75,.3)}
+input[type=range]::-moz-range-track{height:8px;border-radius:50px;background:var(--border)}
+input[type=range]::-moz-range-progress{height:8px;border-radius:50px;background:var(--navy)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border:3px solid var(--navy);border-radius:50%;background:#fff}
+.sticks{display:flex;justify-content:space-between;font-size:11px;color:var(--secondary);margin-top:4px}
+@media(max-width:600px){.sticks span:nth-child(2),.sticks span:nth-child(3){display:none}.presets button{font-size:11.5px;padding:6px 11px}}
+.presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.presets button{border:1px solid var(--border);background:var(--card);border-radius:50px;padding:6px 13px;font-size:12px;font-weight:600;color:var(--secondary);cursor:pointer;font-family:inherit;transition:.12s}
+.presets button:hover{border-color:var(--blue);color:var(--ink)}
+.ro{background:var(--surface);border-radius:13px;padding:20px 22px}
+.ro-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ro-kw{font-size:23px;font-weight:700;letter-spacing:-.4px}
+.ro-badge{font-size:11px;font-weight:700;padding:4px 11px;border-radius:50px;letter-spacing:.2px}
+.ro-big{font-size:40px;font-weight:700;letter-spacing:-1px;line-height:1}
+.ro-big span{font-size:16px;font-weight:600;color:var(--secondary);letter-spacing:0}
+.ro-sub{font-size:13px;color:var(--secondary);margin-top:9px;line-height:1.5}
+.ro-sub b{color:var(--ink)}
+.ro-row{margin-top:14px;padding-top:13px;border-top:1px solid var(--border);font-size:12.5px;color:var(--secondary);line-height:1.55}
+.ro-row b{color:var(--ink)}
+.ro-tip{margin-top:12px;border-radius:9px;padding:11px 13px;font-size:12.5px;line-height:1.55}
+.chip{border:1px solid var(--border);background:var(--card);border-radius:50px;padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--secondary);cursor:pointer;font-family:inherit;transition:.12s}
+.chip:hover{border-color:var(--blue);color:var(--ink)}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+svg{display:block;width:100%;height:auto;overflow:visible}
+.gl{stroke:var(--border);stroke-width:1}
+.ax{font-size:10.5px;fill:var(--secondary)}
+.axt{font-size:11px;fill:var(--secondary);font-weight:600}
+.dot{cursor:pointer}
+.lbl{font-size:10px;fill:var(--ink);font-weight:600}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:right;padding:9px 8px;font-size:10.5px;font-weight:700;color:var(--secondary);letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th:first-child,td:first-child{text-align:left}
+th:hover{color:var(--blue)}
+td{text-align:right;padding:9px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr:hover{background:var(--surface)}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:50px;letter-spacing:.2px}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.mono{font-variant-numeric:tabular-nums}
+
+.pers{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.pers .card{padding:20px}
+.pers h4{font-size:15px;font-weight:700;margin:10px 0 6px}
+.pers .q{font-size:12.5px;color:var(--secondary);line-height:1.55;margin:0 0 12px}
+.pers ul{margin:0;padding-left:0;list-style:none}
+.pers li{font-size:12.5px;padding:6px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px}
+.pers li b{font-weight:700}
+.pick{margin-top:12px;background:var(--surface);border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.5}
+.pick b{color:var(--ink)}
+
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:14px}
+.rule{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+.rule .k{font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.rule .v{font-size:23px;font-weight:700;margin:8px 0 6px;letter-spacing:-.4px}
+.rule .d{font-size:12.5px;color:var(--secondary);line-height:1.55}
+.note{background:var(--yellow-light);border:1px solid #F5D9A8;border-radius:12px;padding:14px 18px;font-size:13px;line-height:1.6;color:#6B4B12;margin-top:16px}
+.foot{font-size:11.5px;color:var(--secondary);margin-top:14px;line-height:1.6}
+@media(max-width:640px){.inner{padding:28px 16px 40px}.mc .v{font-size:26px}}
+
+</style></head><body><div class="wrap">
+<div class="page"><div class="inner">
+
+  <div class="seclabel"><i></i><span>Technical Reference</span></div>
+  <h2 class="big">The most expensive number on the spec sheet isn't the price.</h2>
+  <p class="sub">Manufacturers sell range. Singapore taxes power. We provide the executive intelligence required to navigate the complex interplay between vehicle adoption and infrastructure growth.</p>
+  <div class="scope">Electric models on sale in Singapore &middot; manufacturer and WLTP figures &middot; road tax and charging times computed from LTA rules</div>
+
+  <!-- ===== PRIORITY ===== -->
+  <section>
+    <h3>Start with what you actually care about.</h3>
+    <p class="h3sub">Pick one on the left and see the actual best car for it on the right. Every chart and table below re-ranks the same way. Most buyers never get past range and price &mdash; the two specs that matter least on a 50&#8239;km island.</p>
+    <div class="picker" style="padding:22px 24px">
+      <div class="pkgrid" style="--pkcols:0.92fr 1.08fr">
+        <div class="prioq" id="prio"></div>
+        <div class="ro" id="prioAns"></div>
+      </div>
+    </div>
+  </section>
+
+  <section><div class="cards" id="cards"></div></section>
+
+  <!-- ===== CHART A ===== -->
+  <section>
+    <h3>Power isn't a performance stat here. It's a tax band.</h3>
+    <p class="h3sub">Every brochure leads with horsepower. In Singapore that same figure, in kilowatts, is what LTA charges your road tax on &mdash; and what decides which COE queue you bid in. Move the slider to any car's power figure and see the bill before you commit to it.</p>
+    <div class="picker" id="pick"></div>
+    <div class="card"><div id="cA"></div></div>
+    <div class="note" id="noteA"></div>
+  </section>
+
+  <!-- ===== CHART B ===== -->
+  <section>
+    <h3>What it costs to keep on the road.</h3>
+    <p class="h3sub">Road tax plus electricity. Both are knowable to the dollar before you buy &mdash; unlike the purchase price, which moves with every COE round.</p>
+    <div class="ctlcard" id="ctlB"></div>
+    <div class="card"><div id="cB"></div></div>
+  </section>
+
+  <!-- ===== CHART C ===== -->
+  <section>
+    <h3>Range is the wrong headline.</h3>
+    <p class="h3sub">The median Singapore car covers about 48&#8239;km a day. Measured in days of ordinary driving rather than kilometres, the gap between the shortest- and longest-range EV on sale stops looking like a decision.</p>
+    <div class="card"><div id="cC"></div></div>
+  </section>
+
+  <!-- ===== CHART D ===== -->
+  <section>
+    <h3>The charger you live with is the slow one.</h3>
+    <p class="h3sub">Nine in ten charges happen overnight on AC. The DC peak figure brands compete on only matters on the days you can't plug in at home &mdash; and it's throttled by the onboard charger the rest of the time.</p>
+    <div class="ctlcard" id="ctlD"></div>
+    <div class="card"><div id="cD"></div></div>
+  </section>
+
+  <!-- ===== TABLE ===== -->
+  <section>
+    <h3>The full sheet.</h3>
+    <p class="h3sub">Sorted by your priority. Click any column to re-sort. Road tax, charge times and running cost are computed, not quoted.</p>
+    <div class="ctl" id="ctlT"></div>
+    <div class="card" style="padding:14px 16px"><div class="tw"><table id="tbl"><thead></thead><tbody></tbody></table></div></div>
+    <div class="foot">Battery figures are usable capacity. Efficiency is battery&#8209;to&#8209;wheel; LTA rates VES on wall&#8209;to&#8209;wheel consumption, which runs roughly 10&ndash;15% higher. AC hours are 10&ndash;80% at the onboard charger's limit; DC minutes assume a realistic average of 62% of peak across the window.</div>
+  </section>
+
+  <!-- ===== PERSONAS ===== -->
+  <section>
+    <h3>Four buyers, four different right answers.</h3>
+    <p class="h3sub">The same car is an excellent and a poor choice depending on where it parks at night. These are the specs to filter on &mdash; and what they rule out.</p>
+    <div class="pers" id="pers"></div>
+  </section>
+
+  <!-- ===== RULES ===== -->
+  <section>
+    <h3>The four rules that set every number above.</h3>
+    <p class="h3sub">None of them are on a spec sheet. All of them are on your bill.</p>
+    <div class="rules" id="rules"></div>
+    <div class="note">The incentive ceiling falls from <b>$30,000 to $20,000 on 1 January 2027</b>. The EEAI's 45%-off-ARF rebate ends entirely, and VES Band A drops from $22,500 to $20,000. A registration that slips past New Year costs $10,000 more for an identical car.</div>
+  </section>
+
+</div></div>
+<p style="color:#9AA6B5;font-size:11.5px;margin-top:18px;line-height:1.6;padding:0 16px">Specifications are manufacturer / WLTP figures for Singapore-market variants. Road tax, COE category, charge times and running cost are computed from published LTA formulas, current as at September 2026.</p>
+</div>
+<script>
+const D = [{"model":"Atto 3","brand":"BYD","kwh":60.5,"chem":"LFP","kw":150,"ac":7,"dc":88,"rng":420,"whkm":160,"kmkwh":6.25,"seg":"SUV","boot":440,"len":4455,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":64,"catA":false,"eHome":768,"ePub":1320,"acH":6.0,"dcMin":47},{"model":"Dolphin","brand":"BYD","kwh":44.9,"chem":"LFP","kw":70,"ac":7,"dc":60,"rng":340,"whkm":158,"kmkwh":6.33,"seg":"Hatch","boot":345,"len":4290,"v2l":true,"tax":1326,"ves":"A","vesAmt":-22500,"co2":63,"catA":true,"eHome":758,"ePub":1304,"acH":4.5,"dcMin":51},{"model":"Seal Premium RWD","brand":"BYD","kwh":82.5,"chem":"LFP","kw":230,"ac":11,"dc":150,"rng":570,"whkm":166,"kmkwh":6.02,"seg":"Sedan","boot":400,"len":4800,"v2l":true,"tax":2264,"ves":"A","vesAmt":-22500,"co2":66,"catA":false,"eHome":797,"ePub":1370,"acH":5.2,"dcMin":37},{"model":"Sealion 7 Dynamic","brand":"BYD","kwh":82.5,"chem":"LFP","kw":100,"ac":11,"dc":150,"rng":460,"whkm":185,"kmkwh":5.41,"seg":"SUV","boot":520,"len":4830,"v2l":true,"tax":1502,"ves":"A","vesAmt":-22500,"co2":74,"catA":true,"eHome":888,"ePub":1526,"acH":5.2,"dcMin":37},{"model":"Sealion 7 Perf AWD","brand":"BYD","kwh":82.5,"chem":"LFP","kw":390,"ac":11,"dc":150,"rng":456,"whkm":195,"kmkwh":5.13,"seg":"SUV","boot":520,"len":4830,"v2l":true,"tax":5588,"ves":"A","vesAmt":-22500,"co2":78,"catA":false,"eHome":936,"ePub":1609,"acH":5.2,"dcMin":37},{"model":"M6 7-seat","brand":"BYD","kwh":71.8,"chem":"LFP","kw":150,"ac":7,"dc":89,"rng":420,"whkm":182,"kmkwh":5.49,"seg":"MPV","boot":580,"len":4710,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":73,"catA":false,"eHome":874,"ePub":1502,"acH":7.2,"dcMin":55},{"model":"Model 3 RWD","brand":"Tesla","kwh":57.5,"chem":"LFP","kw":208,"ac":11,"dc":170,"rng":513,"whkm":132,"kmkwh":7.58,"seg":"Sedan","boot":594,"len":4720,"v2l":false,"tax":2135,"ves":"A","vesAmt":-22500,"co2":53,"catA":false,"eHome":634,"ePub":1089,"acH":3.7,"dcMin":23},{"model":"Model 3 Long Range","brand":"Tesla","kwh":75.0,"chem":"NMC","kw":324,"ac":11,"dc":250,"rng":629,"whkm":140,"kmkwh":7.14,"seg":"Sedan","boot":594,"len":4720,"v2l":false,"tax":4555,"ves":"A","vesAmt":-22500,"co2":56,"catA":false,"eHome":672,"ePub":1155,"acH":4.8,"dcMin":20},{"model":"Model Y RWD","brand":"Tesla","kwh":60.0,"chem":"LFP","kw":220,"ac":11,"dc":175,"rng":500,"whkm":149,"kmkwh":6.71,"seg":"SUV","boot":822,"len":4790,"v2l":false,"tax":2205,"ves":"A","vesAmt":-22500,"co2":60,"catA":false,"eHome":715,"ePub":1229,"acH":3.8,"dcMin":23},{"model":"Model Y Long Range","brand":"Tesla","kwh":75.0,"chem":"NMC","kw":378,"ac":11,"dc":250,"rng":586,"whkm":153,"kmkwh":6.54,"seg":"SUV","boot":822,"len":4790,"v2l":false,"tax":5400,"ves":"A","vesAmt":-22500,"co2":61,"catA":false,"eHome":734,"ePub":1262,"acH":4.8,"dcMin":20},{"model":"Ioniq 5 84kWh","brand":"Hyundai","kwh":84.0,"chem":"NMC","kw":168,"ac":11,"dc":258,"rng":570,"whkm":167,"kmkwh":5.99,"seg":"SUV","boot":520,"len":4655,"v2l":true,"tax":1900,"ves":"A","vesAmt":-22500,"co2":67,"catA":false,"eHome":802,"ePub":1378,"acH":5.3,"dcMin":22},{"model":"Ioniq 6 77kWh","brand":"Hyundai","kwh":77.4,"chem":"NMC","kw":168,"ac":11,"dc":233,"rng":614,"whkm":139,"kmkwh":7.19,"seg":"Sedan","boot":401,"len":4855,"v2l":true,"tax":1900,"ves":"A","vesAmt":-22500,"co2":56,"catA":false,"eHome":667,"ePub":1147,"acH":4.9,"dcMin":23},{"model":"Kona Electric 65kWh","brand":"Hyundai","kwh":65.4,"chem":"NMC","kw":160,"ac":11,"dc":102,"rng":444,"whkm":156,"kmkwh":6.41,"seg":"SUV","boot":466,"len":4355,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":62,"catA":false,"eHome":749,"ePub":1287,"acH":4.2,"dcMin":43},{"model":"Ioniq 9 RWD","brand":"Hyundai","kwh":110.3,"chem":"NMC","kw":160,"ac":11,"dc":233,"rng":620,"whkm":187,"kmkwh":5.35,"seg":"SUV","boot":620,"len":5060,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":75,"catA":false,"eHome":898,"ePub":1543,"acH":7.0,"dcMin":32},{"model":"EV6 84kWh","brand":"Kia","kwh":84.0,"chem":"NMC","kw":168,"ac":11,"dc":258,"rng":582,"whkm":165,"kmkwh":6.06,"seg":"SUV","boot":490,"len":4695,"v2l":true,"tax":1900,"ves":"A","vesAmt":-22500,"co2":66,"catA":false,"eHome":792,"ePub":1361,"acH":5.3,"dcMin":22},{"model":"EV3 81kWh","brand":"Kia","kwh":81.4,"chem":"NMC","kw":150,"ac":11,"dc":128,"rng":605,"whkm":149,"kmkwh":6.71,"seg":"SUV","boot":460,"len":4300,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":60,"catA":false,"eHome":715,"ePub":1229,"acH":5.2,"dcMin":43},{"model":"EV4","brand":"Kia","kwh":81.4,"chem":"NMC","kw":150,"ac":11,"dc":128,"rng":630,"whkm":143,"kmkwh":6.99,"seg":"Sedan","boot":490,"len":4730,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":57,"catA":false,"eHome":686,"ePub":1180,"acH":5.2,"dcMin":43},{"model":"MG4 Long Range","brand":"MG","kwh":64.0,"chem":"NMC","kw":150,"ac":11,"dc":140,"rng":435,"whkm":166,"kmkwh":6.02,"seg":"Hatch","boot":363,"len":4287,"v2l":false,"tax":1795,"ves":"A","vesAmt":-22500,"co2":66,"catA":false,"eHome":797,"ePub":1370,"acH":4.1,"dcMin":31},{"model":"S5 EV Long Range","brand":"MG","kwh":62.0,"chem":"LFP","kw":170,"ac":11,"dc":139,"rng":480,"whkm":152,"kmkwh":6.58,"seg":"SUV","boot":453,"len":4476,"v2l":true,"tax":1912,"ves":"A","vesAmt":-22500,"co2":61,"catA":false,"eHome":730,"ePub":1254,"acH":3.9,"dcMin":30},{"model":"S6 EV","brand":"MG","kwh":62.0,"chem":"LFP","kw":109,"ac":11,"dc":139,"rng":530,"whkm":145,"kmkwh":6.9,"seg":"SUV","boot":674,"len":4620,"v2l":true,"tax":1554,"ves":"A","vesAmt":-22500,"co2":58,"catA":true,"eHome":696,"ePub":1196,"acH":3.9,"dcMin":30},{"model":"G6 Long Range","brand":"Xpeng","kwh":87.5,"chem":"NMC","kw":210,"ac":11,"dc":280,"rng":570,"whkm":175,"kmkwh":5.71,"seg":"SUV","boot":571,"len":4753,"v2l":true,"tax":2147,"ves":"A","vesAmt":-22500,"co2":70,"catA":false,"eHome":840,"ePub":1444,"acH":5.6,"dcMin":21},{"model":"X9","brand":"Xpeng","kwh":84.5,"chem":"NMC","kw":235,"ac":11,"dc":260,"rng":640,"whkm":190,"kmkwh":5.26,"seg":"MPV","boot":693,"len":5293,"v2l":true,"tax":3163,"ves":"A","vesAmt":-22500,"co2":76,"catA":false,"eHome":912,"ePub":1568,"acH":5.4,"dcMin":22},{"model":"X","brand":"Zeekr","kwh":66.0,"chem":"NMC","kw":200,"ac":11,"dc":150,"rng":440,"whkm":172,"kmkwh":5.81,"seg":"SUV","boot":362,"len":4432,"v2l":true,"tax":2088,"ves":"A","vesAmt":-22500,"co2":69,"catA":false,"eHome":826,"ePub":1419,"acH":4.2,"dcMin":30},{"model":"001 RWD","brand":"Zeekr","kwh":100.0,"chem":"NMC","kw":200,"ac":11,"dc":200,"rng":620,"whkm":181,"kmkwh":5.52,"seg":"Wagon","boot":539,"len":4977,"v2l":true,"tax":2088,"ves":"A","vesAmt":-22500,"co2":72,"catA":false,"eHome":869,"ePub":1493,"acH":6.4,"dcMin":34},{"model":"7X RWD","brand":"Zeekr","kwh":100.0,"chem":"NMC","kw":310,"ac":11,"dc":360,"rng":615,"whkm":178,"kmkwh":5.62,"seg":"SUV","boot":616,"len":4787,"v2l":true,"tax":4336,"ves":"A","vesAmt":-22500,"co2":71,"catA":false,"eHome":854,"ePub":1469,"acH":6.4,"dcMin":19},{"model":"iX1 eDrive20","brand":"BMW","kwh":64.8,"chem":"NMC","kw":150,"ac":11,"dc":130,"rng":475,"whkm":155,"kmkwh":6.45,"seg":"SUV","boot":490,"len":4500,"v2l":false,"tax":1795,"ves":"A","vesAmt":-22500,"co2":62,"catA":false,"eHome":744,"ePub":1279,"acH":4.1,"dcMin":34},{"model":"i4 eDrive35","brand":"BMW","kwh":67.1,"chem":"NMC","kw":210,"ac":11,"dc":180,"rng":490,"whkm":158,"kmkwh":6.33,"seg":"Sedan","boot":470,"len":4785,"v2l":false,"tax":2147,"ves":"A","vesAmt":-22500,"co2":63,"catA":false,"eHome":758,"ePub":1304,"acH":4.3,"dcMin":25},{"model":"EQA 250+","brand":"Mercedes","kwh":70.5,"chem":"NMC","kw":140,"ac":11,"dc":100,"rng":560,"whkm":149,"kmkwh":6.71,"seg":"SUV","boot":340,"len":4463,"v2l":false,"tax":1736,"ves":"A","vesAmt":-22500,"co2":60,"catA":false,"eHome":715,"ePub":1229,"acH":4.5,"dcMin":48},{"model":"CLA 250+","brand":"Mercedes","kwh":85.0,"chem":"NMC","kw":200,"ac":11,"dc":320,"rng":792,"whkm":122,"kmkwh":8.2,"seg":"Sedan","boot":405,"len":4723,"v2l":true,"tax":2088,"ves":"A","vesAmt":-22500,"co2":49,"catA":false,"eHome":586,"ePub":1007,"acH":5.4,"dcMin":18},{"model":"EQE 350+","brand":"Mercedes","kwh":90.6,"chem":"NMC","kw":215,"ac":11,"dc":170,"rng":639,"whkm":159,"kmkwh":6.29,"seg":"Sedan","boot":430,"len":4946,"v2l":false,"tax":2176,"ves":"A","vesAmt":-22500,"co2":64,"catA":false,"eHome":763,"ePub":1312,"acH":5.8,"dcMin":36},{"model":"EX30 Single ER","brand":"Volvo","kwh":69.0,"chem":"NMC","kw":200,"ac":11,"dc":153,"rng":476,"whkm":167,"kmkwh":5.99,"seg":"SUV","boot":318,"len":4233,"v2l":false,"tax":2088,"ves":"A","vesAmt":-22500,"co2":67,"catA":false,"eHome":802,"ePub":1378,"acH":4.4,"dcMin":31},{"model":"4 Long Range","brand":"Polestar","kwh":100.0,"chem":"NMC","kw":200,"ac":11,"dc":200,"rng":620,"whkm":177,"kmkwh":5.65,"seg":"SUV","boot":526,"len":4840,"v2l":false,"tax":2088,"ves":"A","vesAmt":-22500,"co2":71,"catA":false,"eHome":850,"ePub":1460,"acH":6.4,"dcMin":34},{"model":"Taycan RWD","brand":"Porsche","kwh":89.0,"chem":"NMC","kw":300,"ac":11,"dc":320,"rng":590,"whkm":175,"kmkwh":5.71,"seg":"Sedan","boot":407,"len":5063,"v2l":false,"tax":4180,"ves":"A","vesAmt":-22500,"co2":70,"catA":false,"eHome":840,"ePub":1444,"acH":5.7,"dcMin":19},{"model":"Macan 4","brand":"Porsche","kwh":95.0,"chem":"NMC","kw":300,"ac":11,"dc":270,"rng":613,"whkm":179,"kmkwh":5.59,"seg":"SUV","boot":540,"len":4784,"v2l":false,"tax":4180,"ves":"A","vesAmt":-22500,"co2":72,"catA":false,"eHome":859,"ePub":1477,"acH":6.0,"dcMin":24},{"model":"Aion Y Plus","brand":"GAC","kwh":63.2,"chem":"LFP","kw":150,"ac":7,"dc":90,"rng":430,"whkm":160,"kmkwh":6.25,"seg":"SUV","boot":410,"len":4535,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":64,"catA":false,"eHome":768,"ePub":1320,"acH":6.3,"dcMin":48},{"model":"Aion UT Premium","brand":"GAC","kwh":50.0,"chem":"LFP","kw":100,"ac":7,"dc":90,"rng":410,"whkm":141,"kmkwh":7.09,"seg":"Hatch","boot":440,"len":4270,"v2l":true,"tax":1502,"ves":"A","vesAmt":-22500,"co2":56,"catA":true,"eHome":677,"ePub":1163,"acH":5.0,"dcMin":38},{"model":"Omoda E5","brand":"Chery","kwh":61.0,"chem":"LFP","kw":150,"ac":7,"dc":80,"rng":430,"whkm":155,"kmkwh":6.45,"seg":"SUV","boot":380,"len":4424,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":62,"catA":false,"eHome":744,"ePub":1279,"acH":6.1,"dcMin":52},{"model":"11","brand":"Avatr","kwh":90.0,"chem":"NMC","kw":230,"ac":11,"dc":240,"rng":600,"whkm":178,"kmkwh":5.62,"seg":"SUV","boot":450,"len":4880,"v2l":true,"tax":2264,"ves":"A","vesAmt":-22500,"co2":71,"catA":false,"eHome":854,"ePub":1469,"acH":5.7,"dcMin":25},{"model":"Box","brand":"Dongfeng","kwh":42.3,"chem":"LFP","kw":70,"ac":7,"dc":70,"rng":330,"whkm":151,"kmkwh":6.62,"seg":"Hatch","boot":326,"len":4020,"v2l":true,"tax":1326,"ves":"A","vesAmt":-22500,"co2":60,"catA":true,"eHome":725,"ePub":1246,"acH":4.2,"dcMin":41},{"model":"Vigo","brand":"Dongfeng","kwh":64.2,"chem":"LFP","kw":99,"ac":7,"dc":85,"rng":450,"whkm":158,"kmkwh":6.33,"seg":"SUV","boot":500,"len":4606,"v2l":true,"tax":1496,"ves":"A","vesAmt":-22500,"co2":63,"catA":true,"eHome":758,"ePub":1304,"acH":6.4,"dcMin":51},{"model":"Mifa 9","brand":"Maxus","kwh":90.0,"chem":"NMC","kw":180,"ac":11,"dc":90,"rng":440,"whkm":225,"kmkwh":4.44,"seg":"MPV","boot":466,"len":5270,"v2l":true,"tax":1971,"ves":"A","vesAmt":-22500,"co2":90,"catA":false,"eHome":1080,"ePub":1856,"acH":5.7,"dcMin":68},{"model":"bZ4X","brand":"Toyota","kwh":71.4,"chem":"NMC","kw":150,"ac":11,"dc":150,"rng":516,"whkm":160,"kmkwh":6.25,"seg":"SUV","boot":452,"len":4690,"v2l":false,"tax":1795,"ves":"A","vesAmt":-22500,"co2":64,"catA":false,"eHome":768,"ePub":1320,"acH":4.5,"dcMin":32},{"model":"C10","brand":"Leapmotor","kwh":69.9,"chem":"LFP","kw":160,"ac":7,"dc":84,"rng":420,"whkm":174,"kmkwh":5.75,"seg":"SUV","boot":435,"len":4739,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":70,"catA":false,"eHome":835,"ePub":1436,"acH":7.0,"dcMin":56},{"model":"S07","brand":"Deepal","kwh":79.9,"chem":"LFP","kw":160,"ac":7,"dc":92,"rng":520,"whkm":165,"kmkwh":6.06,"seg":"SUV","boot":445,"len":4750,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":66,"catA":false,"eHome":792,"ePub":1361,"acH":8.0,"dcMin":59},{"model":"EX5","brand":"Geely","kwh":60.2,"chem":"LFP","kw":160,"ac":7,"dc":100,"rng":430,"whkm":156,"kmkwh":6.41,"seg":"SUV","boot":461,"len":4615,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":62,"catA":false,"eHome":749,"ePub":1287,"acH":6.0,"dcMin":41},{"model":"Cooper SE","brand":"Mini","kwh":54.2,"chem":"NMC","kw":160,"ac":11,"dc":95,"rng":402,"whkm":147,"kmkwh":6.8,"seg":"Hatch","boot":210,"len":3858,"v2l":false,"tax":1853,"ves":"A","vesAmt":-22500,"co2":59,"catA":false,"eHome":706,"ePub":1213,"acH":3.4,"dcMin":39}];
+const C = {blue:'#22C8C8',navy:'#08244B',slate:'#345A7D',green:'#32D17B',yellow:'#FFB648',red:'#E5484D',cyan:'#00A9B8',sec:'#5B6470',bd:'#E5E8EC',ink:'#111827'};
+const $ = s => document.querySelector(s);
+const fmt = n => n.toLocaleString('en-SG');
+const DAY = 48; // median SG car, km/day
+
+// ---------- state ----------
+let prio = 'cost', pkKw = 150, km = 15000, tariff = 0.32, showB = 'cheap', acKw = 7, sortK = null, sortDir = 1, segF = 'all';
+// tariff levels: $0.32 home (residential) · $0.65 public (DC/AC network) ·
+// mixed = a 70% home / 30% public blend of those two = 0.7×0.32 + 0.3×0.65 = $0.42/kWh
+
+const PRIOS = [
+  {k:'cost', e:'💸', t:'Lowest running cost', s:'Road tax and electricity, every year, for ten years.'},
+  {k:'nohome', e:'🔌', t:"I can't charge at home", s:'DC speed and range carry the whole burden.'},
+  {k:'space', e:'🧳', t:'Space for a family', s:'Boot litres — and staying inside a 4.8 m carpark lot.'},
+  {k:'perf', e:'⚡', t:'Performance', s:'Kilowatts. And what they cost you annually.'},
+];
+
+const score = {
+  cost:   r => -(r.tax + r.whkm/1000*km*tariff),
+  nohome: r => r.dc*0.6 + r.rng*0.25 - r.dcMin*1.2,
+  space:  r => r.boot - (r.len>4800 ? (r.len-4800)*0.9 : 0),
+  perf:   r => r.kw,
+};
+const ranked = () => D.slice().sort((a,b)=>score[prio](b)-score[prio](a));
+const annual = r => Math.round(r.tax + r.whkm/1000*km*tariff);
+const nm = r => `${r.brand} ${r.model}`;
+
+// ---------- priority question ----------
+function prioQ(){
+  $('#prio').innerHTML = PRIOS.map(p=>`<button class="opt${p.k===prio?' on':''}" data-p="${p.k}">
+    <span class="radio"></span>
+    <span class="body"><span class="row1"><span class="e">${p.e}</span><span class="t">${p.t}</span></span><div class="s">${p.s}</div></span>
+  </button>`).join('');
+}
+$('#prio').addEventListener('click', e => { const b = e.target.closest('.opt'); if(!b) return; prio = b.dataset.p; sortK = null; render(); });
+
+// ---------- the answer, in plain language ----------
+function prioAnswer(){
+  const p = PRIOS.find(x=>x.k===prio);
+  const r = ranked(), best = r[0], runner = r[1];
+  let value, unit, sub, facts, runnerLine;
+  if(prio==='cost'){
+    const worst = r[r.length-1];
+    value = '$'+fmt(annual(best)); unit = '/ year';
+    sub = `Road tax plus electricity at ${fmt(km)} km/yr, charging at $${tariff.toFixed(2)}/kWh.`;
+    facts = [['Road tax', '$'+fmt(best.tax)+'/yr'], ['Electricity', '$'+fmt(annual(best)-best.tax)+'/yr'], ['Over a 10-year COE', '$'+fmt(annual(best)*10)]];
+    runnerLine = `The most expensive model here, the <b>${nm(worst)}</b>, costs <b>$${fmt(annual(worst))}</b> a year — <b>$${fmt((annual(worst)-annual(best))*10)}</b> more over ten years.`;
+  } else if(prio==='nohome'){
+    value = best.dcMin; unit = 'min to 80%';
+    sub = `Fastest realistic DC top-up among every EV on sale, from a ${best.dc} kW-capable charger.`;
+    facts = [['DC peak', best.dc+' kW'], ['WLTP range', fmt(best.rng)+' km'], ['Days per charge', (best.rng/DAY).toFixed(1)]];
+    runnerLine = `Next best is the <b>${nm(runner)}</b> at <b>${runner.dcMin} min</b>. Only <b>${D.filter(x=>x.dc>=250).length} of ${D.length}</b> models charge at 250 kW or above.`;
+  } else if(prio==='space'){
+    value = fmt(best.boot); unit = 'L boot';
+    sub = `Largest boot among models that still fit a standard 4.80 m carpark lot.`;
+    facts = [['Length', (best.len/1000).toFixed(2)+' m'], ['Battery', best.kwh+' kWh'], ['V2L (power tools, camping)', best.v2l?'Yes':'No']];
+    runnerLine = `<b>${D.filter(x=>x.len>4800).length} of ${D.length}</b> models on sale are too long for a standard bay — check length before boot space.`;
+  } else {
+    const petrolX = (best.tax/PETROL).toFixed(1);
+    value = best.kw; unit = 'kW';
+    sub = `Most powerful EV on sale in Singapore right now.`;
+    facts = [['0 in road-tax terms', '$'+fmt(best.tax)+'/yr'], ['vs. a 1.6L petrol car', petrolX+'×'], ['COE category', best.catA?'A':'B']];
+    runnerLine = `That much power lands it in <b>${best.catA?'Category A':'the top tax band'}</b> — power is the one spec that bites back on the bill.`;
+  }
+  $('#prioAns').innerHTML = `
+    <div class="ans-eyebrow"><span>${p.e}</span> Best match for "${p.t}"</div>
+    <div class="ans-name">${nm(best)}</div>
+    <div class="ans-value">${value} <span>${unit}</span></div>
+    <div class="ans-sub">${sub}</div>
+    <div class="ans-facts">${facts.map(([k,v])=>`<div class="ans-fact"><span>${k}</span><b>${v}</b></div>`).join('')}</div>
+    <div class="ans-runner">${runnerLine}</div>`;
+}
+
+// ---------- controls ----------
+function chips(host, groups){ host.innerHTML = groups.map(g =>
+  `<span class="lab">${g.lab}</span>` + g.opts.map(o=>`<button class="chip${o.v===g.cur?' on':''}" data-g="${g.id}" data-v="${o.v}">${o.t}</button>`).join('')
+).join('<span style="width:10px"></span>'); }
+
+function wireCtl(host, fn){ host.onclick = e => { const b = e.target.closest('.chip,.seg button'); if(!b) return; fn(b.dataset.g, b.dataset.v); render(); }; }
+
+// labelled segmented controls + a plain-English summary of the current selection
+function fields(host, defs, summary){
+  host.innerHTML = '<div class="fields">' + defs.map(f => {
+    const cur = f.opts.find(o => o.v === f.cur) || f.opts[0];
+    return `<div class="field"><div class="fl">${f.label}</div><div class="seg">` +
+      f.opts.map(o=>`<button class="${o.v===f.cur?'on':''}" data-g="${f.id}" data-v="${o.v}">${o.t}${o.sub?`<small>${o.sub}</small>`:''}</button>`).join('') +
+      `</div><div class="fh">${cur.help||''}</div></div>`;
+  }).join('') + '</div>' + (summary ? `<div class="summary"><i></i><div>${summary}</div></div>` : '');
+}
+
+// ---------- svg helpers ----------
+function svg(w,h,inner){ return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">${inner}</svg>`; }
+
+// ======== POWER PICKER ========
+const taxOf = k => { let b; if(k<=7.5)b=200; else if(k<=30)b=200+2*(k-7.5); else if(k<=230)b=250+3.75*(k-30); else b=1525+10*(k-230); return Math.round(b*0.782*2+700); };
+const PETROL = 743; // 1.6-litre petrol car, per year
+
+function picker(){
+  $('#pick').innerHTML = `
+  <div class="pkgrid">
+    <div>
+      <div class="slab">How powerful is the car you're looking at?</div>
+      <div class="shelp">It's on every spec sheet as "maximum power" or "motor output", in kW. If yours is quoted in horsepower, divide by 1.34.</div>
+      <input type="range" id="pkr" min="60" max="400" step="5" value="${pkKw}">
+      <div class="sticks"><span>60 kW</span><span>Small hatchback</span><span>Performance SUV</span><span>400 kW</span></div>
+      <div class="presets">
+        <button data-k="70">BYD Dolphin · 70</button>
+        <button data-k="109">MG S6 EV · 109</button>
+        <button data-k="150">BYD Atto 3 · 150</button>
+        <button data-k="208">Tesla Model 3 · 208</button>
+        <button data-k="310">Zeekr 7X · 310</button>
+        <button data-k="390">BYD Sealion 7 Perf · 390</button>
+      </div>
+      <div class="shelp" style="margin:14px 0 0">Tap a car to jump to its power figure. The tax curve below is fixed by LTA — no model can sit off it, so the power figure alone tells you the bill.</div>
+    </div>
+    <div class="ro" id="ro"></div>
+  </div>`;
+  const r = $('#pkr');
+  r.oninput = () => { pkKw = +r.value; readout(); chartA(); };
+  $('#pick').querySelectorAll('.presets button').forEach(b => b.onclick = () => { pkKw = +b.dataset.k; r.value = pkKw; readout(); chartA(); });
+  readout();
+}
+
+function readout(){
+  const t = taxOf(pkKw), catA = pkKw <= 110, top = pkKw > 230;
+  $('#pkr').style.setProperty('--pct', ((pkKw-60)/340*100).toFixed(1)+'%');
+  const near = D.map(r=>({r,d:Math.abs(r.kw-pkKw)})).sort((a,b)=>a.d-b.d).slice(0,3).filter(x=>x.d<=25).map(x=>x.r.brand+' '+x.r.model);
+  const perKw = top ? 15.64 : 5.87;
+  let tip;
+  if(catA) tip = `<div class="ro-tip" style="background:#EAFBF1;color:#186B3F">✓ Inside <b>Category A</b> — the cheaper COE queue, and the bottom of the tax curve. This is where the money is.</div>`;
+  else {
+    const save = (t - taxOf(110)) * 10;
+    tip = `<div class="ro-tip" style="background:#FFF6E8;color:#7A5512">A 110 kW version of the same car would cost <b>$${fmt(taxOf(110))}</b> a year — <b>$${fmt(save)}</b> less over the COE — and bid in <b>Category A</b>, where premiums have run tens of thousands lower.</div>`;
+  }
+  $('#ro').innerHTML = `
+    <div class="ro-top">
+      <span class="ro-kw">${pkKw} kW</span>
+      <span class="ro-badge" style="background:${catA?'#FFF6E8':'#EAF0F6'};color:${catA?'#8A6212':'#345A7D'}">COE Category ${catA?'A':'B'}</span>
+      ${top?`<span class="ro-badge" style="background:#FDEBEC;color:#B03237">Top tax band</span>`:''}
+    </div>
+    <div class="ro-big">$${fmt(t)} <span>a year</span></div>
+    <div class="ro-sub"><b>$${fmt(t*10)}</b> over a ten-year COE · <b>${(t/PETROL).toFixed(1)}×</b> what a 1.6-litre petrol car pays</div>
+    <div class="ro-row">Every extra kilowatt from here adds <b>$${perKw.toFixed(2)} a year</b>${top?' — nearly three times the rate below 230 kW':''}.</div>
+    ${near.length?`<div class="ro-row">Around this power: <b>${near.join(', ')}</b></div>`:''}
+    ${tip}`;
+}
+
+// ======== CHART A : power -> road tax ========
+function chartA(){
+  const W=1000,H=470,L=68,R=26,T=54,B=64;
+  const iw=W-L-R, ih=H-T-B;
+  const kwA=60, kwB=410, maxTax=6200;
+  const x=k=>L+(k-kwA)/(kwB-kwA)*iw, y=t=>T+ih-t/maxTax*ih;
+  let o='';
+  // ---- zones, named in plain English ----
+  const ZONES=[
+    [60,110,'#FFB648',.10,'#8A6212','Category A','≤ 110 kW'],
+    [110,230,'#345A7D',.06,'#345A7D','Category B','110 – 230 kW'],
+    [230,410,'#E5484D',.08,'#B03237','Top tax band','tax rises 2.7× faster'],
+  ];
+  ZONES.forEach(([a,b,col,op,txt,name,desc])=>{
+    const xa=x(a),xb=x(b);
+    o+=`<rect x="${xa}" y="${T}" width="${xb-xa}" height="${ih}" fill="${col}" opacity="${op}"/>`;
+    o+=`<line x1="${xa}" y1="${T-32}" x2="${xa}" y2="${T+ih}" stroke="${col}" stroke-width="${a===60?0:2}"/>`;
+    o+=`<text x="${(xa+xb)/2}" y="${T-36}" text-anchor="middle" style="font-size:12.5px;font-weight:700" fill="${txt}">${name}</text>`;
+    o+=`<text x="${(xa+xb)/2}" y="${T-20}" text-anchor="middle" style="font-size:10.5px" fill="${C.sec}">${desc}</text>`;
+  });
+  // ---- axes ----
+  for(let t=0;t<=6000;t+=1000){o+=`<line class="gl" x1="${L}" y1="${y(t)}" x2="${W-R}" y2="${y(t)}"/><text class="ax" x="${L-9}" y="${y(t)+4}" text-anchor="end">$${fmt(t)}</text>`;}
+  for(let k=100;k<=400;k+=50){o+=`<text class="ax" x="${x(k)}" y="${H-B+20}" text-anchor="middle">${k}</text>`;}
+  o+=`<text class="axt" x="${L+iw/2}" y="${H-B+42}" text-anchor="middle">The car's power figure, in kilowatts →</text>`;
+  o+=`<text class="axt" x="${-(T+ih/2)}" y="16" transform="rotate(-90)" text-anchor="middle">↑ Road tax you pay every year</text>`;
+  // ---- the curve ----
+  let d='';for(let k=kwA;k<=kwB;k+=2){d+=(d?'L':'M')+x(k)+','+y(taxOf(k));}
+  o+=`<path d="${d}" fill="none" stroke="${C.navy}" stroke-width="3" opacity=".9"/>`;
+  // petrol reference
+  o+=`<line x1="${L}" y1="${y(PETROL)}" x2="${W-R}" y2="${y(PETROL)}" stroke="${C.sec}" stroke-width="1.5" stroke-dasharray="6 5"/>`;
+  o+=`<text class="lbl" x="${W-R-6}" y="${y(PETROL)-9}" text-anchor="end" fill="${C.sec}">What a 1.6-litre petrol car pays — $${PETROL}/yr</text>`;
+  // ---- every model as a small tick on the curve ----
+  D.forEach(r=>{
+    o+=`<circle class="dot" cx="${x(r.kw)}" cy="${y(r.tax)}" r="4" fill="#fff" stroke="${r.catA?C.yellow:C.navy}" stroke-width="2" opacity=".9"><title>${r.brand} ${r.model}\n${r.kw} kW · $${fmt(r.tax)}/yr road tax\nCOE ${r.catA?'Cat A':'Cat B'}</title></circle>`;
+  });
+  // ---- named cars, alternating above / below ----
+  const NAMED=[[70,'BYD Dolphin'],[109,'MG S6 EV'],[150,'BYD Atto 3'],[208,'Tesla Model 3'],[230,'BYD Seal'],[300,'Porsche Taycan'],[378,'Tesla Model Y LR']];
+  NAMED.forEach(([k,n],i)=>{
+    const up=i%2===0, yy=y(taxOf(k)), ly=up?yy-15:yy+27;
+    o+=`<line x1="${x(k)}" y1="${up?yy-6:yy+6}" x2="${x(k)}" y2="${up?ly+4:ly-13}" stroke="${C.sec}" stroke-width="1" opacity=".5"/>`;
+    o+=`<text class="lbl" x="${x(k)}" y="${ly}" text-anchor="middle">${n}<tspan x="${x(k)}" dy="12" fill="${C.sec}" style="font-weight:500">$${fmt(taxOf(k))}/yr</tspan></text>`;
+  });
+  // ---- the live marker from the slider ----
+  const mt=taxOf(pkKw);
+  o+=`<line x1="${x(pkKw)}" y1="${T}" x2="${x(pkKw)}" y2="${T+ih}" stroke="${C.blue}" stroke-width="2.5"/>`;
+  o+=`<line x1="${L}" y1="${y(mt)}" x2="${x(pkKw)}" y2="${y(mt)}" stroke="${C.blue}" stroke-width="2.5" stroke-dasharray="5 4"/>`;
+  o+=`<circle cx="${x(pkKw)}" cy="${y(mt)}" r="9" fill="${C.blue}" stroke="#fff" stroke-width="3"/>`;
+  const bw=205, bx=Math.min(Math.max(x(pkKw)-bw/2, L+2), W-R-bw-2);
+  o+=`<rect x="${bx}" y="${T+8}" width="${bw}" height="42" rx="9" fill="${C.navy}"/>`;
+  o+=`<text x="${bx+14}" y="${T+27}" style="font-size:13px;font-weight:700" fill="#fff">${pkKw} kW → $${fmt(mt)} a year</text>`;
+  o+=`<text x="${bx+14}" y="${T+42}" style="font-size:11px" fill="#8FE3E3">$${fmt(mt*10)} over a ten-year COE</text>`;
+  $('#cA').innerHTML = svg(W,H,o);
+  const lo=D.reduce((a,b)=>b.tax<a.tax?b:a), hiM=D.reduce((a,b)=>b.tax>a.tax?b:a);
+  $('#noteA').innerHTML = `Read it this way: every white dot is a model on sale, and its height is fixed the moment you know its power figure. The <b>${hiM.brand} ${hiM.model}</b> pays <b>$${fmt((hiM.tax-lo.tax)*10)} more road tax</b> over a ten-year COE than the <b>${lo.brand} ${lo.model}</b> — before a single kilowatt-hour is bought. Only <b>${D.filter(r=>r.catA).length} of ${D.length}</b> sit inside Category A, which is why several are sold here deliberately detuned to 99 or 109 kW.`;
+}
+
+// ======== CHART B : running cost ========
+// The x-axis is scaled against the worst-case tariff ($0.65, public) at the
+// CURRENT mileage — fixed regardless of which tariff is selected. That way the
+// road-tax segment of every bar is a constant pixel width whether you're
+// looking at Home, Mixed or Public: only the electricity segment moves when
+// you switch tariff. (Changing the mileage control legitimately changes the
+// scale, since it changes the actual cost ceiling.)
+const maxAnnualFor = km => Math.max(...D.map(r => r.tax + r.whkm/1000*km*0.65)) * 1.03;
+
+function chartB(){
+  const rows = D.slice().sort((a,b)=>annual(a)-annual(b));
+  const sel = showB==='all'? rows : showB==='cheap'? rows.slice(0,14) : rows.slice(-14).reverse();
+  const W=1000, rowH=27, T=34, B=44, L=205, R=110;
+  const H=T+B+sel.length*rowH;
+  const max=maxAnnualFor(km);
+  const x=v=>L+v/max*(W-L-R);
+  const step = max>7000?1500 : max>4000?1000 : max>2000?500 : 250;
+  let o=`<text class="axt" x="${L}" y="16">Annual cost — road tax + electricity</text>`;
+  for(let v=0;v<=max;v+=step){o+=`<line class="gl" x1="${x(v)}" y1="${T-8}" x2="${x(v)}" y2="${T+sel.length*rowH}"/><text class="ax" x="${x(v)}" y="${T+sel.length*rowH+18}" text-anchor="middle">$${fmt(v)}</text>`;}
+  sel.forEach((r,i)=>{
+    const yy=T+i*rowH+4, h=rowH-10;
+    const e=Math.round(r.whkm/1000*km*tariff);
+    o+=`<text class="lbl" x="${L-10}" y="${yy+h-2}" text-anchor="end" fill="${C.ink}">${r.brand} ${r.model}</text>`;
+    o+=`<rect x="${L}" y="${yy}" width="${x(r.tax)-L}" height="${h}" fill="${C.navy}" rx="2"><title>Road tax $${fmt(r.tax)} — ${r.kw} kW</title></rect>`;
+    o+=`<rect x="${x(r.tax)}" y="${yy}" width="${x(r.tax+e)-x(r.tax)}" height="${h}" fill="${C.blue}" rx="2"><title>Electricity $${fmt(e)} — ${r.kmkwh} km/kWh</title></rect>`;
+    o+=`<text class="lbl" x="${x(r.tax+e)+8}" y="${yy+h-2}" fill="${C.ink}">$${fmt(r.tax+e)}</text>`;
+  });
+  o+=`<rect x="${W-R+4}" y="${T-26}" width="9" height="9" fill="${C.navy}"/><text class="ax" x="${W-R+18}" y="${T-18}">Road tax</text>`;
+  o+=`<rect x="${W-R+4}" y="${T-13}" width="9" height="9" fill="${C.blue}"/><text class="ax" x="${W-R+18}" y="${T-5}">Electricity</text>`;
+  $('#cB').innerHTML = svg(W,H,o);
+}
+
+// ======== CHART C : range, reframed as days-per-charge ========
+function chartC(){
+  const days = D.map(r=>({r, d:r.rng/DAY})).sort((a,b)=>a.d-b.d);
+  const under7 = days.filter(x=>x.d<7);
+  const median = days[Math.floor(days.length/2)].d;
+  const lo=days[0], hi=days[days.length-1];
+
+  // bucket into clean weekly-feeling bands
+  const BUCKETS = [
+    {a:0,  b:7,  label:'Under a week',   col:C.yellow},
+    {a:7,  b:9,  label:'1 – 1.3 weeks',  col:C.slate},
+    {a:9,  b:11, label:'1.3 – 1.6 weeks',col:C.slate},
+    {a:11, b:13, label:'1.6 – 1.9 weeks',col:C.blue},
+    {a:13, b:99, label:'1.9 weeks+',     col:C.blue},
+  ];
+  const rows = BUCKETS.map(b => ({...b, items: days.filter(x=>x.d>=b.a && x.d<b.b)}));
+  const maxCount = Math.max(...rows.map(r=>r.items.length));
+
+  const headline = under7.length<=2
+    ? `${days.length-under7.length} of ${days.length} EVs on sale already go more than a week between charges`
+    : `Most EVs on sale already go more than a week between charges`;
+
+  let bars = '';
+  rows.forEach(b=>{
+    const pct = maxCount ? b.items.length/maxCount*100 : 0;
+    const names = b.items.map(x=>x.r.brand+' '+x.r.model).join(', ');
+    bars += `<div class="hrow">
+      <div class="hrow-lab">${b.label}</div>
+      <div class="hrow-track"><div class="hrow-fill" style="width:${pct}%;background:${b.col}" title="${names}"></div></div>
+      <div class="hrow-n">${b.items.length}<span> model${b.items.length===1?'':'s'}</span></div>
+    </div>`;
+  });
+
+  $('#cC').innerHTML = `
+    <div class="chead">
+      <div class="chead-eyebrow">The headline finding</div>
+      <div class="chead-big">${headline}</div>
+      <div class="chead-sub">Median car on sale covers <b>${median.toFixed(1)} days</b> — nearly a fortnight — before it needs a plug, measured against ${DAY} km of typical Singapore driving a day.</div>
+    </div>
+    <div class="histo">${bars}</div>
+    <div class="extremes">
+      <div class="ext" style="border-left-color:${C.yellow}">
+        <div class="ext-k" style="color:#8A6212">SHORTEST ON SALE</div>
+        <div class="ext-v">${lo.r.brand} ${lo.r.model}</div>
+        <div class="ext-d">${fmt(lo.r.rng)} km WLTP → <b>${lo.d.toFixed(1)} days</b> per charge — still nearly a week.</div>
+      </div>
+      <div class="ext" style="border-left-color:${C.blue}">
+        <div class="ext-k" style="color:#00A9B8">LONGEST ON SALE</div>
+        <div class="ext-v">${hi.r.brand} ${hi.r.model}</div>
+        <div class="ext-d">${fmt(hi.r.rng)} km WLTP → <b>${hi.d.toFixed(1)} days</b> per charge — over two weeks.</div>
+      </div>
+    </div>`;
+}
+
+// ======== CHART D : charging ========
+function chartD(){
+  const rows = ranked().slice(0,16);
+  const W=1000, rowH=27, T=34, B=42, L=205, R=132;
+  const H=T+B+rows.length*rowH;
+  const acH = r => r.kwh*0.7/Math.min(r.ac, acKw);
+  const max=Math.max(...D.map(acH))*1.04;
+  const x=v=>L+v/max*(W-L-R);
+  let o=`<text class="axt" x="${L}" y="16">Hours to go 10 → 80% on a ${acKw} kW home charger</text>`;
+  for(let v=0;v<=max;v+=2){o+=`<line class="gl" x1="${x(v)}" y1="${T-8}" x2="${x(v)}" y2="${T+rows.length*rowH}"/><text class="ax" x="${x(v)}" y="${T+rows.length*rowH+18}" text-anchor="middle">${v}h</text>`;}
+  rows.forEach((r,i)=>{
+    const yy=T+i*rowH+4,h=rowH-10,v=acH(r);
+    const cap = r.ac < acKw;
+    o+=`<text class="lbl" x="${L-10}" y="${yy+h-2}" text-anchor="end">${r.brand} ${r.model}</text>`;
+    o+=`<rect x="${L}" y="${yy}" width="${x(v)-L}" height="${h}" fill="${cap?C.yellow:C.blue}" rx="2"><title>${r.kwh} kWh · onboard charger ${r.ac} kW${cap?' — caps your '+acKw+' kW supply':''}\n${v.toFixed(1)} h on AC · ${r.dcMin} min on DC at ${r.dc} kW</title></rect>`;
+    o+=`<text class="lbl" x="${x(v)+8}" y="${yy+h-2}">${v.toFixed(1)}h<tspan fill="${C.sec}"> · ${r.dcMin} min DC</tspan></text>`;
+  });
+  o+=`<rect x="${W-R+4}" y="${T-26}" width="9" height="9" fill="${C.blue}"/><text class="ax" x="${W-R+18}" y="${T-18}">Uses full supply</text>`;
+  o+=`<rect x="${W-R+4}" y="${T-13}" width="9" height="9" fill="${C.yellow}"/><text class="ax" x="${W-R+18}" y="${T-5}">Onboard limit bites</text>`;
+  $('#cD').innerHTML = svg(W,H,o);
+}
+
+// ======== CARDS — dataset context, independent of the priority pick ========
+function cards(){
+  const med = a => { const s=a.slice().sort((x,y)=>x-y); return s[Math.floor(s.length/2)]; };
+  const common = [
+    ['Models tracked', D.length, 'on sale in Singapore now', C.navy],
+    ['Median efficiency', med(D.map(x=>x.kmkwh)).toFixed(1)+' km/kWh', 'best '+Math.max(...D.map(x=>x.kmkwh)).toFixed(1)+' · worst '+Math.min(...D.map(x=>x.kmkwh)).toFixed(1), C.cyan],
+    ['Inside COE Category A', D.filter(r=>r.catA).length+' of '+D.length, '≤ 110 kW — the cheaper bidding queue', C.yellow],
+    ['Road tax spread', '$'+fmt(Math.min(...D.map(r=>r.tax)))+'–$'+fmt(Math.max(...D.map(r=>r.tax))), 'per year, same LTA formula for every model', C.red],
+  ];
+  $('#cards').innerHTML = common.map(([l,v,s,c])=>
+    `<div class="mc" style="border-left-color:${c}"><div class="l">${l}</div><div class="v" style="color:${C.ink}">${v}</div><div class="s">${s}</div></div>`).join('');
+}
+
+// ======== TABLE ========
+const COLS = [
+  ['m','Model',r=>`<b>${r.brand}</b> ${r.model}`, r=>r.brand+r.model],
+  ['kwh','Battery',r=>r.kwh+' <span style="color:#5B6470">kWh</span>',r=>r.kwh],
+  ['chem','Chem',r=>`<span class="tag" style="background:${r.chem==='LFP'?'#EAFBF1':'#EAF0F6'};color:${r.chem==='LFP'?'#1B8A4E':'#345A7D'}">${r.chem}</span>`,r=>r.chem],
+  ['kw','Power',r=>r.kw+' <span style="color:#5B6470">kW</span>',r=>r.kw],
+  ['catA','COE',r=>`<span class="tag" style="background:${r.catA?'#FFF6E8':'#F7F8FA'};color:${r.catA?'#8A6212':'#5B6470'}">${r.catA?'Cat A':'Cat B'}</span>`,r=>r.catA?1:0],
+  ['tax','Road tax',r=>'$'+fmt(r.tax),r=>r.tax],
+  ['ac','AC',r=>r.ac+' kW',r=>r.ac],
+  ['dc','DC peak',r=>r.dc+' kW',r=>r.dc],
+  ['dcMin','10–80%',r=>r.dcMin+' min',r=>r.dcMin],
+  ['rng','Range',r=>fmt(r.rng)+' km',r=>r.rng],
+  ['kmkwh','Efficiency',r=>r.kmkwh+' km/kWh',r=>r.kmkwh],
+  ['run','Run cost',r=>'$'+fmt(annual(r))+'/yr',r=>annual(r)],
+  ['boot','Boot',r=>fmt(r.boot)+' L',r=>r.boot],
+  ['len','Length',r=>`<span style="color:${r.len>4800?C.red:C.ink}">${(r.len/1000).toFixed(2)} m</span>`,r=>r.len],
+  ['v2l','V2L',r=>r.v2l?'✓':'—',r=>r.v2l?1:0],
+];
+function table(){
+  const segs=['all',...new Set(D.map(r=>r.seg))];
+  chips($('#ctlT'), [{id:'seg',lab:'Body',cur:segF,opts:segs.map(s=>({v:s,t:s==='all'?'All':s}))}]);
+  let rows = segF==='all'? ranked() : ranked().filter(r=>r.seg===segF);
+  if(sortK){ const c=COLS.find(c=>c[0]===sortK); rows=rows.slice().sort((a,b)=>{const x=c[3](a),y=c[3](b); return (x>y?1:x<y?-1:0)*sortDir;}); }
+  $('#tbl thead').innerHTML = '<tr>'+COLS.map(c=>`<th data-k="${c[0]}">${c[1]}${sortK===c[0]?(sortDir>0?' ▲':' ▼'):''}</th>`).join('')+'</tr>';
+  $('#tbl tbody').innerHTML = rows.map(r=>'<tr>'+COLS.map(c=>`<td class="mono">${c[2](r)}</td>`).join('')+'</tr>').join('');
+  $('#tbl thead').onclick = e => { const th=e.target.closest('th'); if(!th) return;
+    if(sortK===th.dataset.k) sortDir*=-1; else {sortK=th.dataset.k; sortDir=-1;} table(); };
+}
+
+// ======== PERSONAS ========
+function personas(){
+  const byBoot = D.filter(r=>r.len<=4800).sort((a,b)=>b.boot-a.boot)[0];
+  const byRun  = D.slice().sort((a,b)=>annual(a)-annual(b))[0];
+  const byDC   = D.slice().sort((a,b)=>a.dcMin-b.dcMin)[0];
+  const catA   = D.filter(r=>r.catA).sort((a,b)=>annual(a)-annual(b))[0];
+  const P=[
+    {e:'🏢',t:'Condo, no charger of your own',q:'You rely on the carpark shared units and the occasional DC stop. Range matters more here than anywhere else — but DC speed matters more still.',
+     specs:[['Filter on','DC peak ≥ 150 kW'],['Then','10–80% under 30 min'],['Ignore','Onboard AC rating']],
+     pick:`<b>${byDC.brand} ${byDC.model}</b> — ${byDC.dc} kW peak, 10–80% in ${byDC.dcMin} minutes.`},
+    {e:'🏠',t:'Landed or a dedicated 11 kW point',q:"You plug in every night and the car is full by morning regardless. DC speed is almost irrelevant; what you're really buying is a decade of road tax.",
+     specs:[['Filter on','Power under 110 kW'],['Then','Efficiency over 6 km/kWh'],['Ignore','DC peak, WLTP range']],
+     pick:`<b>${byRun.brand} ${byRun.model}</b> — $${fmt(annual(byRun))} a year to run, $${fmt(annual(byRun)*10)} over the COE.`},
+    {e:'👨‍👩‍👧',t:'Family of five, HDB carpark',q:'Boot space decides this one, but a standard bay is 4.8 m long. Several of the roomiest EVs on sale will overhang it.',
+     specs:[['Filter on','Length ≤ 4.80 m'],['Then','Boot ≥ 450 L'],['Watch','V2L for trips']],
+     pick:`<b>${byBoot.brand} ${byBoot.model}</b> — ${fmt(byBoot.boot)} L inside ${(byBoot.len/1000).toFixed(2)} m.`},
+    {e:'🚕',t:'PHV or small fleet',q:'You do three to four times the median mileage, so efficiency compounds and COE category dominates the capital cost. Cat A eligibility is worth more than any feature.',
+     specs:[['Filter on','COE Cat A (≤110 kW)'],['Then','Lowest $/km at 60,000 km'],['Then','LFP for daily 100% charging']],
+     pick:`<b>${catA.brand} ${catA.model}</b> — Cat A, ${catA.chem}, $${fmt(catA.tax)} road tax.`},
+  ];
+  $('#pers').innerHTML = P.map(p=>`<div class="card"><div style="font-size:22px">${p.e}</div><h4>${p.t}</h4><p class="q">${p.q}</p><ul>${p.specs.map(s=>`<li><span style="color:${C.sec}">${s[0]}</span><b>${s[1]}</b></li>`).join('')}</ul><div class="pick">${p.pick}</div></div>`).join('');
+}
+
+// ======== RULES ========
+$('#rules').innerHTML = [
+  ['#8A6212','#FFF6E8','COE Category A','110 kW','Above it you bid in Cat B, where premiums have run tens of thousands higher. This is why several models are sold here detuned to 99 or 109 kW.'],
+  ['#08244B','#EAF0F6','Road tax','f(kW) + $700','A power-band formula times 0.782, doubled, plus the $700 Additional Flat Component. Fixed for the life of the car.'],
+  ['#1B8A4E','#EAFBF1','VES Band A','≤ 225 Wh/km','LTA rates an EV at 0.4 g CO₂ per Wh. Stay under 225 Wh/km wall-to-wheel and you take the $22,500 rebate; above it, nothing.'],
+  ['#B03237','#FDEBEC','EEAI','Ends 1 Jan 2027','45% off ARF, capped at $7,500 through 2026. With VES the ceiling is $30,000 this year, $20,000 next.'],
+].map(([c,bg,k,v,d])=>`<div class="rule" style="border-left:3px solid ${c}"><div class="k" style="color:${c}">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
+
+// ======== render ========
+function ctlB(){
+  const lo=Math.min(...D.map(annual)), hi=Math.max(...D.map(annual));
+  const tarWord = tariff===0.32?'at home':tariff===0.42?'mostly at home, with occasional public top-ups':'entirely at public chargers';
+  const shown = showB==='all'? 'All '+D.length+' models' : showB==='cheap'? 'The 14 cheapest' : 'The 14 priciest';
+  fields($('#ctlB'), [
+    {id:'km', label:'How far you drive', cur:String(km), opts:[
+      {v:'10000',t:'10,000',sub:'km a year',help:'Light use — weekend trips and errands, well under the national average.'},
+      {v:'15000',t:'15,000',sub:'km a year',help:'Roughly the Singapore average: about 48 km a day, every day.'},
+      {v:'25000',t:'25,000',sub:'km a year',help:'Private-hire, heavy commuting or a shared family car. Efficiency compounds fast here.'}]},
+    {id:'tar', label:'Where you charge', cur:String(tariff), opts:[
+      {v:'0.32',t:'Home',sub:'$0.32/kWh',help:'Overnight AC in your own bay, at residential tariff. The cheapest electricity you can buy.'},
+      {v:'0.42',t:'Mixed',sub:'$0.42/kWh',help:'A weighted blend, not a guess: 70% of charging at home ($0.32) plus 30% topped up in public ($0.65) = $0.42/kWh. The realistic case for most owners with a home point.'},
+      {v:'0.65',t:'Public',sub:'$0.65/kWh',help:'No home point at all — every kWh bought at a public DC/AC charger. Public charging in Singapore isn\'t cheap: roughly double the residential rate.'}]},
+    {id:'show', label:'How many to show', cur:showB, opts:[
+      {v:'cheap',t:'Cheapest',sub:'14 models',help:'The 14 least expensive to keep on the road, in order.'},
+      {v:'dear',t:'Priciest',sub:'14 models',help:'The 14 most expensive — almost all of them high-power Cat B cars.'},
+      {v:'all',t:'All',sub:D.length+' models',help:'Every model on sale, cheapest to run at the top.'}]},
+  ],
+  `<b>${shown}</b>, driving <b>${fmt(km)} km a year</b> and charging <b>${tarWord}</b>. On these settings running costs span <b>$${fmt(lo)}</b> to <b>$${fmt(hi)}</b> a year — a <b>$${fmt((hi-lo)*10)}</b> gap over a ten-year COE, before you've paid for either car.`);
+}
+
+function ctlD(){
+  const capped = D.filter(r=>r.ac < acKw).length;
+  fields($('#ctlD'), [
+    {id:'ac', label:'The charger you plug into at night', cur:String(acKw), opts:[
+      {v:'3.7',t:'3.7 kW',sub:'Basic point',help:'A standard socket or an older shared unit. Overnight is barely enough for a big battery.'},
+      {v:'7',t:'7 kW',sub:'Most common',help:'What the great majority of HDB and condo carpark chargers deliver. Full by morning for most cars.'},
+      {v:'11',t:'11 kW',sub:'Three-phase',help:'A dedicated three-phase home or workplace point. Only cars with an 11 kW onboard charger can use all of it.'},
+      {v:'22',t:'22 kW',sub:'Commercial',help:'Fast AC at malls and offices. Almost no passenger EV has an onboard charger big enough to take it.'}]},
+  ],
+  capped
+    ? `<b>${capped} of ${D.length}</b> models can't accept your full <b>${acKw} kW</b> — their onboard charger caps out lower, so the extra supply is wasted on them. Those bars are shown in amber.`
+    : `Every model shown can take the full <b>${acKw} kW</b>. Charge time then comes down to battery size alone.`);
+}
+
+function render(){
+  ctlB(); ctlD(); picker();
+  prioQ(); prioAnswer();
+  cards(); chartA(); chartB(); chartC(); chartD(); table(); personas();
+}
+wireCtl($('#ctlB'), (g,v)=>{ if(g==='km')km=+v; if(g==='tar')tariff=+v; if(g==='show')showB=v; });
+wireCtl($('#ctlD'), (g,v)=>{ if(g==='ac')acKw=+v; });
+$('#ctlT').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(b){ segF=b.dataset.v; table(); }});
+render();
+</script>
+</body></html>
