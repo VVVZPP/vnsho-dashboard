@@ -281,6 +281,9 @@ export default function SingaporeEVDashboard() {
   const [brandLimit, setBrandLimit] = useState('top10'); // 'top10' | 'top20' | 'all'
   const [brandRangeFrom, setBrandRangeFrom] = useState('jan');
   const [brandRangeTo, setBrandRangeTo] = useState('jul');
+  const [lifeFrom, setLifeFrom] = useState(2023);
+  const [lifeTo, setLifeTo] = useState(2026);
+  const [lifeLimit, setLifeLimit] = useState('top10');
   const [specsSubView, setSpecsSubView] = useState('specs'); // 'specs' | 'charging' | 'compare'
   const [specsShowCount, setSpecsShowCount] = useState(10);
   const [coeYearFrom, setCoeYearFrom] = useState(2025);
@@ -306,7 +309,7 @@ export default function SingaporeEVDashboard() {
   // New registrations (flow, not fleet stock), Jan-Jul 2026, by vehicle type — for Brand Rankings highlight boxes
   // Source: LTA M03 (cars), M04 (motorcycles), M08 (LGV/HGV/VHGV/Bus) — totalNew is ALL fuel types combined
   const newRegByType = [
-    { type: 'Cars', segId: 'cars', ev: 19653, totalNew: 32097 },
+    { type: 'Cars', segId: 'cars', ev: 20148, totalNew: 32097 },
     { type: 'Motorcycle', segId: 'motorcycle', ev: 49, totalNew: 7547 },
     { type: 'LGV', segId: 'lgv', ev: 788, totalNew: 1189 },
     { type: 'HGV', segId: 'hgv', ev: 602, totalNew: 2111 },
@@ -457,33 +460,49 @@ export default function SingaporeEVDashboard() {
 
   // Monthly EV brand breakdown (Jan-May 2026 from M03 + M08)
   const brandMonthly = [
-    { brand: 'BYD', jan: 1112, feb: 859, mar: 1102, apr: 1349, may: 1091, jun: 953, jul: 995, total: 7461, type: 'car' },
-    { brand: 'Tesla', jan: 413, feb: 485, mar: 617, apr: 168, may: 360, jun: 783, jul: 434, total: 3260, type: 'car' },
-    { brand: 'Chery', jan: 229, feb: 138, mar: 205, apr: 184, may: 243, jun: 191, jul: 171, total: 1361, type: 'car' },
-    { brand: 'GAC', jan: 41, feb: 117, mar: 222, apr: 208, may: 166, jun: 87, jul: 232, total: 1073, type: 'car' },
-    { brand: 'M.G.', jan: 115, feb: 124, mar: 136, apr: 163, may: 203, jun: 223, jul: 233, total: 1197, type: 'car' },
-    { brand: 'Zeekr', jan: 77, feb: 90, mar: 102, apr: 156, may: 140, jun: 130, jul: 135, total: 830, type: 'car' },
-    { brand: 'Xpeng', jan: 66, feb: 75, mar: 106, apr: 152, may: 161, jun: 181, jul: 169, total: 910, type: 'car' },
-    { brand: 'B.M.W.', jan: 74, feb: 79, mar: 126, apr: 148, may: 120, jun: 115, jul: 62, total: 724, type: 'car' },
-    { brand: 'Dongfeng', jan: 41, feb: 35, mar: 70, apr: 54, may: 30, jun: 72, jul: 76, total: 378, type: 'car' },
-    { brand: 'Avatr', jan: 11, feb: 26, mar: 41, apr: 45, may: 45, jun: 61, jul: 72, total: 301, type: 'car' },
-    { brand: 'Volvo', jan: 22, feb: 37, mar: 31, apr: 40, may: 30, jun: 36, jul: 48, total: 244, type: 'car' },
-    { brand: 'Maxus', jan: 15, feb: 14, mar: 30, apr: 51, may: 50, jun: 122, jul: 76, total: 358, type: 'car' },
-    { brand: 'Toyota', jan: 14, feb: 51, mar: 23, apr: 0, may: 57, jun: 43, jul: 30, total: 218, type: 'car' },
-    { brand: 'Leapmotor', jan: 19, feb: 15, mar: 16, apr: 42, may: 42, jun: 40, jul: 40, total: 214, type: 'car' },
-    { brand: 'Porsche', jan: 7, feb: 27, mar: 34, apr: 17, may: 27, jun: 25, jul: 24, total: 161, type: 'car' },
-    { brand: 'Deepal', jan: 8, feb: 14, mar: 9, apr: 15, may: 18, jun: 81, jul: 67, total: 212, type: 'car' },
-    { brand: 'Geely', jan: 16, feb: 9, mar: 34, apr: 29, may: 30, jun: 33, jul: 38, total: 189, type: 'car' },
-    { brand: 'Hyundai', jan: 13, feb: 13, mar: 11, apr: 14, may: 18, jun: 7, jul: 15, total: 91, type: 'car' },
-    { brand: 'Mini', jan: 12, feb: 9, mar: 13, apr: 16, may: 15, jun: 12, jul: 10, total: 87, type: 'car' },
-    { brand: 'Audi', jan: 11, feb: 8, mar: 14, apr: 21, may: 10, jun: 8, jul: 10, total: 82, type: 'car' },
-    { brand: 'Kia', jan: 4, feb: 3, mar: 4, apr: 11, may: 21, jun: 16, jul: 8, total: 67, type: 'car' },
-    { brand: 'Polestar', jan: 5, feb: 8, mar: 11, apr: 12, may: 5, jun: 7, jul: 3, total: 51, type: 'car' },
-    { brand: 'Smart', jan: 2, feb: 4, mar: 2, apr: 7, may: 4, jun: 8, jul: 13, total: 40, type: 'car' },
-    { brand: 'Great Wall', jan: 4, feb: 2, mar: 6, apr: 4, may: 3, jun: 3, jul: 18, total: 40, type: 'car' },
-    { brand: 'Subaru', jan: 2, feb: 5, mar: 9, apr: 11, may: 0, jun: 4, jul: 8, total: 39, type: 'car' },
-    { brand: 'NIO', jan: 7, feb: 5, mar: 4, apr: 2, may: 6, jun: 5, jul: 5, total: 34, type: 'car' },
-    { brand: 'Volkswagen', jan: 4, feb: 5, mar: 4, apr: 7, may: 4, jun: 4, jul: 3, total: 31, type: 'car' },
+    { brand: 'BYD',           jan: 1112, feb: 859, mar: 1102, apr: 1349, may: 1091, jun: 953, jul: 995, total:  7461, type: 'car' },
+    { brand: 'Tesla',         jan: 413, feb: 485, mar: 617, apr: 168, may: 360, jun: 783, jul: 434, total:  3260, type: 'car' },
+    { brand: 'Chery',         jan: 229, feb: 138, mar: 205, apr: 184, may: 243, jun: 191, jul: 171, total:  1361, type: 'car' },
+    { brand: 'M.G.',          jan: 115, feb: 124, mar: 136, apr: 163, may: 203, jun: 223, jul: 233, total:  1197, type: 'car' },
+    { brand: 'GAC',           jan: 41, feb: 117, mar: 222, apr: 208, may: 166, jun: 87, jul: 232, total:  1073, type: 'car' },
+    { brand: 'Xpeng',         jan: 66, feb: 75, mar: 106, apr: 152, may: 161, jun: 181, jul: 169, total:   910, type: 'car' },
+    { brand: 'Zeekr',         jan: 77, feb: 90, mar: 102, apr: 156, may: 140, jun: 130, jul: 135, total:   830, type: 'car' },
+    { brand: 'B.M.W.',        jan: 74, feb: 79, mar: 126, apr: 148, may: 120, jun: 115, jul: 62, total:   724, type: 'car' },
+    { brand: 'Dongfeng',      jan: 41, feb: 35, mar: 70, apr: 54, may: 30, jun: 72, jul: 76, total:   378, type: 'car' },
+    { brand: 'Maxus',         jan: 15, feb: 14, mar: 30, apr: 51, may: 50, jun: 122, jul: 76, total:   358, type: 'car' },
+    { brand: 'Avatr',         jan: 11, feb: 26, mar: 41, apr: 45, may: 45, jun: 61, jul: 72, total:   301, type: 'car' },
+    { brand: 'Mercedes-Benz', jan: 12, feb: 14, mar: 17, apr: 5, may: 8, jun: 60, jul: 141, total:   257, type: 'car' },
+    { brand: 'Volvo',         jan: 22, feb: 37, mar: 31, apr: 40, may: 30, jun: 36, jul: 48, total:   244, type: 'car' },
+    { brand: 'Toyota',        jan: 0, feb: 14, mar: 51, apr: 23, may: 57, jun: 43, jul: 30, total:   218, type: 'car' },
+    { brand: 'Leapmotor',     jan: 19, feb: 15, mar: 16, apr: 42, may: 42, jun: 40, jul: 40, total:   214, type: 'car' },
+    { brand: 'Deepal',        jan: 8, feb: 14, mar: 9, apr: 15, may: 18, jun: 81, jul: 67, total:   212, type: 'car' },
+    { brand: 'Geely',         jan: 16, feb: 9, mar: 34, apr: 29, may: 30, jun: 33, jul: 38, total:   189, type: 'car' },
+    { brand: 'Porsche',       jan: 7, feb: 26, mar: 33, apr: 16, may: 27, jun: 25, jul: 25, total:   159, type: 'car' },
+    { brand: 'Hyundai',       jan: 13, feb: 13, mar: 11, apr: 14, may: 18, jun: 7, jul: 15, total:    91, type: 'car' },
+    { brand: 'Mini',          jan: 12, feb: 9, mar: 13, apr: 16, may: 15, jun: 12, jul: 10, total:    87, type: 'car' },
+    { brand: 'Audi',          jan: 11, feb: 8, mar: 14, apr: 21, may: 10, jun: 8, jul: 10, total:    82, type: 'car' },
+    { brand: 'Opel',          jan: 0, feb: 2, mar: 49, apr: 8, may: 1, jun: 10, jul: 1, total:    71, type: 'car' },
+    { brand: 'Kia',           jan: 4, feb: 3, mar: 4, apr: 11, may: 21, jun: 16, jul: 8, total:    67, type: 'car' },
+    { brand: 'Polestar',      jan: 5, feb: 8, mar: 11, apr: 12, may: 5, jun: 7, jul: 3, total:    51, type: 'car' },
+    { brand: 'Great Wall',    jan: 4, feb: 2, mar: 6, apr: 4, may: 3, jun: 3, jul: 18, total:    40, type: 'car' },
+    { brand: 'Smart',         jan: 2, feb: 4, mar: 2, apr: 7, may: 4, jun: 8, jul: 13, total:    40, type: 'car' },
+    { brand: 'Subaru',        jan: 0, feb: 2, mar: 5, apr: 9, may: 11, jun: 4, jul: 8, total:    39, type: 'car' },
+    { brand: 'Mazda',         jan: 0, feb: 0, mar: 0, apr: 0, may: 0, jun: 0, jul: 35, total:    35, type: 'car' },
+    { brand: 'NIO',           jan: 7, feb: 5, mar: 4, apr: 2, may: 6, jun: 5, jul: 5, total:    34, type: 'car' },
+    { brand: 'Volkswagen',    jan: 4, feb: 5, mar: 4, apr: 7, may: 4, jun: 4, jul: 3, total:    31, type: 'car' },
+    { brand: 'Hongqi',        jan: 0, feb: 0, mar: 0, apr: 0, may: 1, jun: 17, jul: 12, total:    30, type: 'car' },
+    { brand: 'Cupra',         jan: 2, feb: 1, mar: 6, apr: 4, may: 2, jun: 4, jul: 4, total:    23, type: 'car' },
+    { brand: 'Citroen',       jan: 3, feb: 0, mar: 1, apr: 16, may: 0, jun: 0, jul: 0, total:    20, type: 'car' },
+    { brand: 'Nissan',        jan: 0, feb: 0, mar: 2, apr: 2, may: 6, jun: 3, jul: 1, total:    14, type: 'car' },
+    { brand: 'EVeasy',        jan: 9, feb: 0, mar: 1, apr: 0, may: 0, jun: 1, jul: 0, total:    11, type: 'car' },
+    { brand: 'Suzuki',        jan: 0, feb: 0, mar: 0, apr: 1, may: 0, jun: 5, jul: 4, total:    10, type: 'car' },
+    { brand: 'Skyworth',      jan: 0, feb: 1, mar: 4, apr: 0, may: 0, jun: 1, jul: 0, total:     6, type: 'car' },
+    { brand: 'Honda',         jan: 0, feb: 0, mar: 0, apr: 0, may: 0, jun: 4, jul: 1, total:     5, type: 'car' },
+    { brand: 'Lotus',         jan: 0, feb: 2, mar: 0, apr: 0, may: 0, jun: 1, jul: 2, total:     5, type: 'car' },
+    { brand: 'Skoda',         jan: 0, feb: 0, mar: 0, apr: 0, may: 2, jun: 0, jul: 3, total:     5, type: 'car' },
+    { brand: 'KGM',           jan: 0, feb: 1, mar: 1, apr: 0, may: 0, jun: 1, jul: 0, total:     3, type: 'car' },
+    { brand: 'Jaguar',        jan: 1, feb: 0, mar: 0, apr: 0, may: 0, jun: 0, jul: 0, total:     1, type: 'car' },
+    { brand: 'Rolls-Royce',   jan: 0, feb: 0, mar: 1, apr: 0, may: 0, jun: 0, jul: 0, total:     1, type: 'car' },
   ];
 
   const commercialBrandMonthly = [
@@ -897,12 +916,6 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
 
           return (
             <>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 16, marginBottom: 20 }}>
-                <MetricCard label={`Total EV - ${activeBrandFilter.toUpperCase()}`} value={limited.reduce((s,b)=>s+b.rangeUnit,0).toLocaleString()} delta={`${rangeLabel} 2026`} sub="New registrations" color={BLUE} bg={BLUE_LIGHT} icon="STAT"/>
-                <MetricCard label="Top brand" value={topBrand ? topBrand.brand : '-'} delta={topBrand ? `${topBrand.rangeUnit.toLocaleString()} units` : ''} sub={`Ranked by ${rangeLabel} total`} color={NAVY} bg={NAVY_LIGHT} icon="TOP"/>
-                <MetricCard label="Fastest growing" value={fastestGrowing ? fastestGrowing.brand : '-'} delta={fastestGrowing && rangeMonths.length > 1 ? `+${(fastestGrowing[rangeMonths[rangeMonths.length-1]] - fastestGrowing[rangeMonths[0]])} units (${rangeLabel})` : 'Select a range > 1 month'} sub="Within selected range" color={SLATE} bg={NAVY_LIGHT} icon="UP"/>
-              </div>
-
               <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 20 }}>
                 <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
                   {[{id:'top10',l:'Top 10'},{id:'top20',l:'Top 20'},{id:'all',l:'All'}].map(f => (
@@ -920,6 +933,12 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
                   </select>
                 </div>
                 <span style={{ fontSize: 11, color: SECONDARY }}>Showing {limited.length} of {segBrands.length} brands · {rangeLabel} 2026</span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 16, marginBottom: 20 }}>
+                <MetricCard label={`Total EV - ${activeBrandFilter.toUpperCase()}`} value={limited.reduce((s,b)=>s+b.rangeUnit,0).toLocaleString()} delta={`${rangeLabel} 2026`} sub="New registrations" color={BLUE} bg={BLUE_LIGHT} icon="STAT"/>
+                <MetricCard label="Top brand" value={topBrand ? topBrand.brand : '-'} delta={topBrand ? `${topBrand.rangeUnit.toLocaleString()} units` : ''} sub={`Ranked by ${rangeLabel} total`} color={NAVY} bg={NAVY_LIGHT} icon="TOP"/>
+                <MetricCard label="Fastest growing" value={fastestGrowing ? fastestGrowing.brand : '-'} delta={fastestGrowing && rangeMonths.length > 1 ? `+${(fastestGrowing[rangeMonths[rangeMonths.length-1]] - fastestGrowing[rangeMonths[0]])} units (${rangeLabel})` : 'Select a range > 1 month'} sub="Within selected range" color={SLATE} bg={NAVY_LIGHT} icon="UP"/>
               </div>
 
               <div style={{ background: CARD, borderRadius: 20, padding: 24, border: `1px solid ${BORDER}`, marginBottom: 20 }}>
@@ -945,7 +964,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
                 <div style={{ padding: '16px 20px', borderBottom: `1px solid ${BORDER}`, background: SURFACE }}>
                   <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: 0 }}>Monthly breakdown by brand {'\u2014'} {rangeLabel} 2026</h3>
                 </div>
-                <div style={{ overflowX: 'auto' }}>
+                 <div style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: 520 }}>
                   <table style={{ width: '100%', minWidth: 500 + rangeMonths.length * 70, borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead><tr style={{ background: SURFACE }}>{['#','Brand', ...rangeLabels, 'Total'].map((h,i) => (<th key={h+i} style={{ padding: '10px 14px', textAlign: i>1?'right':'left', fontSize: 11, fontWeight: 600, color: SECONDARY, borderBottom: `2px solid ${BORDER}` }}>{h}</th>))}</tr></thead>
                     <tbody>
@@ -978,6 +997,170 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
                 </ResponsiveContainer>
               </div>
             </>
+          );
+        })()}
+                {/* ===== Cumulative EV registrations by make, filterable by year ===== */}
+        {(() => {
+          const lifetimeByMake = [
+              { brand: 'BYD',            y2023:  1416, y2024:  6191, y2025: 10780, y2026:  7461 },
+              { brand: 'Tesla',          y2023:   941, y2024:  2384, y2025:  3476, y2026:  3260 },
+              { brand: 'B.M.W.',         y2023:   789, y2024:  1636, y2025:  1495, y2026:   724 },
+              { brand: 'M.G.',           y2023:   178, y2024:   461, y2025:   907, y2026:  1197 },
+              { brand: 'GAC',            y2023:     0, y2024:   310, y2025:  1050, y2026:  1073 },
+              { brand: 'Xpeng',          y2023:     0, y2024:   336, y2025:   940, y2026:   910 },
+              { brand: 'Chery',          y2023:     0, y2024:   113, y2025:   623, y2026:  1361 },
+              { brand: 'Hyundai',        y2023:   694, y2024:   708, y2025:   376, y2026:    91 },
+              { brand: 'Mercedes-Benz',  y2023:   537, y2024:   441, y2025:   574, y2026:   257 },
+              { brand: 'Zeekr',          y2023:     0, y2024:    99, y2025:   764, y2026:   830 },
+              { brand: 'Volvo',          y2023:   159, y2024:   319, y2025:   391, y2026:   244 },
+              { brand: 'Porsche',        y2023:   131, y2024:   225, y2025:   379, y2026:   159 },
+              { brand: 'Dongfeng',       y2023:     0, y2024:    22, y2025:   320, y2026:   378 },
+              { brand: 'Maxus',          y2023:    10, y2024:    90, y2025:   212, y2026:   358 },
+              { brand: 'Polestar',       y2023:   101, y2024:   140, y2025:   146, y2026:    51 },
+              { brand: 'Audi',           y2023:    61, y2024:   136, y2025:   155, y2026:    82 },
+              { brand: 'Avatr',          y2023:     0, y2024:     0, y2025:    76, y2026:   301 },
+              { brand: 'Deepal',         y2023:     0, y2024:     0, y2025:   135, y2026:   212 },
+              { brand: 'Volkswagen',     y2023:     2, y2024:   190, y2025:   123, y2026:    31 },
+              { brand: 'Great Wall',     y2023:    54, y2024:   147, y2025:    96, y2026:    40 },
+              { brand: 'Mini',           y2023:     9, y2024:   103, y2025:   134, y2026:    87 },
+              { brand: 'Toyota',         y2023:    43, y2024:    46, y2025:    19, y2026:   218 },
+              { brand: 'Opel',           y2023:   106, y2024:    38, y2025:    74, y2026:    71 },
+              { brand: 'Leapmotor',      y2023:     0, y2024:     0, y2025:    43, y2026:   214 },
+              { brand: 'Kia',            y2023:    53, y2024:    48, y2025:    82, y2026:    67 },
+              { brand: 'Geely',          y2023:     0, y2024:     0, y2025:    42, y2026:   189 },
+              { brand: 'Peugeot',        y2023:   119, y2024:    59, y2025:    20, y2026:     0 },
+              { brand: 'Citroen',        y2023:    20, y2024:    79, y2025:    39, y2026:    20 },
+              { brand: 'Smart',          y2023:     1, y2024:    41, y2025:    66, y2026:    40 },
+              { brand: 'Skoda',          y2023:     2, y2024:    38, y2025:    17, y2026:     5 },
+              { brand: 'Cupra',          y2023:     0, y2024:     0, y2025:    38, y2026:    23 },
+              { brand: 'Mazda',          y2023:    11, y2024:     4, y2025:     1, y2026:    35 },
+              { brand: 'Nissan',         y2023:    10, y2024:    11, y2025:    16, y2026:    14 },
+              { brand: 'Subaru',         y2023:     0, y2024:     0, y2025:     1, y2026:    39 },
+              { brand: 'NIO',            y2023:     0, y2024:     0, y2025:     1, y2026:    34 },
+              { brand: 'Lotus',          y2023:     1, y2024:    11, y2025:    14, y2026:     5 },
+              { brand: 'Hongqi',         y2023:     0, y2024:     0, y2025:     0, y2026:    30 },
+              { brand: 'EVeasy',         y2023:     0, y2024:     0, y2025:    17, y2026:    11 },
+              { brand: 'Skyworth',       y2023:     0, y2024:     0, y2025:    22, y2026:     6 },
+              { brand: 'Honda',          y2023:     8, y2024:     4, y2025:     2, y2026:     5 },
+              { brand: 'Rolls-Royce',    y2023:     0, y2024:    13, y2025:     4, y2026:     1 },
+              { brand: 'Jaguar',         y2023:     8, y2024:     2, y2025:     1, y2026:     1 },
+              { brand: 'Suzuki',         y2023:     0, y2024:     0, y2025:     0, y2026:    10 },
+              { brand: 'Seres',          y2023:     0, y2024:     1, y2025:     8, y2026:     0 },
+              { brand: 'Neta',           y2023:     0, y2024:     2, y2025:     3, y2026:     0 },
+              { brand: 'Fiat',           y2023:     4, y2024:     0, y2025:     0, y2026:     0 },
+              { brand: 'KGM',            y2023:     0, y2024:     0, y2025:     0, y2026:     3 },
+              { brand: 'SEAT',           y2023:     0, y2024:     0, y2025:     1, y2026:     0 },
+              { brand: 'SsangYong',      y2023:     0, y2024:     0, y2025:     1, y2026:     0 },
+          ];
+
+          const ALL_BANDS = [
+            { key: 'y2023', year: 2023, label: '2023', color: NAVY },
+            { key: 'y2024', year: 2024, label: '2024', color: SLATE },
+            { key: 'y2025', year: 2025, label: '2025', color: DEEP_CYAN },
+            { key: 'y2026', year: 2026, label: '2026 (Jan–Jul)', color: BLUE },
+          ];
+
+          const loY = Math.min(lifeFrom, lifeTo), hiY = Math.max(lifeFrom, lifeTo);
+          const bands = ALL_BANDS.filter(b => b.year >= loY && b.year <= hiY);
+          const fullRange = loY === 2023 && hiY === 2026;
+          const yearLabel = loY === hiY
+            ? (loY === 2026 ? '2026 (Jan–Jul)' : String(loY))
+            : `${loY}–${hiY === 2026 ? '2026 (Jan–Jul)' : hiY}`;
+
+          const ranked = lifetimeByMake
+            .map(b => ({ ...b, total: bands.reduce((s, bd) => s + b[bd.key], 0) }))
+            .filter(b => b.total > 0)
+            .sort((a, b) => b.total - a.total);
+          const lifeLimitN = lifeLimit === 'top10' ? 10 : lifeLimit === 'top20' ? 20 : 999;
+          const shown = ranked.slice(0, lifeLimitN);
+          const grandTotal = ranked.reduce((s, b) => s + b.total, 0);
+
+          const LifeTooltip = ({ active, label }) => {
+            if (!active) return null;
+            const row = shown.find(r => r.brand === label);
+            if (!row) return null;
+            return (
+              <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '12px 14px', boxShadow: '0 4px 16px rgba(8,36,75,0.10)' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: INK, marginBottom: 2 }}>{label}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: BLUE, marginBottom: 8 }}>{row.total.toLocaleString()} EVs {'·'} {yearLabel}</div>
+                {bands.map(b => (
+                  <div key={b.key} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: SECONDARY, marginTop: 3 }}>
+                    <span style={{ width: 9, height: 9, borderRadius: 2, background: b.color, flexShrink: 0 }}/>
+                    <span style={{ flex: 1 }}>{b.label}</span>
+                    <span style={{ fontWeight: 700, color: INK }}>{row[b.key].toLocaleString()}</span>
+                    <span style={{ minWidth: 38, textAlign: 'right' }}>{row.total ? ((row[b.key] / row.total) * 100).toFixed(0) : 0}%</span>
+                  </div>
+                ))}
+              </div>
+            );
+          };
+
+          return (
+            <div style={{ background: CARD, borderRadius: 20, padding: 24, border: `1px solid ${BORDER}`, marginTop: 20 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>
+                Cumulative EV car registrations by make {'—'} {yearLabel}
+              </h3>
+              <p style={{ fontSize: 12, color: SECONDARY, margin: '0 0 16px', lineHeight: 1.5 }}>
+                Bar length is every pure-electric car each make registered in the selected years; colour shows which year.
+                {' '}<strong style={{ color: INK }}>{grandTotal.toLocaleString()}</strong> cars across {ranked.length} makes
+                {fullRange ? ', covering 92% of the 69,190 EV cars in the fleet today' : ''}
+                {' · '}passenger cars only, independent of the filters above.
+              </p>
+
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
+                <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
+                  {[{id:'top10',l:'Top 10'},{id:'top20',l:'Top 20'},{id:'all',l:'All'}].map(f => (
+                    <button key={f.id} onClick={() => setLifeLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: lifeLimit === f.id ? NAVY : 'transparent', color: lifeLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>Years:</span>
+                  <select value={lifeFrom} onChange={e => setLifeFrom(Number(e.target.value))} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {ALL_BANDS.map(b => <option key={b.year} value={b.year}>{b.year}</option>)}
+                  </select>
+                  <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
+                  <select value={lifeTo} onChange={e => setLifeTo(Number(e.target.value))} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                    {ALL_BANDS.map(b => <option key={b.year} value={b.year}>{b.year}</option>)}
+                  </select>
+                </div>
+                <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                  {bands.map(b => (
+                    <div key={b.key} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ width: 11, height: 11, borderRadius: 3, background: b.color }}/>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: SECONDARY }}>{b.label}</span>
+                    </div>
+                  ))}
+                </div>
+                <span style={{ fontSize: 11, color: SECONDARY }}>
+                  Showing top {shown.length} of {ranked.length} makes
+                </span>
+              </div>
+
+              <ResponsiveContainer width="100%" height={Math.max(300, shown.length * 34 + 40)}>
+                <BarChart data={shown} layout="vertical" margin={{ left: 8, right: 76, top: 4, bottom: 4 }}>
+                  <CartesianGrid stroke={BORDER} horizontal={false} strokeDasharray="3 6"/>
+                  <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v.toLocaleString()}/>
+                  <YAxis type="category" dataKey="brand" stroke={INK} tick={{ fontSize: 12, fontWeight: 600 }} width={104} axisLine={false} tickLine={false}/>
+                  <Tooltip content={<LifeTooltip/>} cursor={{ fill: BLUE_LIGHT }}/>
+                  {bands.map((b, i) => (
+                    <Bar key={b.key} dataKey={b.key} name={b.label} stackId="life" fill={b.color}
+                         radius={i === bands.length - 1 ? [0,8,8,0] : [0,0,0,0]}>
+                      {i === bands.length - 1 && (
+                        <LabelList dataKey="total" position="right" formatter={v => v.toLocaleString()}
+                                   style={{ fontSize: 12, fontWeight: 700, fill: INK }}/>
+                      )}
+                    </Bar>
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+
+              <p style={{ fontSize: 10, color: SECONDARY, margin: '14px 0 0', lineHeight: 1.6 }}>
+                Cumulative new registrations of pure-electric cars, not the registered fleet: vehicles registered before 2023 and those
+                since deregistered are excluded. Authorised-dealer and parallel-import volumes are combined. Ranking and the Top 10 / 20 / All cut both recalculate for the
+                selected years. 2023{'–'}2025 from LTA Annual Vehicle Statistics (MVP02-2, new cars by make); 2026 from LTA Monthly
+                Vehicle Statistics (M03), Jan{'–'}Jul.
+              </p>
+            </div>
           );
         })()}
         
