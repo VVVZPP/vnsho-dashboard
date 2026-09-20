@@ -980,10 +980,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
             </>
           );
         })()}
-
-        <div style={{ marginTop: 20, paddingTop: 14, borderTop: `1px solid ${BORDER}`, fontSize: 10, color: SECONDARY, textAlign: 'right' }}>
-          Source: LTA M03/M08 {'\u00b7'} <a href="https://vnsho-dashboard-ev.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: BLUE, textDecoration: 'none', fontWeight: 600 }}>Full dashboard →</a>
-        </div>
+        
       </div>
     );
   }
