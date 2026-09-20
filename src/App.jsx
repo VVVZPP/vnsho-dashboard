@@ -140,7 +140,7 @@ export default function SingaporeEVDashboard() {
 
   // ============ ACCESS CONTROL (disabled — full public access, no sign-in required) ============
   const MEMBER_TABS = [];
-  const TAB_LABELS = { home: 'Home', overview: 'Overview', fleet: 'Fleet by Type', brands: 'Brand Rankings', specs: 'EV Specs', charging: 'EV Charging Stations', coe: 'COE & EVs', blog: 'News', calculator: 'Calculator', compare: 'Compare EVs' };
+  const TAB_LABELS = { home: 'Home', overview: 'Overview', fleet: 'EV Population', brands: 'Brand Rankings', specs: 'EV Specs', charging: 'EV Charging Stations', coe: 'COE & EVs', blog: 'News', calculator: 'Calculator', compare: 'Compare EVs' };
   const isTabGated = (id) => false;
   const isMember = true;
   const requireAuth = () => {};
@@ -284,6 +284,16 @@ export default function SingaporeEVDashboard() {
   const [lifeFrom, setLifeFrom] = useState(2023);
   const [lifeTo, setLifeTo] = useState(2026);
   const [lifeLimit, setLifeLimit] = useState('top10');
+  const [popVeh, setPopVeh] = useState('Cars');
+  const [popFrom, setPopFrom] = useState('Jan');
+  const [popTo, setPopTo] = useState('Aug');
+  const [popFuelMode, setPopFuelMode] = useState('abs');
+  const [popEvMode, setPopEvMode] = useState('index');
+  const [popYFrom, setPopYFrom] = useState(2015);
+  const [popYTo, setPopYTo] = useState(2026);
+  const [popFuelOff, setPopFuelOff] = useState(['petrol', 'diesel', 'other']);
+  const [popEvOff, setPopEvOff] = useState([]);
+  const [popAnnOff, setPopAnnOff] = useState([]);
   const [specsSubView, setSpecsSubView] = useState('specs'); // 'specs' | 'charging' | 'compare'
   const [specsShowCount, setSpecsShowCount] = useState(10);
   const [coeYearFrom, setCoeYearFrom] = useState(2025);
@@ -434,6 +444,112 @@ export default function SingaporeEVDashboard() {
     { label: 'Buses', total: 18331, ev: 920, hybrid: 0, icon: '🚌' },
   ];
 
+  const popMonthly = [
+    { v: 'Cars',       m: 'Jan', bev:  51454, hybrid: 120125, phev:  2555, petrol: 470815, diesel:  13822, other:  68, total: 658839 },
+    { v: 'Cars',       m: 'Feb', bev:  53688, hybrid: 121408, phev:  2627, petrol: 467281, diesel:  13626, other:  67, total: 658697 },
+    { v: 'Cars',       m: 'Mar', bev:  56770, hybrid: 122840, phev:  2705, petrol: 462180, diesel:  13311, other:  67, total: 657873 },
+    { v: 'Cars',       m: 'Apr', bev:  59735, hybrid: 123968, phev:  2799, petrol: 457081, diesel:  12986, other:  65, total: 656634 },
+    { v: 'Cars',       m: 'May', bev:  62653, hybrid: 125078, phev:  2915, petrol: 451351, diesel:  12631, other:  63, total: 654691 },
+    { v: 'Cars',       m: 'Jun', bev:  66005, hybrid: 126044, phev:  3041, petrol: 446024, diesel:  12267, other:  61, total: 653442 },
+    { v: 'Cars',       m: 'Jul', bev:  69190, hybrid: 127128, phev:  3195, petrol: 441350, diesel:  11907, other:  60, total: 652830 },
+    { v: 'Cars',       m: 'Aug', bev:  72067, hybrid: 128041, phev:  3483, petrol: 436777, diesel:  11591, other:  60, total: 652019 },
+    { v: 'Taxis',      m: 'Jan', bev:    552, hybrid:  11540, phev:     0, petrol:      3, diesel:     83, other:   0, total:  12178 },
+    { v: 'Taxis',      m: 'Feb', bev:    557, hybrid:  11552, phev:     0, petrol:      3, diesel:     83, other:   0, total:  12195 },
+    { v: 'Taxis',      m: 'Mar', bev:    569, hybrid:  11586, phev:     0, petrol:      3, diesel:     81, other:   0, total:  12239 },
+    { v: 'Taxis',      m: 'Apr', bev:    586, hybrid:  11610, phev:     0, petrol:      3, diesel:     81, other:   0, total:  12280 },
+    { v: 'Taxis',      m: 'May', bev:    599, hybrid:  11594, phev:     0, petrol:      3, diesel:     80, other:   0, total:  12276 },
+    { v: 'Taxis',      m: 'Jun', bev:    620, hybrid:  11525, phev:     0, petrol:      3, diesel:     80, other:   0, total:  12228 },
+    { v: 'Taxis',      m: 'Jul', bev:    633, hybrid:  11431, phev:     0, petrol:      2, diesel:     68, other:   0, total:  12134 },
+    { v: 'Taxis',      m: 'Aug', bev:    642, hybrid:  11245, phev:     0, petrol:      2, diesel:     43, other:   0, total:  11932 },
+    { v: 'Motorcycles', m: 'Jan', bev:    391, hybrid:      0, phev:     0, petrol: 151412, diesel:      0, other:   0, total: 151803 },
+    { v: 'Motorcycles', m: 'Feb', bev:    398, hybrid:      0, phev:     0, petrol: 151736, diesel:      0, other:   0, total: 152134 },
+    { v: 'Motorcycles', m: 'Mar', bev:    406, hybrid:      0, phev:     0, petrol: 152364, diesel:      0, other:   0, total: 152770 },
+    { v: 'Motorcycles', m: 'Apr', bev:    415, hybrid:      0, phev:     0, petrol: 152697, diesel:      0, other:   0, total: 153112 },
+    { v: 'Motorcycles', m: 'May', bev:    420, hybrid:      0, phev:     0, petrol: 153122, diesel:      0, other:   0, total: 153542 },
+    { v: 'Motorcycles', m: 'Jun', bev:    426, hybrid:      0, phev:     0, petrol: 153549, diesel:      0, other:   0, total: 153975 },
+    { v: 'Motorcycles', m: 'Jul', bev:    433, hybrid:      0, phev:     0, petrol: 153973, diesel:      0, other:   0, total: 154406 },
+    { v: 'Motorcycles', m: 'Aug', bev:    440, hybrid:      0, phev:     0, petrol: 154143, diesel:      0, other:   0, total: 154583 },
+    { v: 'Goods',      m: 'Jan', bev:   6575, hybrid:     39, phev:     1, petrol:  13707, diesel: 122438, other:   0, total: 142760 },
+    { v: 'Goods',      m: 'Feb', bev:   6706, hybrid:     39, phev:     2, petrol:  13732, diesel: 122255, other:   0, total: 142734 },
+    { v: 'Goods',      m: 'Mar', bev:   6936, hybrid:     39, phev:     2, petrol:  13754, diesel: 122229, other:   0, total: 142960 },
+    { v: 'Goods',      m: 'Apr', bev:   7192, hybrid:     39, phev:     2, petrol:  13771, diesel: 122038, other:   0, total: 143042 },
+    { v: 'Goods',      m: 'May', bev:   7428, hybrid:     39, phev:     2, petrol:  13790, diesel: 121801, other:   0, total: 143060 },
+    { v: 'Goods',      m: 'Jun', bev:   7649, hybrid:     39, phev:     2, petrol:  13791, diesel: 121411, other:   0, total: 142892 },
+    { v: 'Goods',      m: 'Jul', bev:   7857, hybrid:     39, phev:     2, petrol:  13776, diesel: 120898, other:   0, total: 142572 },
+    { v: 'Goods',      m: 'Aug', bev:   8043, hybrid:     39, phev:     2, petrol:  13769, diesel: 120450, other:   0, total: 142303 },
+    { v: 'Buses',      m: 'Jan', bev:    813, hybrid:     50, phev:    45, petrol:    133, diesel:  17323, other:   0, total:  18364 },
+    { v: 'Buses',      m: 'Feb', bev:    830, hybrid:     50, phev:    44, petrol:    133, diesel:  17314, other:   0, total:  18371 },
+    { v: 'Buses',      m: 'Mar', bev:    870, hybrid:     50, phev:    45, petrol:    132, diesel:  17292, other:   0, total:  18389 },
+    { v: 'Buses',      m: 'Apr', bev:    885, hybrid:     50, phev:    45, petrol:    132, diesel:  17291, other:   0, total:  18403 },
+    { v: 'Buses',      m: 'May', bev:    890, hybrid:     50, phev:    46, petrol:    131, diesel:  17267, other:   0, total:  18384 },
+    { v: 'Buses',      m: 'Jun', bev:    900, hybrid:     50, phev:    46, petrol:    131, diesel:  17221, other:   0, total:  18348 },
+    { v: 'Buses',      m: 'Jul', bev:    920, hybrid:     50, phev:    46, petrol:    132, diesel:  17183, other:   0, total:  18331 },
+    { v: 'Buses',      m: 'Aug', bev:    930, hybrid:     50, phev:    46, petrol:    132, diesel:  17126, other:   0, total:  18284 },
+  ];
+
+  const popAnnual = [
+    { v: 'Cars',       y: 2015, bev:      1, hybrid:   6394, phev:   108, petrol: 587900, diesel:   5976, other: 1932, total: 602311 },
+    { v: 'Cars',       y: 2016, bev:     12, hybrid:  10097, phev:   125, petrol: 578977, diesel:  10364, other: 1682, total: 601257 },
+    { v: 'Cars',       y: 2017, bev:    314, hybrid:  20773, phev:   206, petrol: 574443, diesel:  15514, other: 1006, total: 612256 },
+    { v: 'Cars',       y: 2018, bev:    560, hybrid:  27200, phev:   380, petrol: 569673, diesel:  17253, other:  386, total: 615452 },
+    { v: 'Cars',       y: 2019, bev:   1120, hybrid:  35737, phev:   473, petrol: 574967, diesel:  18049, other:  250, total: 630596 },
+    { v: 'Cars',       y: 2020, bev:   1217, hybrid:  41863, phev:   552, petrol: 572132, diesel:  18076, other:  202, total: 634042 },
+    { v: 'Cars',       y: 2021, bev:   2942, hybrid:  54840, phev:   692, petrol: 568376, diesel:  18136, other:  164, total: 645150 },
+    { v: 'Cars',       y: 2022, bev:   6531, hybrid:  65901, phev:  1102, petrol: 558729, diesel:  18261, other:  143, total: 650667 },
+    { v: 'Cars',       y: 2023, bev:  11941, hybrid:  79274, phev:  1360, petrol: 540605, diesel:  18037, other:   85, total: 651302 },
+    { v: 'Cars',       y: 2024, bev:  26225, hybrid:  99170, phev:  1557, petrol: 513943, diesel:  16775, other:   74, total: 657744 },
+    { v: 'Cars',       y: 2025, bev:  49110, hybrid: 118705, phev:  2450, petrol: 475455, diesel:  14101, other:   68, total: 659889 },
+    { v: 'Cars',       y: 2026, bev:  72067, hybrid: 128041, phev:  3483, petrol: 436777, diesel:  11591, other:   60, total: 652019 },
+    { v: 'Taxis',      y: 2015, bev:      0, hybrid:   1889, phev:     0, petrol:    466, diesel:  24244, other: 1660, total:  28259 },
+    { v: 'Taxis',      y: 2016, bev:      0, hybrid:   2492, phev:     0, petrol:    260, diesel:  23748, other: 1034, total:  27534 },
+    { v: 'Taxis',      y: 2017, bev:      0, hybrid:   4159, phev:     0, petrol:    129, diesel:  18851, other:    1, total:  23140 },
+    { v: 'Taxis',      y: 2018, bev:    102, hybrid:   5337, phev:     0, petrol:     53, diesel:  15089, other:    0, total:  20581 },
+    { v: 'Taxis',      y: 2019, bev:    133, hybrid:   8626, phev:     0, petrol:     24, diesel:   9759, other:    0, total:  18542 },
+    { v: 'Taxis',      y: 2020, bev:     32, hybrid:   9117, phev:     0, petrol:     21, diesel:   6508, other:    0, total:  15678 },
+    { v: 'Taxis',      y: 2021, bev:    304, hybrid:   9617, phev:     0, petrol:     15, diesel:   4951, other:    0, total:  14887 },
+    { v: 'Taxis',      y: 2022, bev:    402, hybrid:   9661, phev:     0, petrol:      9, diesel:   4012, other:    0, total:  14084 },
+    { v: 'Taxis',      y: 2023, bev:    471, hybrid:  10284, phev:     0, petrol:      5, diesel:   2860, other:    0, total:  13620 },
+    { v: 'Taxis',      y: 2024, bev:    502, hybrid:  11348, phev:     0, petrol:      4, diesel:   1263, other:    0, total:  13117 },
+    { v: 'Taxis',      y: 2025, bev:    527, hybrid:  11547, phev:     0, petrol:      3, diesel:     84, other:    0, total:  12161 },
+    { v: 'Taxis',      y: 2026, bev:    642, hybrid:  11245, phev:     0, petrol:      2, diesel:     43, other:    0, total:  11932 },
+    { v: 'Motorcycles', y: 2015, bev:      2, hybrid:      0, phev:     0, petrol: 143277, diesel:      0, other:    0, total: 143279 },
+    { v: 'Motorcycles', y: 2016, bev:      2, hybrid:      0, phev:     0, petrol: 142437, diesel:      0, other:    0, total: 142439 },
+    { v: 'Motorcycles', y: 2017, bev:      2, hybrid:      0, phev:     0, petrol: 141302, diesel:      0, other:    0, total: 141304 },
+    { v: 'Motorcycles', y: 2018, bev:      2, hybrid:      0, phev:     0, petrol: 136840, diesel:      0, other:    0, total: 136842 },
+    { v: 'Motorcycles', y: 2019, bev:      2, hybrid:      0, phev:     0, petrol: 140396, diesel:      0, other:    0, total: 140398 },
+    { v: 'Motorcycles', y: 2020, bev:      1, hybrid:      0, phev:     0, petrol: 140781, diesel:      0, other:    0, total: 140782 },
+    { v: 'Motorcycles', y: 2021, bev:      5, hybrid:      0, phev:     0, petrol: 141589, diesel:      0, other:    0, total: 141594 },
+    { v: 'Motorcycles', y: 2022, bev:    115, hybrid:      0, phev:     0, petrol: 142338, diesel:      0, other:    0, total: 142453 },
+    { v: 'Motorcycles', y: 2023, bev:    270, hybrid:      0, phev:     0, petrol: 143218, diesel:      0, other:    0, total: 143488 },
+    { v: 'Motorcycles', y: 2024, bev:    304, hybrid:      0, phev:     0, petrol: 147091, diesel:      0, other:    0, total: 147395 },
+    { v: 'Motorcycles', y: 2025, bev:    388, hybrid:      0, phev:     0, petrol: 151228, diesel:      0, other:    0, total: 151616 },
+    { v: 'Motorcycles', y: 2026, bev:    440, hybrid:      0, phev:     0, petrol: 154143, diesel:      0, other:    0, total: 154583 },
+    { v: 'Goods',      y: 2015, bev:      1, hybrid:      7, phev:     0, petrol:   7266, diesel: 136686, other:   12, total: 143972 },
+    { v: 'Goods',      y: 2016, bev:     18, hybrid:      8, phev:     0, petrol:   7123, diesel: 136809, other:    8, total: 143966 },
+    { v: 'Goods',      y: 2017, bev:     31, hybrid:      8, phev:     0, petrol:   5009, diesel: 137803, other:    6, total: 142857 },
+    { v: 'Goods',      y: 2018, bev:     39, hybrid:      8, phev:     0, petrol:   4879, diesel: 136478, other:    4, total: 141408 },
+    { v: 'Goods',      y: 2019, bev:     71, hybrid:      8, phev:     0, petrol:   5109, diesel: 135773, other:    3, total: 140964 },
+    { v: 'Goods',      y: 2020, bev:     97, hybrid:      8, phev:     0, petrol:   5816, diesel: 134860, other:    2, total: 140783 },
+    { v: 'Goods',      y: 2021, bev:    387, hybrid:     13, phev:     0, petrol:   9096, diesel: 134527, other:    1, total: 144024 },
+    { v: 'Goods',      y: 2022, bev:   1894, hybrid:     19, phev:     0, petrol:  11447, diesel: 131623, other:    1, total: 144984 },
+    { v: 'Goods',      y: 2023, bev:   3338, hybrid:     28, phev:     0, petrol:  12213, diesel: 128381, other:    0, total: 143960 },
+    { v: 'Goods',      y: 2024, bev:   4567, hybrid:     33, phev:     1, petrol:  13059, diesel: 125549, other:    0, total: 143209 },
+    { v: 'Goods',      y: 2025, bev:   6389, hybrid:     39, phev:     1, petrol:  13691, diesel: 122576, other:    0, total: 142696 },
+    { v: 'Goods',      y: 2026, bev:   8043, hybrid:     39, phev:     2, petrol:  13769, diesel: 120450, other:    0, total: 142303 },
+    { v: 'Buses',      y: 2015, bev:      0, hybrid:      4, phev:     0, petrol:     93, diesel:  17629, other:   14, total:  17740 },
+    { v: 'Buses',      y: 2016, bev:      1, hybrid:      3, phev:     0, petrol:     73, diesel:  18247, other:   14, total:  18338 },
+    { v: 'Buses',      y: 2017, bev:      2, hybrid:      3, phev:     0, petrol:     43, diesel:  18753, other:   13, total:  18814 },
+    { v: 'Buses',      y: 2018, bev:      4, hybrid:     23, phev:     0, petrol:     33, diesel:  18875, other:   12, total:  18947 },
+    { v: 'Buses',      y: 2019, bev:     10, hybrid:     50, phev:     0, petrol:     18, diesel:  19248, other:    0, total:  19326 },
+    { v: 'Buses',      y: 2020, bev:     50, hybrid:     50, phev:     0, petrol:     14, diesel:  18798, other:    0, total:  18912 },
+    { v: 'Buses',      y: 2021, bev:     75, hybrid:     50, phev:     0, petrol:     42, diesel:  18353, other:    0, total:  18520 },
+    { v: 'Buses',      y: 2022, bev:    151, hybrid:     50, phev:     0, petrol:     97, diesel:  17538, other:    0, total:  17836 },
+    { v: 'Buses',      y: 2023, bev:    242, hybrid:     50, phev:     0, petrol:    135, diesel:  17406, other:    0, total:  17833 },
+    { v: 'Buses',      y: 2024, bev:    382, hybrid:     50, phev:    24, petrol:    132, diesel:  17680, other:    0, total:  18268 },
+    { v: 'Buses',      y: 2025, bev:    799, hybrid:     50, phev:    44, petrol:    133, diesel:  17331, other:    0, total:  18357 },
+    { v: 'Buses',      y: 2026, bev:    930, hybrid:     50, phev:    46, petrol:    132, diesel:  17126, other:    0, total:  18284 },
+  ];
+  
   // ============ COE DATA (LTA M11 — Jan 2025 to Jul 2026 1st bidding) ============
   const coeData = [
     { month: 'Jan 25', catA: 93699, catB: 121501, catC: 67891, evPop: 26225 },
@@ -1642,7 +1758,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           <div style={{ display: 'flex', gap: 2, alignItems: 'center', overflowX: 'auto', scrollbarWidth: 'none', flex: 1, justifyContent: 'center' }}>
             <TabBtn id="home"     label="Home" />
             <TabBtn id="overview" label="Overview" />
-            <TabBtn id="fleet"    label="Fleet by Type" />
+            <TabBtn id="fleet"    label="EV Population" />
             <TabBtn id="brands"   label="Brand Rankings" />
             <TabBtn id="specs"    label="EV Specs" />
             <TabBtn id="charging" label="EV Charging Stations" />
@@ -2130,121 +2246,326 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
         )}
 
         {/* ============ FLEET BY TYPE ============ */}
-        {activeTab === 'fleet' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
-            <SectionHead chip="Fleet Composition" title="EV population by vehicle category." subtitle="79,033 pure EVs across all road vehicle types · 31 July 2026 · Source: LTA M09 (Jul 2026)"/>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16 }}>
-              {[
-                { label: 'EV Cars', value: '69,190', sub: '87.6% of all EVs', color: BLUE, bg: BLUE_LIGHT, icon: '🚗' },
-                { label: 'EV Goods Veh.', value: '7,857', sub: 'LGV/HGV/VHGV', color: NAVY, bg: NAVY_LIGHT, icon: '🚛' },
-                { label: 'EV Buses', value: '920', sub: 'Public + Charter', color: SLATE, bg: NAVY_LIGHT, icon: '🚌' },
-                { label: 'EV Taxis', value: '633', sub: 'Of 12,134 taxis', color: BLUE, bg: BLUE_LIGHT, icon: '🚕' },
-                { label: 'EV Motorcycles', value: '433', sub: 'Slowest segment', color: SECONDARY, bg: SURFACE, icon: '🏍️' },
-              ].map(m => <MetricCard key={m.label} {...m} icon={m.icon}/>)}
-            </div>
+        {activeTab === 'fleet' && (() => {
+          const POP_FUELS = [
+            { k: 'bev',    l: 'Pure electric',  c: BLUE },
+            { k: 'phev',   l: 'Plug-in hybrid', c: DEEP_CYAN },
+            { k: 'hybrid', l: 'Hybrid',         c: SLATE },
+            { k: 'petrol', l: 'Petrol',         c: '#8A94A0' },
+            { k: 'diesel', l: 'Diesel',         c: '#B9C0C9' },
+            { k: 'other',  l: 'Other',          c: '#C9CED6' },
+          ];
+          const POP_VEH = ['Cars', 'Taxis', 'Motorcycles', 'Goods', 'Buses'];
+          const POP_VCOL = { Cars: BLUE, Taxis: NAVY, Motorcycles: YELLOW, Goods: SLATE, Buses: GREEN };
+          const POP_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+          const POP_YEARS = [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
 
-            <div style={{ background: CARD, borderRadius: 20, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
-              <div style={{ padding: '24px 28px', borderBottom: `1px solid ${BORDER}` }}>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: INK, margin: 0 }}>Fuel type × Vehicle type — full breakdown</h3>
-                <p style={{ fontSize: 14, color: SECONDARY, margin: '4px 0 0' }}>Every road vehicle in Singapore by powertrain · July 2026</p>
-              </div>
-              <div className="scroll-table" style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', minWidth: 800, borderCollapse: 'collapse', fontSize: 14 }}>
-                  <thead>
-                    <tr style={{ background: SURFACE }}>
-                      {['Vehicle Type','Petrol','Diesel','Hybrid','PHEV','Pure EV','Total','EV %'].map((h, i) => (
-                        <th key={h} style={{ padding: '14px 16px', textAlign: i > 0 ? 'right' : 'left', fontSize: 12, fontWeight: 600, color: SECONDARY, letterSpacing: 0.3, borderBottom: `1px solid ${BORDER}` }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { type: 'Cars 🚗', petrol: 441350, diesel: 11907, hybrid: 127118, phev: 3194, ev: 69190, total: 652830 },
-                      { type: 'Taxis 🚕', petrol: 2, diesel: 68, hybrid: 11431, phev: 0, ev: 633, total: 12134 },
-                      { type: 'Motorcycles 🏍️', petrol: 153973, diesel: 0, hybrid: 0, phev: 0, ev: 433, total: 154406 },
-                      { type: 'Goods Vehicles 🚛', petrol: 13776, diesel: 120898, hybrid: 6, phev: 1, ev: 7857, total: 142572 },
-                      { type: 'Buses 🚌', petrol: 132, diesel: 17183, hybrid: 50, phev: 46, ev: 920, total: 18331 },
-                    ].map((r, ri) => {
-                      const pct = ((r.ev / r.total) * 100).toFixed(2);
-                      return (
-                        <tr key={r.type} style={{ borderBottom: `1px solid ${BORDER}`, background: ri % 2 ? SURFACE : CARD }}>
-                          <td style={{ padding: '14px 16px', fontWeight: 600, color: INK }}>{r.type}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right', color: SECONDARY }}>{r.petrol.toLocaleString()}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right', color: SECONDARY }}>{r.diesel.toLocaleString()}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right', color: GREEN, fontWeight: 500 }}>{r.hybrid.toLocaleString()}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right', color: SECONDARY }}>{r.phev.toLocaleString()}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right', color: BLUE, fontWeight: 700 }}>{r.ev.toLocaleString()}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 600 }}>{r.total.toLocaleString()}</td>
-                          <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                            <span style={{ background: BLUE_LIGHT, color: BLUE, fontWeight: 700, borderRadius: 50, padding: '4px 12px', fontSize: 12 }}>{pct}%</span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    <tr style={{ background: BLUE_LIGHT, borderTop: `2px solid ${BLUE}` }}>
-                      <td style={{ padding: '14px 16px', fontWeight: 700, color: INK, fontSize: 15 }}>Total Fleet</td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 600 }}>609,233</td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 600 }}>150,056</td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 600, color: GREEN }}>138,605</td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 600 }}>3,241</td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 700, color: BLUE, fontSize: 15 }}>79,033</td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 700, fontSize: 15 }}>980,273</td>
-                      <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                        <span style={{ background: BLUE, color: '#fff', fontWeight: 700, borderRadius: 50, padding: '4px 12px', fontSize: 12 }}>8.06%</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          const pRow = (v, m) => popMonthly.find(r => r.v === v && r.m === m);
+          const pARow = (v, y) => popAnnual.find(r => r.v === v && r.y === y);
+          const fi = POP_MON.indexOf(popFrom), ti = POP_MON.indexOf(popTo);
+          const ms = POP_MON.slice(Math.min(fi, ti), Math.max(fi, ti) + 1);
+          const lastM = ms[ms.length - 1], firstM = ms[0];
+          const cur = pRow(popVeh, lastM), base = pRow(popVeh, firstM);
+          const share = (a, b) => b ? (100 * a / b) : 0;
 
-            <section>
-              <SectionHead chip="Goods Vehicle Drilldown" title="LGV vs HGV vs VHGV." subtitle="Jan–Jul 2026 cumulative new EV registrations by weight class · LTA M08" chipColor={YELLOW}/>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
-                {[
-                  { cls: 'LGV', weight: '≤ 3.5 t', q1New: 788, desc: 'Fastest-electrifying segment. Last-mile vans and small trucks.', lead: 'Maxus, BYD, Citroën', color: BLUE, bg: BLUE_LIGHT },
-                  { cls: 'HGV', weight: '3.5 – 16 t', q1New: 602, desc: 'HVZES (S$40K) launched Jan 2026 is accelerating adoption here.', lead: 'BYD, Toyota, Sany', color: YELLOW, bg: YELLOW_LIGHT },
-                  { cls: 'VHGV', weight: '> 16 t', q1New: 0, desc: 'Zero EV registrations Jan–Jul 2026. Diesel owns this segment entirely.', lead: 'No EV penetration yet', color: RED, bg: RED_LIGHT },
-                ].map(c => (
-                  <div key={c.cls} style={{ background: c.bg, borderRadius: 20, padding: 28 }}>
-                    <span style={{ background: c.color, color: '#fff', borderRadius: 50, padding: '6px 14px', fontSize: 12, fontWeight: 700 }}>{c.cls} · {c.weight}</span>
-                    <div style={{ fontSize: 52, fontWeight: 800, color: c.color, margin: '20px 0 4px', fontFamily: "'Google Sans Flex', 'Inter', sans-serif", lineHeight: 1 }}>{c.q1New}</div>
-                    <div style={{ fontSize: 13, color: SECONDARY, marginBottom: 4 }}>new EV registrations Jan–Jul 2026</div>
-                    <p style={{ fontSize: 14, color: INK, lineHeight: 1.6, margin: '16px 0 12px' }}>{c.desc}</p>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: c.color }}>Leading brands: {c.lead}</div>
+          const yLo = Math.min(popYFrom, popYTo), yHi = Math.max(popYFrom, popYTo);
+          const yrs = POP_YEARS.filter(y => y >= yLo && y <= yHi);
+
+          const fuelsOn = POP_FUELS.filter(f => !popFuelOff.includes(f.k));
+          const evOn = POP_VEH.filter(v => !popEvOff.includes(v));
+          const annOn = POP_VEH.filter(v => !popAnnOff.includes(v));
+          const flip = (arr, set, k) => set(arr.includes(k) ? arr.filter(x => x !== k) : [...arr, k]);
+
+          const fuelData = ms.map(m => {
+            const r = pRow(popVeh, m), o = { month: m };
+            POP_FUELS.forEach(f => { o[f.k] = popFuelMode === 'share' ? +share(r[f.k], r.total).toFixed(2) : r[f.k]; });
+            return o;
+          });
+          const evData = ms.map(m => {
+            const o = { month: m };
+            POP_VEH.forEach(v => {
+              const raw = pRow(v, m).bev, b0 = pRow(v, firstM).bev || 1;
+              o[v] = popEvMode === 'index' ? +(100 * raw / b0).toFixed(1) : raw;
+            });
+            return o;
+          });
+          const annData = yrs.map(y => {
+            const o = { year: y === 2026 ? '2026*' : String(y) };
+            POP_VEH.forEach(v => { const r = pARow(v, y); o[v] = r ? r.bev : 0; });
+            return o;
+          });
+          const shareData = POP_VEH.map(v => {
+            const r = pRow(v, lastM);
+            return { type: v, pct: +share(r.bev, r.total).toFixed(2), ev: r.bev, total: r.total };
+          }).sort((a, b) => b.pct - a.pct);
+
+          const PopTip = ({ active, payload, label, unit }) => {
+            if (!active || !payload || !payload.length) return null;
+            const rows = payload.filter(p => p.value !== null && p.value !== undefined)
+                                .slice().sort((a, b) => b.value - a.value);
+            return (
+              <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '10px 12px', boxShadow: '0 4px 18px rgba(8,36,75,0.14)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: INK, marginBottom: 7 }}>{label}</div>
+                {rows.map(p => (
+                  <div key={p.dataKey} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: SECONDARY, marginTop: 3 }}>
+                    <span style={{ width: 9, height: 9, borderRadius: 2, background: p.color, flexShrink: 0 }}/>
+                    <span style={{ flex: 1, whiteSpace: 'nowrap' }}>{p.name}</span>
+                    <span style={{ fontWeight: 700, color: INK }}>
+                      {unit === 'pct' ? p.value.toFixed(2) + '%' : unit === 'idx' ? p.value.toFixed(1) : p.value.toLocaleString()}
+                    </span>
                   </div>
                 ))}
               </div>
-            </section>
+            );
+          };
 
-            <section>
-              <SectionHead chip="Penetration" title="EV share of total fleet by vehicle type."/>
-              {[
-                { type: 'Cars 🚗', ev: 69190, total: 652830, color: BLUE },
-                { type: 'Goods Vehicles 🚛', ev: 7857, total: 142572, color: YELLOW },
-                { type: 'Buses 🚌', ev: 920, total: 18331, color: RED },
-                { type: 'Taxis 🚕', ev: 633, total: 12134, color: GREEN },
-                { type: 'Motorcycles 🏍️', ev: 433, total: 154406, color: SECONDARY },
-              ].map(r => {
-                const pct = (r.ev / r.total) * 100;
-                return (
-                  <div key={r.type} style={{ background: CARD, borderRadius: 16, padding: '20px 24px', marginBottom: 12, border: `1px solid ${BORDER}` }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                      <span style={{ fontSize: 15, fontWeight: 600, color: INK }}>{r.type}</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <span style={{ fontSize: 13, color: SECONDARY }}>{r.ev.toLocaleString()} / {r.total.toLocaleString()}</span>
-                        <span style={{ fontSize: 22, fontWeight: 800, color: r.color, fontFamily: "'Google Sans Flex', 'Inter', sans-serif" }}>{pct.toFixed(2)}%</span>
+          const Chip = ({ on, color, label, onClick }) => (
+            <button onClick={onClick} aria-pressed={on} style={{
+              display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', background: on ? CARD : SURFACE,
+              border: `1px solid ${BORDER}`, borderRadius: 999, padding: '5px 11px 5px 8px',
+              fontSize: 11, fontWeight: 600, color: SECONDARY, opacity: on ? 1 : 0.45 }}>
+              <span style={{ width: 10, height: 10, borderRadius: 3, background: on ? color : SECONDARY, flex: 'none' }}/>
+              {label}
+            </button>
+          );
+          const ModeBtn = ({ on, label, onClick }) => (
+            <button onClick={onClick} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer',
+              fontSize: 12, fontWeight: 600, background: on ? NAVY : 'transparent', color: on ? '#fff' : SECONDARY }}>{label}</button>
+          );
+          const panel = { background: CARD, borderRadius: 20, padding: 24, border: `1px solid ${BORDER}` };
+          const subP  = { fontSize: 12, color: SECONDARY, margin: '0 0 16px', lineHeight: 1.5 };
+          const rowF  = { display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 14 };
+          const segBox= { display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` };
+          const selBox= { padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK };
+
+          return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <SectionHead chip="EV Population" title="EV population by vehicle type."
+              subtitle={`${pRow('Cars', lastM).bev.toLocaleString()} electric cars of ${pRow('Cars', lastM).total.toLocaleString()} · as at 31 ${lastM} 2026 · Source: LTA M09 (monthly) & MVP01-4 (annual)`}/>
+
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', background: SURFACE, borderRadius: 12, padding: 4, border: `1px solid ${BORDER}`, width: 'fit-content', maxWidth: '100%' }}>
+              {POP_VEH.map(v => (
+                <button key={v} onClick={() => setPopVeh(v)} style={{ padding: '8px 14px', borderRadius: 9, border: 'none', cursor: 'pointer',
+                  fontSize: 12, fontWeight: 600, background: popVeh === v ? BLUE : 'transparent', color: popVeh === v ? NAVY : SECONDARY }}>{v}</button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
+                <select value={popFrom} onChange={e => setPopFrom(e.target.value)} style={selBox}>
+                  {POP_MON.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+                <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
+                <select value={popTo} onChange={e => setPopTo(e.target.value)} style={selBox}>
+                  {POP_MON.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              <span style={{ fontSize: 11, color: SECONDARY }}>Population as at 31 {lastM} 2026 · {ms.length} month{ms.length > 1 ? 's' : ''} shown</span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 16 }}>
+              <MetricCard label={`Pure EV - ${popVeh}`} value={cur.bev.toLocaleString()}
+                delta={`${cur.bev - base.bev >= 0 ? '+' : ''}${(cur.bev - base.bev).toLocaleString()} since ${firstM}`}
+                sub={`On the road, 31 ${lastM} 2026`} color={BLUE} bg={BLUE_LIGHT} icon="EV"/>
+              <MetricCard label="EV share of fleet" value={`${share(cur.bev, cur.total).toFixed(2)}%`}
+                delta={`${share(cur.bev, cur.total) - share(base.bev, base.total) >= 0 ? '+' : ''}${(share(cur.bev, cur.total) - share(base.bev, base.total)).toFixed(2)} pts`}
+                sub={`of ${cur.total.toLocaleString()} ${popVeh.toLowerCase()}`} color={NAVY} bg={NAVY_LIGHT} icon="PCT"/>
+              <MetricCard label="Hybrid" value={cur.hybrid.toLocaleString()}
+                delta={`${share(cur.hybrid, cur.total).toFixed(1)}% of fleet`}
+                sub="Petrol- and diesel-electric" color={SLATE} bg={NAVY_LIGHT} icon="HYB"/>
+              <MetricCard label="Petrol + diesel" value={(cur.petrol + cur.diesel).toLocaleString()}
+                delta={`${((cur.petrol + cur.diesel) - (base.petrol + base.diesel)).toLocaleString()} since ${firstM}`}
+                sub={`${share(cur.petrol + cur.diesel, cur.total).toFixed(1)}% of fleet`} color={SECONDARY} bg={SURFACE} icon="ICE"/>
+            </div>
+
+            <div style={panel}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>Fleet by fuel type {'—'} {popVeh}, 2026</h3>
+              <p style={subP}>
+                How {popVeh.toLowerCase()} on the road break down by powertrain, month by month. Pure EVs went from{' '}
+                <strong style={{ color: INK }}>{base.bev.toLocaleString()}</strong> to <strong style={{ color: INK }}>{cur.bev.toLocaleString()}</strong>{' '}
+                while petrol and diesel fell by <strong style={{ color: INK }}>{((base.petrol + base.diesel) - (cur.petrol + cur.diesel)).toLocaleString()}</strong>.
+                Click a fuel below to hide it {'—'} dropping petrol rescales the axis so the smaller lines become readable.
+              </p>
+              <div style={rowF}>
+                <div style={segBox}>
+                  <ModeBtn on={popFuelMode === 'abs'} label="Vehicles" onClick={() => setPopFuelMode('abs')}/>
+                  <ModeBtn on={popFuelMode === 'share'} label="Share of fleet" onClick={() => setPopFuelMode('share')}/>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {POP_FUELS.map(f => (
+                    <Chip key={f.k} on={!popFuelOff.includes(f.k)} color={f.c} label={f.l}
+                      onClick={() => flip(popFuelOff, setPopFuelOff, f.k)}/>
+                  ))}
+                </div>
+              </div>
+              {fuelsOn.length === 0 ? (
+                <div style={{ padding: '36px 8px', textAlign: 'center', fontSize: 13, color: SECONDARY }}>Nothing selected {'—'} click a fuel above to bring it back.</div>
+              ) : popFuelMode === 'share' ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={fuelData}>
+                    <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
+                    <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
+                    <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v + '%'}/>
+                    <Tooltip content={<PopTip unit="pct"/>}/>
+                    {fuelsOn.map(f => (
+                      <Area key={f.k} type="monotone" dataKey={f.k} name={f.l} stackId="fuel" stroke={f.c} fill={f.c} fillOpacity={0.9}/>
+                    ))}
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={fuelData}>
+                    <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
+                    <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
+                    <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v.toLocaleString()}/>
+                    <Tooltip content={<PopTip/>}/>
+                    {fuelsOn.map(f => (
+                      <Line key={f.k} type="monotone" dataKey={f.k} name={f.l} stroke={f.c} strokeWidth={2.5} dot={{ r: 2.5 }}/>
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            <div style={panel}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>EV population by vehicle type {'—'} 2026</h3>
+              <p style={subP}>Cars dwarf every other category, so the indexed view ({firstM} = 100) is what shows who is actually growing fastest.</p>
+              <div style={rowF}>
+                <div style={segBox}>
+                  <ModeBtn on={popEvMode === 'index'} label="Indexed" onClick={() => setPopEvMode('index')}/>
+                  <ModeBtn on={popEvMode === 'abs'} label="Absolute" onClick={() => setPopEvMode('abs')}/>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {POP_VEH.map(v => (
+                    <Chip key={v} on={!popEvOff.includes(v)} color={POP_VCOL[v]} label={v}
+                      onClick={() => flip(popEvOff, setPopEvOff, v)}/>
+                  ))}
+                </div>
+              </div>
+              {evOn.length === 0 ? (
+                <div style={{ padding: '36px 8px', textAlign: 'center', fontSize: 13, color: SECONDARY }}>Nothing selected {'—'} click a type above to bring it back.</div>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={evData}>
+                    <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
+                    <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
+                    <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}
+                      domain={popEvMode === 'index' ? ['auto','auto'] : [0,'auto']} tickFormatter={v => v.toLocaleString()}/>
+                    <Tooltip content={<PopTip unit={popEvMode === 'index' ? 'idx' : undefined}/>}/>
+                    {evOn.map(v => (
+                      <Line key={v} type="monotone" dataKey={v} name={v} stroke={POP_VCOL[v]} strokeWidth={2.5} dot={{ r: 2.5 }}/>
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            <div style={panel}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>EV share of the fleet by vehicle type {'—'} 31 {lastM} 2026</h3>
+              <p style={subP}>Pure EVs as a percentage of every vehicle of that type on Singapore roads.</p>
+              <ResponsiveContainer width="100%" height={Math.max(240, shareData.length * 46)}>
+                <BarChart data={shareData} layout="vertical" margin={{ left: 8, right: 70 }}>
+                  <CartesianGrid stroke={BORDER} horizontal={false} strokeDasharray="3 6"/>
+                  <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v + '%'}/>
+                  <YAxis type="category" dataKey="type" stroke={INK} tick={{ fontSize: 12, fontWeight: 600 }} width={96} axisLine={false} tickLine={false}/>
+                  <Tooltip cursor={{ fill: BLUE_LIGHT }} content={({ active, payload }) => {
+                    if (!active || !payload || !payload.length) return null;
+                    const d = payload[0].payload;
+                    return (
+                      <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '10px 12px', boxShadow: '0 4px 18px rgba(8,36,75,0.14)' }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: INK }}>{d.type}</div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: BLUE, marginTop: 4 }}>{d.pct.toFixed(2)}% electric</div>
+                        <div style={{ fontSize: 11, color: SECONDARY, marginTop: 3 }}>{d.ev.toLocaleString()} of {d.total.toLocaleString()}</div>
                       </div>
-                    </div>
-                    <div style={{ height: 8, background: SURFACE, borderRadius: 99, overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${Math.max(pct * 8, 0.5)}%`, background: r.color, borderRadius: 99, transition: 'width 0.8s ease' }}/>
-                    </div>
-                  </div>
-                );
-              })}
-            </section>
+                    );
+                  }}/>
+                  <Bar dataKey="pct" name="EV share" radius={[0,8,8,0]}>
+                    {shareData.map(d => <Cell key={d.type} fill={POP_VCOL[d.type]}/>)}
+                    <LabelList dataKey="pct" position="right" formatter={v => v.toFixed(2) + '%'} style={{ fontSize: 12, fontWeight: 700, fill: INK }}/>
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div style={panel}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>The adoption curve {'—'} EV population 2015 to 2026</h3>
+              <p style={subP}>
+                Eleven years of annual year-end population, plus the current position. Cars went from{' '}
+                <strong style={{ color: INK }}>1</strong> EV in 2015 to <strong style={{ color: INK }}>{pARow('Cars', 2026).bev.toLocaleString()}</strong> today.
+              </p>
+              <div style={rowF}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>Years:</span>
+                  <select value={popYFrom} onChange={e => setPopYFrom(Number(e.target.value))} style={selBox}>
+                    {POP_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                  <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
+                  <select value={popYTo} onChange={e => setPopYTo(Number(e.target.value))} style={selBox}>
+                    {POP_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {POP_VEH.map(v => (
+                    <Chip key={v} on={!popAnnOff.includes(v)} color={POP_VCOL[v]} label={v}
+                      onClick={() => flip(popAnnOff, setPopAnnOff, v)}/>
+                  ))}
+                </div>
+              </div>
+              {annOn.length === 0 ? (
+                <div style={{ padding: '36px 8px', textAlign: 'center', fontSize: 13, color: SECONDARY }}>Nothing selected {'—'} click a type above to bring it back.</div>
+              ) : (
+                <ResponsiveContainer width="100%" height={320}>
+                  <LineChart data={annData}>
+                    <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
+                    <XAxis dataKey="year" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
+                    <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v.toLocaleString()}/>
+                    <Tooltip content={<PopTip/>}/>
+                    {annOn.map(v => (
+                      <Line key={v} type="monotone" dataKey={v} name={v} stroke={POP_VCOL[v]} strokeWidth={2.5} dot={{ r: 2.5 }}/>
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            <div style={{ background: CARD, borderRadius: 20, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: `1px solid ${BORDER}`, background: SURFACE }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: 0 }}>Fuel type {'×'} vehicle type {'—'} 31 {lastM} 2026</h3>
+              </div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', minWidth: 720, borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead><tr style={{ background: SURFACE }}>
+                    {['Vehicle type', ...POP_FUELS.map(f => f.l), 'Total', 'EV %'].map((h, i) => (
+                      <th key={h} style={{ padding: '10px 14px', textAlign: i === 0 ? 'left' : 'right', fontSize: 11, fontWeight: 600, color: SECONDARY, borderBottom: `2px solid ${BORDER}` }}>{h}</th>
+                    ))}
+                  </tr></thead>
+                  <tbody>
+                    {POP_VEH.map((v, i) => {
+                      const r = pRow(v, lastM);
+                      return (
+                        <tr key={v} style={{ borderBottom: `1px solid ${BORDER}`, background: i % 2 ? SURFACE : CARD }}>
+                          <td style={{ padding: '9px 14px', fontWeight: 600, color: INK }}>{v}</td>
+                          {POP_FUELS.map(f => (
+                            <td key={f.k} style={{ padding: '9px 14px', textAlign: 'right', color: SECONDARY }}>{r[f.k].toLocaleString()}</td>
+                          ))}
+                          <td style={{ padding: '9px 14px', textAlign: 'right', fontWeight: 600, color: INK }}>{r.total.toLocaleString()}</td>
+                          <td style={{ padding: '9px 14px', textAlign: 'right', fontWeight: 700, color: BLUE }}>{share(r.bev, r.total).toFixed(2)}%</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ padding: '12px 20px', borderTop: `1px solid ${BORDER}`, fontSize: 10, color: SECONDARY, lineHeight: 1.6 }}>
+                Population, not registrations: vehicles on the road at each period end, excluding tax-exempt and off-the-road (RU) vehicles.
+                2015{'–'}2025 from LTA Annual Vehicle Statistics (MVP01-4); 2026 is as at 31 {lastM} from LTA Monthly Vehicle Statistics (M09)
+                and is a part-year position, not a year end. "Hybrid" combines petrol-electric and diesel-electric; "Plug-in hybrid" combines both plug-in variants.
+              </div>
+            </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* ============ BRANDS ============ */}
         {activeTab === 'brands' && (
