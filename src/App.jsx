@@ -9,40 +9,6 @@ import { Zap, Battery, TrendingUp, Car, Truck, Bus, Clock, Award,
   Globe, ArrowRight, Search, ShoppingCart, Lock, Mail, Shield, CheckCircle,
   Download, Share2, Maximize2, Table2 } from 'lucide-react';
 
-function FitToWidth({ designWidth = 700, children, maxScale = 1.35 }) {
-  const outerRef = useRef(null);
-  const innerRef = useRef(null);
-  const [scale, setScale] = useState(1);
-  const [height, setHeight] = useState('auto');
-
-  useEffect(() => {
-    const recalc = () => {
-      if (!outerRef.current || !innerRef.current) return;
-      const containerWidth = outerRef.current.offsetWidth;
-      const raw = containerWidth > 0 ? containerWidth / designWidth : 1;
-      const s = Math.min(maxScale, raw); // shrink freely, grow only up to maxScale
-      setScale(s);
-      setHeight(innerRef.current.offsetHeight * s);
-    };
-    recalc();
-    window.addEventListener('resize', recalc);
-    const ro = new ResizeObserver(recalc);
-    if (innerRef.current) ro.observe(innerRef.current);
-    return () => {
-      window.removeEventListener('resize', recalc);
-      ro.disconnect();
-    };
-  }, [designWidth, maxScale]);
-
-  return (
-    <div ref={outerRef} style={{ width: '100%', height, overflow: 'visible' }}>
-      <div ref={innerRef} style={{ width: designWidth, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
 // ============ STANDALONE COMPONENT: Charging Density Map (Leaflet, loaded via CDN) ============
 // Rendered only at /embed/charging-density-map — no nav, no auth gate.
 // Leaflet is loaded dynamically since this is the only part of the app that needs it.
@@ -1025,7 +991,6 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   // ============ STANDALONE EMBED: /embed/brand-rankings-header ============
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-header') {
     return (
-      <FitToWidth designWidth={500}>   {/* fine as-is, nothing to wrap */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1035,14 +1000,12 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
         <h2 style={{ fontSize: 22, fontWeight: 800, color: INK, margin: 0 }}>EV brand performance by vehicle type.</h2>
         <p style={{ fontSize: 13, color: SECONDARY, margin: '4px 0 0' }}>Source: LTA M03 / M08 - New registrations, Jan-Jul 2026</p>
       </div>
-      </FitToWidth>
     );
   }
 
   // ============ STANDALONE EMBED: /embed/brand-rankings-stats ============
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-stats') {
     return (
-      <FitToWidth designWidth={950}>   {/* was 700 — now fits all 6 cards in one row */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1062,7 +1025,6 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           })}
         </div>
       </div>
-      </FitToWidth>
     );
   }
 
@@ -1071,7 +1033,6 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-metrics') {
     const segBrands = getSegmentBrands(activeBrandFilter);
     return (
-      <FitToWidth designWidth={700}>   {/* fine as-is — 3 cards already fit in one row at 700 */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1141,7 +1102,6 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           );
         })()}
       </div>
-      </FitToWidth>
     );
   }
 
@@ -1150,7 +1110,6 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-trend') {
     const segBrands = getSegmentBrands(activeBrandFilter);
     return (
-      <FitToWidth designWidth={700}>   {/* fine as-is, nothing to wrap */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1228,7 +1187,6 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           );
         })()}
       </div>
-      </FitToWidth>
     );
   }
         
@@ -1239,7 +1197,6 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
   if (typeof window !== 'undefined' && window.location.pathname === '/embed/brand-rankings-table') {
     const segBrands = getSegmentBrands(activeBrandFilter);
     return (
-      <FitToWidth designWidth={800}>   {/* fine as-is */}
       <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -1319,7 +1276,6 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           );
         })()}
       </div>
-      </FitToWidth>
     );
   }
 
