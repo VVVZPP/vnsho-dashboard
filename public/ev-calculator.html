@@ -1,0 +1,362 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EV vs Petrol Calculator — World Mobility Forum</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --blue:#22C8C8; --blue-light:#E3FAFA; --deep-cyan:#00A9B8;
+  --navy:#08244B; --navy-light:#EAF0F6; --slate:#345A7D;
+  --yellow:#FFB648; --yellow-light:#FFF6E8; --green:#32D17B; --green-light:#EAFBF1;
+  --red:#E5484D; --red-light:#FDEBEC;
+  --ink:#111827; --secondary:#5B6470;
+  --surface:#F7F8FA; --card:#FFFFFF; --border:#E5E8EC;
+  --chrome-bg:#0E1A2B; --chrome-fg:#C8D4E2; --chrome-line:#24374F;
+  --font:'Inter','Google Sans Flex',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);font-family:var(--font);color:var(--ink);-webkit-font-smoothing:antialiased}
+.wrap{padding:0 0 40px;max-width:1180px;margin:0 auto}
+
+.page{background:var(--surface)}
+.inner{max-width:1100px;margin:0 auto;padding:40px 24px 56px}
+.seclabel{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.seclabel i{width:24px;height:2px;background:var(--blue);display:block}
+.seclabel span{font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1.2px;text-transform:uppercase}
+h2.big{font-size:clamp(1.75rem,3.4vw,2.75rem);font-weight:700;color:var(--ink);line-height:1.15;margin:4px 0 12px;letter-spacing:-.4px;text-wrap:balance}
+p.sub{font-size:16px;color:var(--secondary);line-height:1.6;max-width:660px;margin:0}
+.scope{font-size:12.5px;color:var(--secondary);margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+h3{font-size:19px;font-weight:700;margin:0 0 4px;letter-spacing:-.2px}
+.h3sub{font-size:13.5px;color:var(--secondary);margin:0 0 18px;line-height:1.55;max-width:720px}
+section{margin-top:40px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
+
+/* labelled control panel (shared language with the Specs page) */
+.ctlcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:14px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.field .fl{font-size:10.5px;font-weight:700;color:var(--secondary);letter-spacing:.9px;text-transform:uppercase;margin-bottom:9px}
+.seg{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:9px 6px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--secondary);cursor:pointer;transition:.13s;line-height:1.2}
+.seg button:hover{color:var(--ink);background:#EDEFF3}
+.seg button.on{background:var(--navy);color:#fff;box-shadow:0 1px 3px rgba(8,36,75,.22)}
+.seg button small{display:block;font-size:10px;font-weight:500;opacity:.7;margin-top:3px}
+.fh{font-size:11.5px;color:var(--secondary);margin-top:9px;line-height:1.45;min-height:16px}
+.sel{width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--card);font:600 13px var(--font);color:var(--ink);cursor:pointer}
+
+/* swipeable car picker */
+.swipe-wrap{position:relative}
+.swipe{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.swipe::-webkit-scrollbar{height:6px}
+.swipe::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.scard{flex-shrink:0;scroll-snap-align:start;width:150px;border-radius:14px;border:2px solid var(--border);background:var(--card);padding:14px;cursor:pointer;text-align:left;font-family:inherit;transition:.13s}
+.scard:hover{border-color:var(--blue)}
+.scard.on{border-color:var(--blue);background:var(--blue-light)}
+.scard .ic{width:100%;height:56px;border-radius:10px;background:var(--navy-light);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:10px}
+.scard.on .ic{background:var(--blue)}
+.scard .nm{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3}
+.scard .sp{font-size:11px;color:var(--secondary);margin-top:4px}
+
+/* the verdict — the headline banner */
+.verdict{background:linear-gradient(135deg,var(--navy) 0%,#0E3563 100%);border-radius:18px;padding:34px 32px;color:#fff;text-align:center}
+.verdict .eyebrow{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#8FE3E3;margin-bottom:14px}
+.verdict .big{font-size:clamp(1.5rem,3.6vw,2.4rem);font-weight:700;line-height:1.28;letter-spacing:-.4px;max-width:760px;margin:0 auto}
+.verdict .big b{color:var(--blue)}
+.verdict .sub{font-size:14px;color:#C8D4E2;margin-top:16px;max-width:600px;margin-inline:auto;line-height:1.6}
+.vstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:26px}
+.vstat{background:rgba(255,255,255,.08);border-radius:12px;padding:16px}
+.vstat .v{font-size:24px;font-weight:700;letter-spacing:-.3px}
+.vstat .k{font-size:11px;color:#9FB2C9;margin-top:5px;line-height:1.4}
+
+/* comparison bars */
+.cmp{display:flex;flex-direction:column;gap:16px}
+.cmprow{display:grid;grid-template-columns:170px 1fr 84px;align-items:center;gap:14px}
+.cmprow .lab{font-size:12.5px;font-weight:700;color:var(--secondary);line-height:1.3}
+.cmprow .track{position:relative;height:34px;background:var(--surface);border-radius:9px;overflow:hidden}
+.cmprow .fill{position:absolute;top:0;left:0;height:100%;border-radius:9px;display:flex;align-items:center;padding-left:12px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;transition:width .25s}
+.cmprow .amt{font-size:14px;font-weight:700;text-align:right}
+
+/* results readout (shared "ro" language) */
+.ro{background:var(--surface);border-radius:13px;padding:20px 22px}
+.ro-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.ro-big{font-size:38px;font-weight:700;letter-spacing:-1px;line-height:1.05}
+.ro-big span{font-size:15px;font-weight:600;color:var(--secondary);letter-spacing:0}
+.ro-sub{font-size:12.5px;color:var(--secondary);margin-top:6px;line-height:1.5}
+.ro-facts{display:flex;flex-direction:column;gap:0;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.ro-fact{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:5px 0;color:var(--secondary)}
+.ro-fact b{color:var(--ink)}
+
+.mc{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:12px;padding:18px 20px}
+.mc .l{font-size:10.5px;color:var(--secondary);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.mc .v{font-size:26px;font-weight:700;line-height:1.1;letter-spacing:-.4px}
+.mc .s{font-size:11.5px;color:var(--secondary);margin-top:5px;line-height:1.4}
+.mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+
+.note{background:var(--yellow-light);border:1px solid #F5D9A8;border-radius:12px;padding:14px 18px;font-size:12.5px;line-height:1.6;color:#6B4B12;margin-top:16px}
+.foot{font-size:11.5px;color:var(--secondary);margin-top:14px;line-height:1.6}
+.eqrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:18px}
+.eq{background:var(--green-light);border-radius:12px;padding:16px 18px;text-align:center}
+.eq .em{font-size:26px}
+.eq .v{font-size:20px;font-weight:700;color:#186B3F;margin-top:6px}
+.eq .k{font-size:11.5px;color:#1B8A4E;margin-top:3px;line-height:1.4}
+@media(max-width:640px){.inner{padding:28px 16px 40px}.cmprow{grid-template-columns:1fr;gap:6px}.cmprow .amt{display:none}.cmprow .lab{font-size:12px}}
+</style></head><body><div class="wrap">
+<div class="page"><div class="inner">
+
+  <div class="seclabel"><i></i><span>Calculator</span></div>
+  <h2 class="big">What would switching actually save you?</h2>
+  <p class="sub">Pick the EV you're considering and the car you'd be trading in. Everything below — charging cost, running cost, carbon footprint — updates from those two choices and today's fuel price.</p>
+  <div class="scope">Petrol price live as of today · electricity tariffs and emission factors match the rest of the site</div>
+
+  <!-- ===== CAR PICKERS ===== -->
+  <section>
+    <h3>1 · Pick your two cars.</h3>
+    <p class="h3sub">The EV you're weighing, and the petrol car you'd be replacing. We've auto-matched a common Singapore petrol equivalent by body type — swap it for any other if you'd rather compare against your own car.</p>
+    <div class="card" style="margin-bottom:14px">
+      <div class="fl" style="font-size:10.5px;font-weight:700;color:var(--secondary);letter-spacing:.9px;text-transform:uppercase;margin-bottom:10px">Your EV</div>
+      <div class="swipe-wrap"><div class="swipe" id="evSwipe"></div></div>
+      <select class="sel" id="evSel" style="margin-top:12px"></select>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+        <div class="fl" style="font-size:10.5px;font-weight:700;color:var(--secondary);letter-spacing:.9px;text-transform:uppercase">Comparing against</div>
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--secondary);cursor:pointer">
+          <input type="checkbox" id="autoMatch" checked style="accent-color:#22C8C8;width:16px;height:16px">Auto-match by body type
+        </label>
+      </div>
+      <select class="sel" id="petSel"></select>
+      <div class="fh" id="petHelp"></div>
+    </div>
+  </section>
+
+  <!-- ===== CHARGING COST + TIME ===== -->
+  <section>
+    <h3>2 · Charging cost &amp; time.</h3>
+    <p class="h3sub">One plug-in session for your selected EV — from wherever it's sitting now, to wherever you want it.</p>
+    <div class="ctlcard" id="ctlCharge"></div>
+    <div class="card"><div class="ro" id="chargeAns"></div></div>
+  </section>
+
+  <!-- ===== ANNUAL DRIVING ASSUMPTIONS ===== -->
+  <section>
+    <h3>3 · Your annual driving.</h3>
+    <p class="h3sub">The two numbers that decide everything below: how far you drive, and what you pay for fuel or electricity.</p>
+    <div class="ctlcard" id="ctlAnnual"></div>
+  </section>
+
+  <!-- ===== VERDICT ===== -->
+  <section>
+    <div class="verdict" id="verdict"></div>
+  </section>
+
+  <!-- ===== RUNNING COST BREAKDOWN ===== -->
+  <section>
+    <h3>4 · Where the savings come from.</h3>
+    <p class="h3sub">Same annual mileage, two cars. Electricity is priced at your chosen tariff; petrol at today's pump price.</p>
+    <div class="card"><div class="cmp" id="cmpCost"></div></div>
+  </section>
+
+  <!-- ===== CARBON FOOTPRINT ===== -->
+  <section>
+    <h3>5 · The carbon footprint impact.</h3>
+    <p class="h3sub">Same driving, same distance — a very different exhaust. Singapore's grid still burns gas, so an EV isn't zero-carbon, but it isn't close to a petrol car either.</p>
+    <div class="card"><div class="cmp" id="cmpCO2"></div></div>
+    <div class="eqrow" id="eqrow"></div>
+  </section>
+
+  <div class="foot" id="methodology"></div>
+
+</div></div>
+</div>
+<script>
+const EV = [{"model":"Atto 3","brand":"BYD","kwh":60.5,"chem":"LFP","kw":150,"ac":7,"dc":88,"rng":420,"whkm":160,"kmkwh":6.25,"seg":"SUV","boot":440,"len":4455,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":64,"catA":false,"eHome":768,"ePub":1320,"acH":6.0,"dcMin":47},{"model":"Dolphin","brand":"BYD","kwh":44.9,"chem":"LFP","kw":70,"ac":7,"dc":60,"rng":340,"whkm":158,"kmkwh":6.33,"seg":"Hatch","boot":345,"len":4290,"v2l":true,"tax":1326,"ves":"A","vesAmt":-22500,"co2":63,"catA":true,"eHome":758,"ePub":1304,"acH":4.5,"dcMin":51},{"model":"Seal Premium RWD","brand":"BYD","kwh":82.5,"chem":"LFP","kw":230,"ac":11,"dc":150,"rng":570,"whkm":166,"kmkwh":6.02,"seg":"Sedan","boot":400,"len":4800,"v2l":true,"tax":2264,"ves":"A","vesAmt":-22500,"co2":66,"catA":false,"eHome":797,"ePub":1370,"acH":5.2,"dcMin":37},{"model":"Sealion 7 Dynamic","brand":"BYD","kwh":82.5,"chem":"LFP","kw":100,"ac":11,"dc":150,"rng":460,"whkm":185,"kmkwh":5.41,"seg":"SUV","boot":520,"len":4830,"v2l":true,"tax":1502,"ves":"A","vesAmt":-22500,"co2":74,"catA":true,"eHome":888,"ePub":1526,"acH":5.2,"dcMin":37},{"model":"Sealion 7 Perf AWD","brand":"BYD","kwh":82.5,"chem":"LFP","kw":390,"ac":11,"dc":150,"rng":456,"whkm":195,"kmkwh":5.13,"seg":"SUV","boot":520,"len":4830,"v2l":true,"tax":5588,"ves":"A","vesAmt":-22500,"co2":78,"catA":false,"eHome":936,"ePub":1609,"acH":5.2,"dcMin":37},{"model":"M6 7-seat","brand":"BYD","kwh":71.8,"chem":"LFP","kw":150,"ac":7,"dc":89,"rng":420,"whkm":182,"kmkwh":5.49,"seg":"MPV","boot":580,"len":4710,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":73,"catA":false,"eHome":874,"ePub":1502,"acH":7.2,"dcMin":55},{"model":"Model 3 RWD","brand":"Tesla","kwh":57.5,"chem":"LFP","kw":208,"ac":11,"dc":170,"rng":513,"whkm":132,"kmkwh":7.58,"seg":"Sedan","boot":594,"len":4720,"v2l":false,"tax":2135,"ves":"A","vesAmt":-22500,"co2":53,"catA":false,"eHome":634,"ePub":1089,"acH":3.7,"dcMin":23},{"model":"Model 3 Long Range","brand":"Tesla","kwh":75.0,"chem":"NMC","kw":324,"ac":11,"dc":250,"rng":629,"whkm":140,"kmkwh":7.14,"seg":"Sedan","boot":594,"len":4720,"v2l":false,"tax":4555,"ves":"A","vesAmt":-22500,"co2":56,"catA":false,"eHome":672,"ePub":1155,"acH":4.8,"dcMin":20},{"model":"Model Y RWD","brand":"Tesla","kwh":60.0,"chem":"LFP","kw":220,"ac":11,"dc":175,"rng":500,"whkm":149,"kmkwh":6.71,"seg":"SUV","boot":822,"len":4790,"v2l":false,"tax":2205,"ves":"A","vesAmt":-22500,"co2":60,"catA":false,"eHome":715,"ePub":1229,"acH":3.8,"dcMin":23},{"model":"Model Y Long Range","brand":"Tesla","kwh":75.0,"chem":"NMC","kw":378,"ac":11,"dc":250,"rng":586,"whkm":153,"kmkwh":6.54,"seg":"SUV","boot":822,"len":4790,"v2l":false,"tax":5400,"ves":"A","vesAmt":-22500,"co2":61,"catA":false,"eHome":734,"ePub":1262,"acH":4.8,"dcMin":20},{"model":"Ioniq 5 84kWh","brand":"Hyundai","kwh":84.0,"chem":"NMC","kw":168,"ac":11,"dc":258,"rng":570,"whkm":167,"kmkwh":5.99,"seg":"SUV","boot":520,"len":4655,"v2l":true,"tax":1900,"ves":"A","vesAmt":-22500,"co2":67,"catA":false,"eHome":802,"ePub":1378,"acH":5.3,"dcMin":22},{"model":"Ioniq 6 77kWh","brand":"Hyundai","kwh":77.4,"chem":"NMC","kw":168,"ac":11,"dc":233,"rng":614,"whkm":139,"kmkwh":7.19,"seg":"Sedan","boot":401,"len":4855,"v2l":true,"tax":1900,"ves":"A","vesAmt":-22500,"co2":56,"catA":false,"eHome":667,"ePub":1147,"acH":4.9,"dcMin":23},{"model":"Kona Electric 65kWh","brand":"Hyundai","kwh":65.4,"chem":"NMC","kw":160,"ac":11,"dc":102,"rng":444,"whkm":156,"kmkwh":6.41,"seg":"SUV","boot":466,"len":4355,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":62,"catA":false,"eHome":749,"ePub":1287,"acH":4.2,"dcMin":43},{"model":"Ioniq 9 RWD","brand":"Hyundai","kwh":110.3,"chem":"NMC","kw":160,"ac":11,"dc":233,"rng":620,"whkm":187,"kmkwh":5.35,"seg":"SUV","boot":620,"len":5060,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":75,"catA":false,"eHome":898,"ePub":1543,"acH":7.0,"dcMin":32},{"model":"EV6 84kWh","brand":"Kia","kwh":84.0,"chem":"NMC","kw":168,"ac":11,"dc":258,"rng":582,"whkm":165,"kmkwh":6.06,"seg":"SUV","boot":490,"len":4695,"v2l":true,"tax":1900,"ves":"A","vesAmt":-22500,"co2":66,"catA":false,"eHome":792,"ePub":1361,"acH":5.3,"dcMin":22},{"model":"EV3 81kWh","brand":"Kia","kwh":81.4,"chem":"NMC","kw":150,"ac":11,"dc":128,"rng":605,"whkm":149,"kmkwh":6.71,"seg":"SUV","boot":460,"len":4300,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":60,"catA":false,"eHome":715,"ePub":1229,"acH":5.2,"dcMin":43},{"model":"EV4","brand":"Kia","kwh":81.4,"chem":"NMC","kw":150,"ac":11,"dc":128,"rng":630,"whkm":143,"kmkwh":6.99,"seg":"Sedan","boot":490,"len":4730,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":57,"catA":false,"eHome":686,"ePub":1180,"acH":5.2,"dcMin":43},{"model":"MG4 Long Range","brand":"MG","kwh":64.0,"chem":"NMC","kw":150,"ac":11,"dc":140,"rng":435,"whkm":166,"kmkwh":6.02,"seg":"Hatch","boot":363,"len":4287,"v2l":false,"tax":1795,"ves":"A","vesAmt":-22500,"co2":66,"catA":false,"eHome":797,"ePub":1370,"acH":4.1,"dcMin":31},{"model":"S5 EV Long Range","brand":"MG","kwh":62.0,"chem":"LFP","kw":170,"ac":11,"dc":139,"rng":480,"whkm":152,"kmkwh":6.58,"seg":"SUV","boot":453,"len":4476,"v2l":true,"tax":1912,"ves":"A","vesAmt":-22500,"co2":61,"catA":false,"eHome":730,"ePub":1254,"acH":3.9,"dcMin":30},{"model":"S6 EV","brand":"MG","kwh":62.0,"chem":"LFP","kw":109,"ac":11,"dc":139,"rng":530,"whkm":145,"kmkwh":6.9,"seg":"SUV","boot":674,"len":4620,"v2l":true,"tax":1554,"ves":"A","vesAmt":-22500,"co2":58,"catA":true,"eHome":696,"ePub":1196,"acH":3.9,"dcMin":30},{"model":"G6 Long Range","brand":"Xpeng","kwh":87.5,"chem":"NMC","kw":210,"ac":11,"dc":280,"rng":570,"whkm":175,"kmkwh":5.71,"seg":"SUV","boot":571,"len":4753,"v2l":true,"tax":2147,"ves":"A","vesAmt":-22500,"co2":70,"catA":false,"eHome":840,"ePub":1444,"acH":5.6,"dcMin":21},{"model":"X9","brand":"Xpeng","kwh":84.5,"chem":"NMC","kw":235,"ac":11,"dc":260,"rng":640,"whkm":190,"kmkwh":5.26,"seg":"MPV","boot":693,"len":5293,"v2l":true,"tax":3163,"ves":"A","vesAmt":-22500,"co2":76,"catA":false,"eHome":912,"ePub":1568,"acH":5.4,"dcMin":22},{"model":"X","brand":"Zeekr","kwh":66.0,"chem":"NMC","kw":200,"ac":11,"dc":150,"rng":440,"whkm":172,"kmkwh":5.81,"seg":"SUV","boot":362,"len":4432,"v2l":true,"tax":2088,"ves":"A","vesAmt":-22500,"co2":69,"catA":false,"eHome":826,"ePub":1419,"acH":4.2,"dcMin":30},{"model":"001 RWD","brand":"Zeekr","kwh":100.0,"chem":"NMC","kw":200,"ac":11,"dc":200,"rng":620,"whkm":181,"kmkwh":5.52,"seg":"Wagon","boot":539,"len":4977,"v2l":true,"tax":2088,"ves":"A","vesAmt":-22500,"co2":72,"catA":false,"eHome":869,"ePub":1493,"acH":6.4,"dcMin":34},{"model":"7X RWD","brand":"Zeekr","kwh":100.0,"chem":"NMC","kw":310,"ac":11,"dc":360,"rng":615,"whkm":178,"kmkwh":5.62,"seg":"SUV","boot":616,"len":4787,"v2l":true,"tax":4336,"ves":"A","vesAmt":-22500,"co2":71,"catA":false,"eHome":854,"ePub":1469,"acH":6.4,"dcMin":19},{"model":"iX1 eDrive20","brand":"BMW","kwh":64.8,"chem":"NMC","kw":150,"ac":11,"dc":130,"rng":475,"whkm":155,"kmkwh":6.45,"seg":"SUV","boot":490,"len":4500,"v2l":false,"tax":1795,"ves":"A","vesAmt":-22500,"co2":62,"catA":false,"eHome":744,"ePub":1279,"acH":4.1,"dcMin":34},{"model":"i4 eDrive35","brand":"BMW","kwh":67.1,"chem":"NMC","kw":210,"ac":11,"dc":180,"rng":490,"whkm":158,"kmkwh":6.33,"seg":"Sedan","boot":470,"len":4785,"v2l":false,"tax":2147,"ves":"A","vesAmt":-22500,"co2":63,"catA":false,"eHome":758,"ePub":1304,"acH":4.3,"dcMin":25},{"model":"EQA 250+","brand":"Mercedes","kwh":70.5,"chem":"NMC","kw":140,"ac":11,"dc":100,"rng":560,"whkm":149,"kmkwh":6.71,"seg":"SUV","boot":340,"len":4463,"v2l":false,"tax":1736,"ves":"A","vesAmt":-22500,"co2":60,"catA":false,"eHome":715,"ePub":1229,"acH":4.5,"dcMin":48},{"model":"CLA 250+","brand":"Mercedes","kwh":85.0,"chem":"NMC","kw":200,"ac":11,"dc":320,"rng":792,"whkm":122,"kmkwh":8.2,"seg":"Sedan","boot":405,"len":4723,"v2l":true,"tax":2088,"ves":"A","vesAmt":-22500,"co2":49,"catA":false,"eHome":586,"ePub":1007,"acH":5.4,"dcMin":18},{"model":"EQE 350+","brand":"Mercedes","kwh":90.6,"chem":"NMC","kw":215,"ac":11,"dc":170,"rng":639,"whkm":159,"kmkwh":6.29,"seg":"Sedan","boot":430,"len":4946,"v2l":false,"tax":2176,"ves":"A","vesAmt":-22500,"co2":64,"catA":false,"eHome":763,"ePub":1312,"acH":5.8,"dcMin":36},{"model":"EX30 Single ER","brand":"Volvo","kwh":69.0,"chem":"NMC","kw":200,"ac":11,"dc":153,"rng":476,"whkm":167,"kmkwh":5.99,"seg":"SUV","boot":318,"len":4233,"v2l":false,"tax":2088,"ves":"A","vesAmt":-22500,"co2":67,"catA":false,"eHome":802,"ePub":1378,"acH":4.4,"dcMin":31},{"model":"4 Long Range","brand":"Polestar","kwh":100.0,"chem":"NMC","kw":200,"ac":11,"dc":200,"rng":620,"whkm":177,"kmkwh":5.65,"seg":"SUV","boot":526,"len":4840,"v2l":false,"tax":2088,"ves":"A","vesAmt":-22500,"co2":71,"catA":false,"eHome":850,"ePub":1460,"acH":6.4,"dcMin":34},{"model":"Taycan RWD","brand":"Porsche","kwh":89.0,"chem":"NMC","kw":300,"ac":11,"dc":320,"rng":590,"whkm":175,"kmkwh":5.71,"seg":"Sedan","boot":407,"len":5063,"v2l":false,"tax":4180,"ves":"A","vesAmt":-22500,"co2":70,"catA":false,"eHome":840,"ePub":1444,"acH":5.7,"dcMin":19},{"model":"Macan 4","brand":"Porsche","kwh":95.0,"chem":"NMC","kw":300,"ac":11,"dc":270,"rng":613,"whkm":179,"kmkwh":5.59,"seg":"SUV","boot":540,"len":4784,"v2l":false,"tax":4180,"ves":"A","vesAmt":-22500,"co2":72,"catA":false,"eHome":859,"ePub":1477,"acH":6.0,"dcMin":24},{"model":"Aion Y Plus","brand":"GAC","kwh":63.2,"chem":"LFP","kw":150,"ac":7,"dc":90,"rng":430,"whkm":160,"kmkwh":6.25,"seg":"SUV","boot":410,"len":4535,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":64,"catA":false,"eHome":768,"ePub":1320,"acH":6.3,"dcMin":48},{"model":"Aion UT Premium","brand":"GAC","kwh":50.0,"chem":"LFP","kw":100,"ac":7,"dc":90,"rng":410,"whkm":141,"kmkwh":7.09,"seg":"Hatch","boot":440,"len":4270,"v2l":true,"tax":1502,"ves":"A","vesAmt":-22500,"co2":56,"catA":true,"eHome":677,"ePub":1163,"acH":5.0,"dcMin":38},{"model":"Omoda E5","brand":"Chery","kwh":61.0,"chem":"LFP","kw":150,"ac":7,"dc":80,"rng":430,"whkm":155,"kmkwh":6.45,"seg":"SUV","boot":380,"len":4424,"v2l":true,"tax":1795,"ves":"A","vesAmt":-22500,"co2":62,"catA":false,"eHome":744,"ePub":1279,"acH":6.1,"dcMin":52},{"model":"11","brand":"Avatr","kwh":90.0,"chem":"NMC","kw":230,"ac":11,"dc":240,"rng":600,"whkm":178,"kmkwh":5.62,"seg":"SUV","boot":450,"len":4880,"v2l":true,"tax":2264,"ves":"A","vesAmt":-22500,"co2":71,"catA":false,"eHome":854,"ePub":1469,"acH":5.7,"dcMin":25},{"model":"Box","brand":"Dongfeng","kwh":42.3,"chem":"LFP","kw":70,"ac":7,"dc":70,"rng":330,"whkm":151,"kmkwh":6.62,"seg":"Hatch","boot":326,"len":4020,"v2l":true,"tax":1326,"ves":"A","vesAmt":-22500,"co2":60,"catA":true,"eHome":725,"ePub":1246,"acH":4.2,"dcMin":41},{"model":"Vigo","brand":"Dongfeng","kwh":64.2,"chem":"LFP","kw":99,"ac":7,"dc":85,"rng":450,"whkm":158,"kmkwh":6.33,"seg":"SUV","boot":500,"len":4606,"v2l":true,"tax":1496,"ves":"A","vesAmt":-22500,"co2":63,"catA":true,"eHome":758,"ePub":1304,"acH":6.4,"dcMin":51},{"model":"Mifa 9","brand":"Maxus","kwh":90.0,"chem":"NMC","kw":180,"ac":11,"dc":90,"rng":440,"whkm":225,"kmkwh":4.44,"seg":"MPV","boot":466,"len":5270,"v2l":true,"tax":1971,"ves":"A","vesAmt":-22500,"co2":90,"catA":false,"eHome":1080,"ePub":1856,"acH":5.7,"dcMin":68},{"model":"bZ4X","brand":"Toyota","kwh":71.4,"chem":"NMC","kw":150,"ac":11,"dc":150,"rng":516,"whkm":160,"kmkwh":6.25,"seg":"SUV","boot":452,"len":4690,"v2l":false,"tax":1795,"ves":"A","vesAmt":-22500,"co2":64,"catA":false,"eHome":768,"ePub":1320,"acH":4.5,"dcMin":32},{"model":"C10","brand":"Leapmotor","kwh":69.9,"chem":"LFP","kw":160,"ac":7,"dc":84,"rng":420,"whkm":174,"kmkwh":5.75,"seg":"SUV","boot":435,"len":4739,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":70,"catA":false,"eHome":835,"ePub":1436,"acH":7.0,"dcMin":56},{"model":"S07","brand":"Deepal","kwh":79.9,"chem":"LFP","kw":160,"ac":7,"dc":92,"rng":520,"whkm":165,"kmkwh":6.06,"seg":"SUV","boot":445,"len":4750,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":66,"catA":false,"eHome":792,"ePub":1361,"acH":8.0,"dcMin":59},{"model":"EX5","brand":"Geely","kwh":60.2,"chem":"LFP","kw":160,"ac":7,"dc":100,"rng":430,"whkm":156,"kmkwh":6.41,"seg":"SUV","boot":461,"len":4615,"v2l":true,"tax":1853,"ves":"A","vesAmt":-22500,"co2":62,"catA":false,"eHome":749,"ePub":1287,"acH":6.0,"dcMin":41},{"model":"Cooper SE","brand":"Mini","kwh":54.2,"chem":"NMC","kw":160,"ac":11,"dc":95,"rng":402,"whkm":147,"kmkwh":6.8,"seg":"Hatch","boot":210,"len":3858,"v2l":false,"tax":1853,"ves":"A","vesAmt":-22500,"co2":59,"catA":false,"eHome":706,"ePub":1213,"acH":3.4,"dcMin":39}];
+const PET = [{"brand":"Honda","model":"Jazz 1.5","seg":"Hatch","lkm":5.4,"cc":1498,"tier":"mass","tax":683},{"brand":"Toyota","model":"Vios 1.5","seg":"Sedan","lkm":5.5,"cc":1496,"tier":"mass","tax":682},{"brand":"Toyota","model":"Corolla Altis 1.6","seg":"Sedan","lkm":5.9,"cc":1598,"tier":"mass","tax":742},{"brand":"Honda","model":"Civic 1.5 Turbo","seg":"Sedan","lkm":6.4,"cc":1498,"tier":"mass","tax":683},{"brand":"Toyota","model":"Camry 2.5","seg":"Sedan","lkm":6.4,"cc":2487,"tier":"mass","tax":1783},{"brand":"Honda","model":"CR-V 1.5 Turbo","seg":"SUV","lkm":7.6,"cc":1498,"tier":"mass","tax":683},{"brand":"Mazda","model":"CX-5 2.0","seg":"SUV","lkm":7.9,"cc":1998,"tier":"mass","tax":1210},{"brand":"Honda","model":"Odyssey 2.4","seg":"MPV","lkm":8.1,"cc":2356,"tier":"mass","tax":1630},{"brand":"Toyota","model":"Alphard 2.5","seg":"MPV","lkm":9.6,"cc":2487,"tier":"mass","tax":1783},{"brand":"Skoda","model":"Octavia 1.5 TSI","seg":"Wagon","lkm":5.6,"cc":1498,"tier":"mass","tax":683},{"brand":"BMW","model":"320i","seg":"Sedan","lkm":6.8,"cc":1998,"tier":"premium","tax":1210},{"brand":"Mercedes","model":"C200","seg":"Sedan","lkm":7.0,"cc":1991,"tier":"premium","tax":1202},{"brand":"BMW","model":"X3 xDrive20i","seg":"SUV","lkm":8.0,"cc":1998,"tier":"premium","tax":1210},{"brand":"Porsche","model":"Macan","seg":"SUV","lkm":9.6,"cc":1984,"tier":"premium","tax":1193}];
+const POPULAR = ["Atto 3","Sealion 7 Dynamic","Seal Premium RWD","Model Y RWD","Model 3 RWD","Ioniq 5 84kWh","Ioniq 6 77kWh","EV6 84kWh","4 Long Range","X"];
+const C = {blue:'#22C8C8',navy:'#08244B',slate:'#345A7D',green:'#32D17B',yellow:'#FFB648',red:'#E5484D',cyan:'#00A9B8',sec:'#5B6470'};
+const $ = s => document.querySelector(s);
+const fmt = n => Math.round(n).toLocaleString('en-SG');
+const nm = r => r.brand+' '+r.model;
+
+// petrol price: pump vs typical card-discount rate, per motorist.sg today
+const PETROL_PRICE = { pump: 3.46, card: 2.77 };
+const PET_CO2_PER_L = 2.31;   // kg CO2 / litre, standard combustion factor
+const GRID_CO2_PER_KWH = 0.408; // kg CO2 / kWh, SG grid average
+const TREE_KG_YR = 21; // kg CO2 absorbed per mature tree per year (commonly cited estimate)
+
+let evIdx = EV.findIndex(r=>r.model==='Atto 3'), petIdx = 0, autoMatch = true;
+let chargeKw = 7, chargeFrom = 20, chargeTo = 80, tariff = 0.32;
+let km = 15000, petrolMode = 'pump';
+
+function ev(){ return EV[evIdx]; }
+function pet(){ return PET[petIdx]; }
+
+function matchPetrol(){
+  const seg = ev().seg;
+  const i = PET.findIndex(p=>p.seg===seg);
+  petIdx = i>=0 ? i : 0;
+}
+
+// ---------- EV swipe picker ----------
+function evPicker(){
+  const pop = POPULAR.map(m=>EV.findIndex(r=>r.model===m)).filter(i=>i>=0);
+  $('#evSwipe').innerHTML = pop.map(i=>{
+    const r=EV[i];
+    return `<button class="scard${i===evIdx?' on':''}" data-i="${i}"><div class="ic">🚗</div><div class="nm">${r.brand} ${r.model}</div><div class="sp">${r.kwh} kWh · ${r.kmkwh} km/kWh</div></button>`;
+  }).join('');
+  $('#evSel').innerHTML = EV.map((r,i)=>`<option value="${i}" ${i===evIdx?'selected':''}>${nm(r)} — ${r.seg}</option>`).join('');
+}
+$('#evSwipe').addEventListener('click', e=>{ const b=e.target.closest('.scard'); if(!b) return; evIdx=+b.dataset.i; if(autoMatch) matchPetrol(); render(); });
+$('#evSel').addEventListener('change', e=>{ evIdx=+e.target.value; if(autoMatch) matchPetrol(); render(); });
+
+// ---------- petrol picker ----------
+function petPicker(){
+  $('#petSel').innerHTML = PET.map((r,i)=>`<option value="${i}" ${i===petIdx?'selected':''}>${nm(r)} — ${r.seg} · ${r.lkm} L/100km</option>`).join('');
+  $('#petSel').disabled = autoMatch;
+  $('#petHelp').innerHTML = autoMatch
+    ? `Auto-matched to <b>${nm(pet())}</b> because it's the same body type (${pet().seg}) as your EV. Uncheck the box to pick any other petrol car.`
+    : `Comparing against a car you chose yourself — not necessarily the same body type as your EV.`;
+}
+$('#autoMatch').addEventListener('change', e=>{ autoMatch=e.target.checked; if(autoMatch) matchPetrol(); render(); });
+$('#petSel').addEventListener('change', e=>{ petIdx=+e.target.value; render(); });
+
+// ---------- shared field-control renderer ----------
+function fields(host, defs){
+  host.innerHTML = '<div class="fields">' + defs.map(f=>{
+    const cur=f.opts.find(o=>o.v===f.cur)||f.opts[0];
+    return `<div class="field"><div class="fl">${f.label}</div><div class="seg">`+
+      f.opts.map(o=>`<button class="${o.v===f.cur?'on':''}" data-g="${f.id}" data-v="${o.v}">${o.t}${o.sub?`<small>${o.sub}</small>`:''}</button>`).join('')+
+      `</div><div class="fh">${cur.help||''}</div></div>`;
+  }).join('')+'</div>';
+}
+function wireCtl(host, fn){ host.onclick = e=>{ const b=e.target.closest('.seg button'); if(!b) return; fn(b.dataset.g,b.dataset.v); render(); }; }
+
+// ---------- section 2: charging cost + time ----------
+function ctlCharge(){
+  fields($('#ctlCharge'), [
+    {id:'kw', label:'Charger output', cur:String(chargeKw), opts:[
+      {v:'3.7',t:'3.7 kW',sub:'Basic point',help:'A standard wall socket.'},
+      {v:'7',t:'7 kW',sub:'Most common',help:'Typical HDB/condo overnight charger.'},
+      {v:'11',t:'11 kW',sub:'Three-phase',help:'A dedicated home or workplace point.'},
+      {v:'50',t:'50 kW DC',sub:'Fast charge',help:'A public DC bay — capped by the onboard limit of the car itself.'}]},
+    {id:'tar', label:'Where you charge', cur:String(tariff), opts:[
+      {v:'0.32',t:'Home',sub:'$0.32/kWh',help:'Residential overnight rate.'},
+      {v:'0.42',t:'Mixed',sub:'$0.42/kWh',help:'70% home / 30% public blend.'},
+      {v:'0.65',t:'Public',sub:'$0.65/kWh',help:'Public DC/AC network rate.'}]},
+  ]);
+}
+function chargeAns(){
+  const r=ev();
+  const dc = chargeKw>22; // DC-style input caps at car's own peak DC rate
+  const eff = dc ? Math.min(chargeKw, r.dc)*0.62 : Math.min(chargeKw, r.ac);
+  const kwhAdd = r.kwh*(chargeTo-chargeFrom)/100;
+  const hrs = kwhAdd/eff;
+  const mins = Math.round(hrs*60);
+  const cost = kwhAdd*tariff;
+  const timeStr = mins>=60 ? (Math.floor(mins/60)+'h '+(mins%60)+'m') : mins+' min';
+  $('#chargeAns').innerHTML = `
+    <div class="ro-top"><span class="ro-big">${timeStr}</span></div>
+    <div class="ro-sub">${nm(r)} · ${chargeFrom}% → ${chargeTo}% at ${chargeKw} kW${dc?' DC':''} (effective ${eff.toFixed(1)} kW after the car's own limit)</div>
+    <div class="ro-facts">
+      <div class="ro-fact"><span>Energy added</span><b>${kwhAdd.toFixed(1)} kWh</b></div>
+      <div class="ro-fact"><span>Cost of this charge</span><b>$${cost.toFixed(2)}</b></div>
+      <div class="ro-fact"><span>Cost per 100 km after this charge</span><b>$${(r.whkm/10*tariff).toFixed(2)}</b></div>
+    </div>`;
+}
+function chargeSliders(){
+  // build once; keep in DOM, just sync values on each render
+  if(!$('#chFrom')){
+    const host=$('#ctlCharge');
+    const div=document.createElement('div');
+    div.style.cssText='margin-top:18px;padding-top:16px;border-top:1px solid var(--border)';
+    div.innerHTML=`
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--secondary);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">
+        <span>Charge from <b id="chFromV" style="color:var(--ink)">${chargeFrom}%</b></span>
+        <span>to <b id="chToV" style="color:var(--ink)">${chargeTo}%</b></span>
+      </div>
+      <input type="range" id="chFrom" min="0" max="95" step="5" value="${chargeFrom}" style="width:100%">
+      <input type="range" id="chTo" min="5" max="100" step="5" value="${chargeTo}" style="width:100%;margin-top:8px">`;
+    host.appendChild(div);
+    $('#chFrom').oninput = e=>{ chargeFrom=Math.min(+e.target.value, chargeTo-5); $('#chFrom').value=chargeFrom; $('#chFromV').textContent=chargeFrom+'%'; chargeAns(); };
+    $('#chTo').oninput = e=>{ chargeTo=Math.max(+e.target.value, chargeFrom+5); $('#chTo').value=chargeTo; $('#chToV').textContent=chargeTo+'%'; chargeAns(); };
+  }
+}
+
+// ---------- section 3: annual driving ----------
+function ctlAnnual(){
+  fields($('#ctlAnnual'), [
+    {id:'km', label:'How far you drive', cur:String(km), opts:[
+      {v:'10000',t:'10,000',sub:'km/yr',help:'Light use.'},
+      {v:'15000',t:'15,000',sub:'km/yr',help:'Singapore average — about 48 km a day.'},
+      {v:'25000',t:'25,000',sub:'km/yr',help:'Heavy commuting or private-hire.'}]},
+    {id:'petm', label:'Petrol price', cur:petrolMode, opts:[
+      {v:'pump', t:'Pump price', sub:'$'+PETROL_PRICE.pump.toFixed(2)+'/L', help:'RON95 average listed pump rate today, before any card discount.'},
+      {v:'card', t:'With card discount', sub:'$'+PETROL_PRICE.card.toFixed(2)+'/L', help:'A typical ~20% fuel-card discount most petrol drivers already use.'}]},
+  ]);
+}
+
+// ---------- core numbers ----------
+function evAnnualCost(){ return ev().whkm/1000*km*tariff; }
+function petAnnualCost(){ return pet().lkm/100*km*PETROL_PRICE[petrolMode]; }
+function evAnnualCO2(){ return ev().whkm/1000*km*GRID_CO2_PER_KWH; }
+function petAnnualCO2(){ return pet().lkm/100*km*PET_CO2_PER_L; }
+
+// ---------- verdict ----------
+function verdict(){
+  const save = petAnnualCost()-evAnnualCost();
+  const co2 = petAnnualCO2()-evAnnualCO2();
+  const pct = Math.round(save/petAnnualCost()*100);
+  const trees = Math.round(co2/TREE_KG_YR);
+  $('#verdict').innerHTML = `
+    <div class="eyebrow">The verdict</div>
+    <div class="big">Switching from a <b>${nm(pet())}</b> to a <b>${nm(ev())}</b> would save you <b>$${fmt(save)}</b> a year in fuel alone — ${pct}% less than what you're paying at the pump now.</div>
+    <div class="sub">Over a typical 10-year COE, that's <b style="color:#8FE3E3">$${fmt(save*10)}</b> back in your pocket and <b style="color:#8FE3E3">${fmt(co2*10/1000)} tonnes</b> of CO₂ that never reaches the atmosphere.</div>
+    <div class="vstats">
+      <div class="vstat"><div class="v">$${fmt(save)}</div><div class="k">saved every year</div></div>
+      <div class="vstat"><div class="v">${fmt(co2)} kg</div><div class="k">CO₂ avoided a year</div></div>
+      <div class="vstat"><div class="v">${trees}</div><div class="k">trees' worth of CO₂, every year</div></div>
+      <div class="vstat"><div class="v">${pct}%</div><div class="k">cheaper to run than petrol</div></div>
+    </div>`;
+}
+
+// ---------- comparison bars ----------
+function cmpBars(hostId, aLabel, aVal, aUnit, bLabel, bVal, bUnit, colA, colB){
+  const max = Math.max(aVal, bVal)*1.05;
+  const w = v => Math.max(6, v/max*100);
+  $('#'+hostId).innerHTML = `
+    <div class="cmprow"><div class="lab">${aLabel}</div><div class="track"><div class="fill" style="width:${w(aVal)}%;background:${colA}">${aUnit}</div></div><div class="amt">${aVal.toFixed(aVal<50?2:0).toLocaleString?.() ?? aVal}</div></div>
+    <div class="cmprow"><div class="lab">${bLabel}</div><div class="track"><div class="fill" style="width:${w(bVal)}%;background:${colB}">${bUnit}</div></div><div class="amt">${bVal.toFixed(bVal<50?2:0).toLocaleString?.() ?? bVal}</div></div>`;
+}
+
+function cmpCost(){
+  const e=evAnnualCost(), p=petAnnualCost();
+  const max=Math.max(e,p)*1.05, w=v=>Math.max(8,v/max*100);
+  $('#cmpCost').innerHTML = `
+    <div class="cmprow"><div class="lab">${nm(ev())}</div><div class="track"><div class="fill" style="width:${w(e)}%;background:${C.blue}">$${fmt(e)}/yr</div></div><div class="amt">$${fmt(e)}</div></div>
+    <div class="cmprow"><div class="lab">${nm(pet())}</div><div class="track"><div class="fill" style="width:${w(p)}%;background:${C.slate}">$${fmt(p)}/yr</div></div><div class="amt">$${fmt(p)}</div></div>`;
+}
+function cmpCO2(){
+  const e=evAnnualCO2(), p=petAnnualCO2();
+  const max=Math.max(e,p)*1.05, w=v=>Math.max(8,v/max*100);
+  $('#cmpCO2').innerHTML = `
+    <div class="cmprow"><div class="lab">${nm(ev())}</div><div class="track"><div class="fill" style="width:${w(e)}%;background:${C.green}">${fmt(e)} kg/yr</div></div><div class="amt">${fmt(e)} kg</div></div>
+    <div class="cmprow"><div class="lab">${nm(pet())}</div><div class="track"><div class="fill" style="width:${w(p)}%;background:${C.red}">${fmt(p)} kg/yr</div></div><div class="amt">${fmt(p)} kg</div></div>`;
+  const saved=p-e;
+  $('#eqrow').innerHTML = `
+    <div class="eq"><div class="em">🌳</div><div class="v">${fmt(saved/TREE_KG_YR)} trees</div><div class="k">worth of CO₂ absorption, every year</div></div>
+    <div class="eq"><div class="em">📦</div><div class="v">${fmt(saved*10/1000)} tonnes</div><div class="k">avoided over a 10-year COE</div></div>
+    <div class="eq"><div class="em">⛽</div><div class="v">${fmt(saved/PET_CO2_PER_L)} L</div><div class="k">of petrol never burned, every year</div></div>`;
+}
+
+function methodology(){
+  $('#methodology').innerHTML = `Petrol priced at ${petrolMode==='pump'?'the average pump rate today':'a typical ~20% card-discounted rate'} ($${PETROL_PRICE[petrolMode].toFixed(2)}/L, RON95, motorist.sg) · electricity at $${tariff.toFixed(2)}/kWh · CO₂ factors: petrol 2.31 kg/L combustion, Singapore grid 0.408 kg/kWh · tree absorption assumed at 21 kg CO₂/year per mature tree. Fuel-consumption and efficiency figures are manufacturer/WLTP and vary with driving style.`;
+}
+
+function render(){
+  evPicker(); petPicker();
+  ctlCharge(); chargeSliders(); chargeAns();
+  ctlAnnual();
+  verdict(); cmpCost(); cmpCO2(); methodology();
+}
+wireCtl($('#ctlCharge'), (g,v)=>{ if(g==='kw')chargeKw=+v; if(g==='tar')tariff=+v; });
+wireCtl($('#ctlAnnual'), (g,v)=>{ if(g==='km')km=+v; if(g==='petm')petrolMode=v; });
+matchPetrol();
+render();
+</script></body></html>
