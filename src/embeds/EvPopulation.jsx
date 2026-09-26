@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   LineChart, Line, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList,
 } from 'recharts';
@@ -114,8 +114,25 @@ export default function EvPopulation() {
   const segBox= { display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` };
   const selBox= { padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 14, fontWeight: 600, background: CARD, color: INK };
 
+  // Notify the parent window (e.g. a Wix "Embed Code" element) of this page's actual
+  // rendered height, so the parent can resize its container to match exactly —
+  // avoids a leftover gap or double scrollbars when filters change how much
+  // content is shown.
+  const wmfEmbedRef = useRef(null);
+  useEffect(() => {
+    const el = wmfEmbedRef.current;
+    if (!el || typeof window === 'undefined' || typeof ResizeObserver === 'undefined') return;
+    const sendHeight = () => {
+      window.parent.postMessage({ type: 'wmf-resize', height: el.scrollHeight }, '*');
+    };
+    sendHeight();
+    const ro = new ResizeObserver(sendHeight);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <div className="wmf-embed-wrap" style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK }}>
+    <div ref={wmfEmbedRef} className="wmf-embed-wrap" style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
         * { box-sizing: border-box; }
