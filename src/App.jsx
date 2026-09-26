@@ -766,6 +766,37 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
     </div>
   );
 
+  // Collapsed-by-default methodology/source notes, expanded on click.
+  // Mirrors the "chevron to reveal notes" pattern used on IEA's report pages —
+  // keeps the chart itself clean while still making the full footnote available.
+  // padX: horizontal padding for the toggle + revealed text.
+  // bleed: set to the ancestor's own padding when this sits inside an already-padded
+  // card, so the divider line and hit-area stretch edge-to-edge instead of double-indenting.
+  const ChartNotes = ({ children, label = 'Notes & sources', style, padX = 20, bleed = 0 }) => {
+    const [open, setOpen] = useState(false);
+    return (
+      <div style={{ borderTop: `1px solid ${BORDER}`, marginLeft: -bleed, marginRight: -bleed, ...style }}>
+        <button
+          onClick={() => setOpen(o => !o)}
+          aria-expanded={open}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6, width: '100%', padding: `10px ${padX}px`,
+            background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left',
+            fontSize: 12, fontWeight: 600, color: SECONDARY,
+          }}
+        >
+          <span style={{ display: 'inline-block', transition: 'transform 0.15s', transform: open ? 'rotate(90deg)' : 'rotate(0deg)', fontSize: 10 }}>▶</span>
+          {label}
+        </button>
+        {open && (
+          <div style={{ padding: `0 ${padX}px 14px`, fontSize: 12, color: SECONDARY, lineHeight: 1.6 }}>
+            {children}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const SectionHead = ({ chip, title, subtitle, chipColor }) => (
     <div style={{ marginBottom: 32 }}>
       {chip && <SectionLabel text={chip} color={chipColor || BLUE} />}
@@ -971,17 +1002,19 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
     }, []);
 
     return (
-      <div ref={wmfEmbedRef} style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 20 }}>
+      <div ref={wmfEmbedRef} className="wmf-embed-wrap" style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
           * { box-sizing: border-box; }
           body { margin: 0; background: transparent; }
+          .wmf-embed-wrap { max-width: 1180px; margin: 0 auto; padding: 24px 32px 56px; }
+          @media (max-width: 720px) { .wmf-embed-wrap { padding: 20px 16px 40px; } }
         `}</style>
 
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: BLUE, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>World Mobility Forum</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: BLUE, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>World Mobility Forum</div>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: INK, margin: 0 }}>EV brand performance by vehicle type.</h2>
-          <p style={{ fontSize: 13, color: SECONDARY, margin: '4px 0 0' }}>Source: LTA M03 / M08 - New registrations, Jan-Jul 2026</p>
+          <p style={{ fontSize: 14, color: SECONDARY, margin: '4px 0 0' }}>Source: LTA M03 / M08 - New registrations, Jan-Jul 2026</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 10, marginBottom: 20 }}>
@@ -989,9 +1022,9 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
             const pct = ((v.ev / v.totalNew) * 100).toFixed(1);
             return (
               <div key={v.type} style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 14, padding: '14px 16px' }}>
-                <div style={{ fontSize: 11, color: SECONDARY, fontWeight: 600, marginBottom: 6 }}>{v.type}</div>
+                <div style={{ fontSize: 13, color: SECONDARY, fontWeight: 600, marginBottom: 6 }}>{v.type}</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: INK, fontFamily: "'Google Sans Flex',sans-serif" }}>{v.ev.toLocaleString()} units</div>
-                <div style={{ fontSize: 11, color: BLUE, fontWeight: 700, marginTop: 4 }}>{pct}% of all new registrations</div>
+                <div style={{ fontSize: 13, color: BLUE, fontWeight: 700, marginTop: 4 }}>{pct}% of all new registrations</div>
               </div>
             );
           })}
@@ -1002,12 +1035,12 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
             { id: 'cars', label: 'Cars' }, { id: 'motorcycle', label: 'Motorcycle' },
             { id: 'lgv', label: 'LGV' }, { id: 'hgv', label: 'HGV' }, { id: 'vhgv', label: 'VHGV' }, { id: 'bus', label: 'Bus' },
           ].map(t => (
-            <button key={t.id} onClick={() => setActiveBrandFilter(t.id)} style={{ padding: '8px 14px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: activeBrandFilter === t.id ? BLUE : 'transparent', color: activeBrandFilter === t.id ? NAVY : SECONDARY }}>{t.label}</button>
+            <button key={t.id} onClick={() => setActiveBrandFilter(t.id)} style={{ padding: '8px 14px', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, background: activeBrandFilter === t.id ? BLUE : 'transparent', color: activeBrandFilter === t.id ? NAVY : SECONDARY }}>{t.label}</button>
           ))}
         </div>
 
         {segBrands.length === 0 ? (
-          <div style={{ background: YELLOW_LIGHT, borderRadius: 16, padding: 24, fontSize: 13, color: INK }}>
+          <div style={{ background: YELLOW_LIGHT, borderRadius: 16, padding: 24, fontSize: 14, color: INK }}>
             LTA does not publish brand-level registration data for this vehicle category. Fleet-level totals are shown in the highlight box above.
           </div>
         ) : (() => {
@@ -1035,20 +1068,20 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
               <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 20 }}>
                 <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
                   {[{id:'top10',l:'Top 10'},{id:'top20',l:'Top 20'},{id:'all',l:'All'}].map(f => (
-                    <button key={f.id} onClick={() => setBrandLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: brandLimit === f.id ? NAVY : 'transparent', color: brandLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
+                    <button key={f.id} onClick={() => setBrandLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, background: brandLimit === f.id ? NAVY : 'transparent', color: brandLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
                   ))}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
-                  <select value={brandRangeFrom} onChange={e => setBrandRangeFrom(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
+                  <select value={brandRangeFrom} onChange={e => setBrandRangeFrom(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 14, fontWeight: 600, background: CARD, color: INK }}>
                     {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
                   </select>
-                  <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
-                  <select value={brandRangeTo} onChange={e => setBrandRangeTo(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                  <span style={{ fontSize: 14, color: SECONDARY }}>to</span>
+                  <select value={brandRangeTo} onChange={e => setBrandRangeTo(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 14, fontWeight: 600, background: CARD, color: INK }}>
                     {monthOrder.map(m => <option key={m} value={m}>{m.charAt(0).toUpperCase()+m.slice(1)}</option>)}
                   </select>
                 </div>
-                <span style={{ fontSize: 11, color: SECONDARY }}>Showing {limited.length} of {segBrands.length} brands · {rangeLabel} 2026</span>
+                <span style={{ fontSize: 13, color: SECONDARY }}>Showing {limited.length} of {segBrands.length} brands · {rangeLabel} 2026</span>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 16, marginBottom: 20 }}>
@@ -1058,7 +1091,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
               </div>
 
               <div style={{ background: CARD, borderRadius: 20, padding: 24, border: `1px solid ${BORDER}`, marginBottom: 20 }}>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 16px' }}>Monthly registration trend {'\u2014'} {rangeLabel} 2026</h3>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: '0 0 16px' }}>Monthly registration trend {'\u2014'} {rangeLabel} 2026</h3>
                 <ResponsiveContainer width="100%" height={280}>
                   <LineChart data={rangeMonths.map((m,idx) => {
                     const row = { month: rangeLabels[idx] };
@@ -1066,8 +1099,8 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
                     return row;
                   })}>
                     <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
-                    <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
-                    <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
+                    <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false}/>
+                    <YAxis stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false}/>
                     <Tooltip content={<GoogleTooltip/>}/>
                     {limited.map((b,i) => (
                       <Line key={b.brand} type="monotone" dataKey={b.brand} stroke={[BLUE,NAVY,SLATE,DEEP_CYAN,'#6B93B0','#1A8A94',GREEN,YELLOW,'#8B5CF6','#E36414','#5B7DB1','#2E8B7A','#B0416E','#4A6741','#9B59B6','#16A085','#D35400','#7F8C8D','#2980B9','#C0392B'][i % 20]} strokeWidth={2} dot={{ r: 2 }}/>
@@ -1078,11 +1111,11 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
 
               <div style={{ background: CARD, borderRadius: 20, border: `1px solid ${BORDER}`, overflow: 'hidden', marginBottom: 20 }}>
                 <div style={{ padding: '16px 20px', borderBottom: `1px solid ${BORDER}`, background: SURFACE }}>
-                  <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: 0 }}>Monthly breakdown by brand {'\u2014'} {rangeLabel} 2026</h3>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: 0 }}>Monthly breakdown by brand {'\u2014'} {rangeLabel} 2026</h3>
                 </div>
                  <div style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: 520 }}>
-                  <table style={{ width: '100%', minWidth: 500 + rangeMonths.length * 70, borderCollapse: 'collapse', fontSize: 13 }}>
-                    <thead><tr style={{ background: SURFACE }}>{['#','Brand', ...rangeLabels, 'Total'].map((h,i) => (<th key={h+i} style={{ padding: '10px 14px', textAlign: i>1?'right':'left', fontSize: 11, fontWeight: 600, color: SECONDARY, borderBottom: `2px solid ${BORDER}` }}>{h}</th>))}</tr></thead>
+                  <table style={{ width: '100%', minWidth: 500 + rangeMonths.length * 70, borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead><tr style={{ background: SURFACE }}>{['#','Brand', ...rangeLabels, 'Total'].map((h,i) => (<th key={h+i} style={{ padding: '10px 14px', textAlign: i>1?'right':'left', fontSize: 13, fontWeight: 600, color: SECONDARY, borderBottom: `2px solid ${BORDER}` }}>{h}</th>))}</tr></thead>
                     <tbody>
                       {limited.map((b,i) => (
                         <tr key={b.brand} style={{ borderBottom: `1px solid ${BORDER}`, background: i%2?SURFACE:CARD }}>
@@ -1098,16 +1131,16 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
               </div>
 
               <div style={{ background: CARD, borderRadius: 20, padding: 24, border: `1px solid ${BORDER}` }}>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>Accumulative total by brand</h3>
-                <p style={{ fontSize: 12, color: SECONDARY, margin: '0 0 16px' }}>{rangeLabel} 2026, all brand names shown in full</p>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: '0 0 4px' }}>Accumulative total by brand</h3>
+                <p style={{ fontSize: 14, color: SECONDARY, margin: '0 0 16px' }}>{rangeLabel} 2026, all brand names shown in full</p>
                 <ResponsiveContainer width="100%" height={Math.max(240, limited.length * 32)}>
                   <BarChart data={limited} layout="vertical" margin={{ left: 8, right: 64 }}>
                     <CartesianGrid stroke={BORDER} horizontal={false} strokeDasharray="3 6"/>
-                    <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
-                    <YAxis type="category" dataKey="brand" stroke={INK} tick={{ fontSize: 12, fontWeight: 700 }} width={130} interval={0} axisLine={false} tickLine={false}/>
+                    <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false}/>
+                    <YAxis type="category" dataKey="brand" stroke={INK} tick={{ fontSize: 14, fontWeight: 700 }} width={130} interval={0} axisLine={false} tickLine={false}/>
                     <Tooltip content={<GoogleTooltip/>} cursor={{ fill: BLUE_LIGHT }}/>
                     <Bar dataKey="rangeUnit" name={`${rangeLabel} units`} radius={[0,8,8,0]} fill={BLUE}>
-                      <LabelList dataKey="rangeUnit" position="right" formatter={(v) => v.toLocaleString()} style={{ fontSize: 12, fontWeight: 700, fill: INK }}/>
+                      <LabelList dataKey="rangeUnit" position="right" formatter={(v) => v.toLocaleString()} style={{ fontSize: 14, fontWeight: 700, fill: INK }}/>
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
@@ -1197,10 +1230,10 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
             if (!row) return null;
             return (
               <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '12px 14px', boxShadow: '0 4px 16px rgba(8,36,75,0.10)' }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: INK, marginBottom: 2 }}>{label}</div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: BLUE, marginBottom: 8 }}>{row.total.toLocaleString()} EVs {'·'} {yearLabel}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: INK, marginBottom: 2 }}>{label}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: BLUE, marginBottom: 8 }}>{row.total.toLocaleString()} EVs {'·'} {yearLabel}</div>
                 {bands.map(b => (
-                  <div key={b.key} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: SECONDARY, marginTop: 3 }}>
+                  <div key={b.key} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: SECONDARY, marginTop: 3 }}>
                     <span style={{ width: 9, height: 9, borderRadius: 2, background: b.color, flexShrink: 0 }}/>
                     <span style={{ flex: 1 }}>{b.label}</span>
                     <span style={{ fontWeight: 700, color: INK }}>{row[b.key].toLocaleString()}</span>
@@ -1213,10 +1246,10 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
 
           return (
             <div style={{ background: CARD, borderRadius: 20, padding: 24, border: `1px solid ${BORDER}`, marginTop: 20 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: '0 0 4px' }}>
                 Cumulative EV car registrations by make {'—'} {yearLabel}
               </h3>
-              <p style={{ fontSize: 12, color: SECONDARY, margin: '0 0 16px', lineHeight: 1.5 }}>
+              <p style={{ fontSize: 14, color: SECONDARY, margin: '0 0 16px', lineHeight: 1.5 }}>
                 Bar length is every pure-electric car each make registered in the selected years; colour shows which year.
                 {' '}<strong style={{ color: INK }}>{grandTotal.toLocaleString()}</strong> cars across {ranked.length} makes
                 {fullRange ? ', covering 92% of the 69,190 EV cars in the fleet today' : ''}
@@ -1226,16 +1259,16 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
               <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}>
                 <div style={{ display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` }}>
                   {[{id:'top10',l:'Top 10'},{id:'top20',l:'Top 20'},{id:'all',l:'All'}].map(f => (
-                    <button key={f.id} onClick={() => setLifeLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, background: lifeLimit === f.id ? NAVY : 'transparent', color: lifeLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
+                    <button key={f.id} onClick={() => setLifeLimit(f.id)} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, background: lifeLimit === f.id ? NAVY : 'transparent', color: lifeLimit === f.id ? '#fff' : SECONDARY }}>{f.l}</button>
                   ))}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>Years:</span>
-                  <select value={lifeFrom} onChange={e => setLifeFrom(Number(e.target.value))} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: SECONDARY }}>Years:</span>
+                  <select value={lifeFrom} onChange={e => setLifeFrom(Number(e.target.value))} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 14, fontWeight: 600, background: CARD, color: INK }}>
                     {ALL_BANDS.map(b => <option key={b.year} value={b.year}>{b.year}</option>)}
                   </select>
-                  <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
-                  <select value={lifeTo} onChange={e => setLifeTo(Number(e.target.value))} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK }}>
+                  <span style={{ fontSize: 14, color: SECONDARY }}>to</span>
+                  <select value={lifeTo} onChange={e => setLifeTo(Number(e.target.value))} style={{ padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 14, fontWeight: 600, background: CARD, color: INK }}>
                     {ALL_BANDS.map(b => <option key={b.year} value={b.year}>{b.year}</option>)}
                   </select>
                 </div>
@@ -1243,11 +1276,11 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
                   {bands.map(b => (
                     <div key={b.key} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <span style={{ width: 11, height: 11, borderRadius: 3, background: b.color }}/>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: SECONDARY }}>{b.label}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: SECONDARY }}>{b.label}</span>
                     </div>
                   ))}
                 </div>
-                <span style={{ fontSize: 11, color: SECONDARY }}>
+                <span style={{ fontSize: 13, color: SECONDARY }}>
                   Showing top {shown.length} of {ranked.length} makes
                 </span>
               </div>
@@ -1255,27 +1288,27 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
               <ResponsiveContainer width="100%" height={Math.max(300, shown.length * 34 + 40)}>
                 <BarChart data={shown} layout="vertical" margin={{ left: 8, right: 76, top: 4, bottom: 4 }}>
                   <CartesianGrid stroke={BORDER} horizontal={false} strokeDasharray="3 6"/>
-                  <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v.toLocaleString()}/>
-                  <YAxis type="category" dataKey="brand" stroke={INK} tick={{ fontSize: 12, fontWeight: 600 }} width={104} axisLine={false} tickLine={false}/>
+                  <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false} tickFormatter={v => v.toLocaleString()}/>
+                  <YAxis type="category" dataKey="brand" stroke={INK} tick={{ fontSize: 14, fontWeight: 600 }} width={128} axisLine={false} tickLine={false}/>
                   <Tooltip content={<LifeTooltip/>} cursor={{ fill: BLUE_LIGHT }}/>
                   {bands.map((b, i) => (
                     <Bar key={b.key} dataKey={b.key} name={b.label} stackId="life" fill={b.color}
                          radius={i === bands.length - 1 ? [0,8,8,0] : [0,0,0,0]}>
                       {i === bands.length - 1 && (
                         <LabelList dataKey="total" position="right" formatter={v => v.toLocaleString()}
-                                   style={{ fontSize: 12, fontWeight: 700, fill: INK }}/>
+                                   style={{ fontSize: 14, fontWeight: 700, fill: INK }}/>
                       )}
                     </Bar>
                   ))}
                 </BarChart>
               </ResponsiveContainer>
 
-              <p style={{ fontSize: 10, color: SECONDARY, margin: '14px 0 0', lineHeight: 1.6 }}>
+              <ChartNotes style={{ marginTop: 14 }} bleed={24} padX={24}>
                 Cumulative new registrations of pure-electric cars, not the registered fleet: vehicles registered before 2023 and those
                 since deregistered are excluded. Authorised-dealer and parallel-import volumes are combined. Ranking and the Top 10 / 20 / All cut both recalculate for the
                 selected years. 2023{'–'}2025 from LTA Annual Vehicle Statistics (MVP02-2, new cars by make); 2026 from LTA Monthly
                 Vehicle Statistics (M03), Jan{'–'}Jul.
-              </p>
+              </ChartNotes>
             </div>
           );
         })()}
@@ -1688,9 +1721,9 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
                           .slice().sort((a, b) => b.value - a.value);
       return (
         <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '10px 12px', boxShadow: '0 4px 18px rgba(8,36,75,0.14)' }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: INK, marginBottom: 7 }}>{label}</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: INK, marginBottom: 7 }}>{label}</div>
           {rows.map(p => (
-            <div key={p.dataKey} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: SECONDARY, marginTop: 3 }}>
+            <div key={p.dataKey} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: SECONDARY, marginTop: 3 }}>
               <span style={{ width: 9, height: 9, borderRadius: 2, background: p.color, flexShrink: 0 }}/>
               <span style={{ flex: 1, whiteSpace: 'nowrap' }}>{p.name}</span>
               <span style={{ fontWeight: 700, color: INK }}>
@@ -1706,31 +1739,33 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
       <button onClick={onClick} aria-pressed={on} style={{
         display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', background: on ? CARD : SURFACE,
         border: `1px solid ${BORDER}`, borderRadius: 999, padding: '5px 11px 5px 8px',
-        fontSize: 11, fontWeight: 600, color: SECONDARY, opacity: on ? 1 : 0.45 }}>
+        fontSize: 13, fontWeight: 600, color: SECONDARY, opacity: on ? 1 : 0.45 }}>
         <span style={{ width: 10, height: 10, borderRadius: 3, background: on ? color : SECONDARY, flex: 'none' }}/>
         {label}
       </button>
     );
     const ModeBtn = ({ on, label, onClick }) => (
       <button onClick={onClick} style={{ padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer',
-        fontSize: 12, fontWeight: 600, background: on ? NAVY : 'transparent', color: on ? '#fff' : SECONDARY }}>{label}</button>
+        fontSize: 14, fontWeight: 600, background: on ? NAVY : 'transparent', color: on ? '#fff' : SECONDARY }}>{label}</button>
     );
     const panel = { background: CARD, borderRadius: 20, padding: 24, border: `1px solid ${BORDER}` };
-    const subP  = { fontSize: 12, color: SECONDARY, margin: '0 0 16px', lineHeight: 1.5 };
+    const subP  = { fontSize: 14, color: SECONDARY, margin: '0 0 16px', lineHeight: 1.5 };
     const rowF  = { display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center', marginBottom: 14 };
     const segBox= { display: 'flex', gap: 4, background: SURFACE, borderRadius: 10, padding: 4, border: `1px solid ${BORDER}` };
-    const selBox= { padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 12, fontWeight: 600, background: CARD, color: INK };
+    const selBox= { padding: '6px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 14, fontWeight: 600, background: CARD, color: INK };
     return (
-      <div style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK, padding: 16 }}>
+      <div className="wmf-embed-wrap" style={{ background: 'transparent', fontFamily: "'Google Sans Flex', 'Inter', system-ui, sans-serif", color: INK }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
           * { box-sizing: border-box; }
           body { margin: 0; background: transparent; }
+          .wmf-embed-wrap { max-width: 1180px; margin: 0 auto; padding: 24px 32px 56px; }
+          @media (max-width: 720px) { .wmf-embed-wrap { padding: 20px 16px 40px; } }
         `}</style>
 
         <div style={{ marginBottom: 20 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: INK, margin: 0 }}>EV population by vehicle type.</h2>
-          <p style={{ fontSize: 13, color: SECONDARY, margin: '4px 0 0' }}>
+          <p style={{ fontSize: 14, color: SECONDARY, margin: '4px 0 0' }}>
             {pRow('Cars', lastM).bev.toLocaleString()} electric cars of {pRow('Cars', lastM).total.toLocaleString()} {'\u00b7'} as at 31 {lastM} 2026 {'\u00b7'} Source: LTA M09 (monthly) &amp; MVP01-4 (annual)
           </p>
         </div>
@@ -1740,22 +1775,22 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', background: SURFACE, borderRadius: 12, padding: 4, border: `1px solid ${BORDER}`, width: 'fit-content', maxWidth: '100%' }}>
             {POP_VEH.map(v => (
               <button key={v} onClick={() => setPopVeh(v)} style={{ padding: '8px 14px', borderRadius: 9, border: 'none', cursor: 'pointer',
-                fontSize: 12, fontWeight: 600, background: popVeh === v ? BLUE : 'transparent', color: popVeh === v ? NAVY : SECONDARY }}>{v}</button>
+                fontSize: 14, fontWeight: 600, background: popVeh === v ? BLUE : 'transparent', color: popVeh === v ? NAVY : SECONDARY }}>{v}</button>
             ))}
           </div>
 
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: SECONDARY }}>2026 range:</span>
               <select value={popFrom} onChange={e => setPopFrom(e.target.value)} style={selBox}>
                 {POP_MON.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
-              <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
+              <span style={{ fontSize: 14, color: SECONDARY }}>to</span>
               <select value={popTo} onChange={e => setPopTo(e.target.value)} style={selBox}>
                 {POP_MON.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
-            <span style={{ fontSize: 11, color: SECONDARY }}>Population as at 31 {lastM} 2026 · {ms.length} month{ms.length > 1 ? 's' : ''} shown</span>
+            <span style={{ fontSize: 13, color: SECONDARY }}>Population as at 31 {lastM} 2026 · {ms.length} month{ms.length > 1 ? 's' : ''} shown</span>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 16 }}>
@@ -1774,7 +1809,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           </div>
 
           <div style={panel}>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>Fleet by fuel type {'—'} {popVeh}, 2026</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: '0 0 4px' }}>Fleet by fuel type {'—'} {popVeh}, 2026</h3>
             <p style={subP}>
               How {popVeh.toLowerCase()} on the road break down by powertrain, month by month. Pure EVs went from{' '}
               <strong style={{ color: INK }}>{base.bev.toLocaleString()}</strong> to <strong style={{ color: INK }}>{cur.bev.toLocaleString()}</strong>{' '}
@@ -1794,13 +1829,13 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
               </div>
             </div>
             {fuelsOn.length === 0 ? (
-              <div style={{ padding: '36px 8px', textAlign: 'center', fontSize: 13, color: SECONDARY }}>Nothing selected {'—'} click a fuel above to bring it back.</div>
+              <div style={{ padding: '36px 8px', textAlign: 'center', fontSize: 14, color: SECONDARY }}>Nothing selected {'—'} click a fuel above to bring it back.</div>
             ) : popFuelMode === 'share' ? (
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={fuelData}>
                   <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
-                  <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
-                  <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v + '%'}/>
+                  <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false}/>
+                  <YAxis stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false} tickFormatter={v => v + '%'}/>
                   <Tooltip content={<PopTip unit="pct"/>}/>
                   {fuelsOn.map(f => (
                     <Area key={f.k} type="monotone" dataKey={f.k} name={f.l} stackId="fuel" stroke={f.c} fill={f.c} fillOpacity={0.9}/>
@@ -1811,8 +1846,8 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={fuelData}>
                   <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
-                  <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
-                  <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v.toLocaleString()}/>
+                  <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false}/>
+                  <YAxis stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false} tickFormatter={v => v.toLocaleString()}/>
                   <Tooltip content={<PopTip/>}/>
                   {fuelsOn.map(f => (
                     <Line key={f.k} type="monotone" dataKey={f.k} name={f.l} stroke={f.c} strokeWidth={2.5} dot={{ r: 2.5 }}/>
@@ -1823,7 +1858,7 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           </div>
 
           <div style={panel}>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>EV population by vehicle type {'—'} 2026</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: '0 0 4px' }}>EV population by vehicle type {'—'} 2026</h3>
             <p style={subP}>Cars dwarf every other category, so the indexed view ({firstM} = 100) is what shows who is actually growing fastest.</p>
             <div style={rowF}>
               <div style={segBox}>
@@ -1838,13 +1873,13 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
               </div>
             </div>
             {evOn.length === 0 ? (
-              <div style={{ padding: '36px 8px', textAlign: 'center', fontSize: 13, color: SECONDARY }}>Nothing selected {'—'} click a type above to bring it back.</div>
+              <div style={{ padding: '36px 8px', textAlign: 'center', fontSize: 14, color: SECONDARY }}>Nothing selected {'—'} click a type above to bring it back.</div>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={evData}>
                   <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
-                  <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
-                  <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}
+                  <XAxis dataKey="month" stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false}/>
+                  <YAxis stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false}
                     domain={popEvMode === 'index' ? ['auto','auto'] : [0,'auto']} tickFormatter={v => v.toLocaleString()}/>
                   <Tooltip content={<PopTip unit={popEvMode === 'index' ? 'idx' : undefined}/>}/>
                   {evOn.map(v => (
@@ -1856,45 +1891,45 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
           </div>
 
           <div style={panel}>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>EV share of the fleet by vehicle type {'—'} 31 {lastM} 2026</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: '0 0 4px' }}>EV share of the fleet by vehicle type {'—'} 31 {lastM} 2026</h3>
             <p style={subP}>Pure EVs as a percentage of every vehicle of that type on Singapore roads.</p>
             <ResponsiveContainer width="100%" height={Math.max(240, shareData.length * 46)}>
               <BarChart data={shareData} layout="vertical" margin={{ left: 8, right: 70 }}>
                 <CartesianGrid stroke={BORDER} horizontal={false} strokeDasharray="3 6"/>
-                <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v + '%'}/>
-                <YAxis type="category" dataKey="type" stroke={INK} tick={{ fontSize: 12, fontWeight: 600 }} width={96} axisLine={false} tickLine={false}/>
+                <XAxis type="number" stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false} tickFormatter={v => v + '%'}/>
+                <YAxis type="category" dataKey="type" stroke={INK} tick={{ fontSize: 14, fontWeight: 600 }} width={96} axisLine={false} tickLine={false}/>
                 <Tooltip cursor={{ fill: BLUE_LIGHT }} content={({ active, payload }) => {
                   if (!active || !payload || !payload.length) return null;
                   const d = payload[0].payload;
                   return (
                     <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '10px 12px', boxShadow: '0 4px 18px rgba(8,36,75,0.14)' }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: INK }}>{d.type}</div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: BLUE, marginTop: 4 }}>{d.pct.toFixed(2)}% electric</div>
-                      <div style={{ fontSize: 11, color: SECONDARY, marginTop: 3 }}>{d.ev.toLocaleString()} of {d.total.toLocaleString()}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: INK }}>{d.type}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: BLUE, marginTop: 4 }}>{d.pct.toFixed(2)}% electric</div>
+                      <div style={{ fontSize: 13, color: SECONDARY, marginTop: 3 }}>{d.ev.toLocaleString()} of {d.total.toLocaleString()}</div>
                     </div>
                   );
                 }}/>
                 <Bar dataKey="pct" name="EV share" radius={[0,8,8,0]}>
                   {shareData.map(d => <Cell key={d.type} fill={POP_VCOL[d.type]}/>)}
-                  <LabelList dataKey="pct" position="right" formatter={v => v.toFixed(2) + '%'} style={{ fontSize: 12, fontWeight: 700, fill: INK }}/>
+                  <LabelList dataKey="pct" position="right" formatter={v => v.toFixed(2) + '%'} style={{ fontSize: 14, fontWeight: 700, fill: INK }}/>
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
 
           <div style={panel}>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: '0 0 4px' }}>The adoption curve {'—'} EV population 2015 to 2026</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: '0 0 4px' }}>The adoption curve {'—'} EV population 2015 to 2026</h3>
             <p style={subP}>
               Eleven years of annual year-end population, plus the current position. Cars went from{' '}
               <strong style={{ color: INK }}>1</strong> EV in 2015 to <strong style={{ color: INK }}>{pARow('Cars', 2026).bev.toLocaleString()}</strong> today.
             </p>
             <div style={rowF}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: SECONDARY }}>Years:</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: SECONDARY }}>Years:</span>
                 <select value={popYFrom} onChange={e => setPopYFrom(Number(e.target.value))} style={selBox}>
                   {POP_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
-                <span style={{ fontSize: 12, color: SECONDARY }}>to</span>
+                <span style={{ fontSize: 14, color: SECONDARY }}>to</span>
                 <select value={popYTo} onChange={e => setPopYTo(Number(e.target.value))} style={selBox}>
                   {POP_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
@@ -1907,13 +1942,13 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
               </div>
             </div>
             {annOn.length === 0 ? (
-              <div style={{ padding: '36px 8px', textAlign: 'center', fontSize: 13, color: SECONDARY }}>Nothing selected {'—'} click a type above to bring it back.</div>
+              <div style={{ padding: '36px 8px', textAlign: 'center', fontSize: 14, color: SECONDARY }}>Nothing selected {'—'} click a type above to bring it back.</div>
             ) : (
               <ResponsiveContainer width="100%" height={320}>
                 <LineChart data={annData}>
                   <CartesianGrid stroke={BORDER} strokeDasharray="3 6" vertical={false}/>
-                  <XAxis dataKey="year" stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false}/>
-                  <YAxis stroke={SECONDARY} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v.toLocaleString()}/>
+                  <XAxis dataKey="year" stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false}/>
+                  <YAxis stroke={SECONDARY} tick={{ fontSize: 13 }} axisLine={false} tickLine={false} tickFormatter={v => v.toLocaleString()}/>
                   <Tooltip content={<PopTip/>}/>
                   {annOn.map(v => (
                     <Line key={v} type="monotone" dataKey={v} name={v} stroke={POP_VCOL[v]} strokeWidth={2.5} dot={{ r: 2.5 }}/>
@@ -1925,13 +1960,13 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
 
           <div style={{ background: CARD, borderRadius: 20, border: `1px solid ${BORDER}`, overflow: 'hidden' }}>
             <div style={{ padding: '16px 20px', borderBottom: `1px solid ${BORDER}`, background: SURFACE }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: INK, margin: 0 }}>Fuel type {'×'} vehicle type {'—'} 31 {lastM} 2026</h3>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: 0 }}>Fuel type {'×'} vehicle type {'—'} 31 {lastM} 2026</h3>
             </div>
             <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', minWidth: 720, borderCollapse: 'collapse', fontSize: 13 }}>
+              <table style={{ width: '100%', minWidth: 720, borderCollapse: 'collapse', fontSize: 14 }}>
                 <thead><tr style={{ background: SURFACE }}>
                   {['Vehicle type', ...POP_FUELS.map(f => f.l), 'Total', 'EV %'].map((h, i) => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: i === 0 ? 'left' : 'right', fontSize: 11, fontWeight: 600, color: SECONDARY, borderBottom: `2px solid ${BORDER}` }}>{h}</th>
+                    <th key={h} style={{ padding: '10px 14px', textAlign: i === 0 ? 'left' : 'right', fontSize: 13, fontWeight: 600, color: SECONDARY, borderBottom: `2px solid ${BORDER}` }}>{h}</th>
                   ))}
                 </tr></thead>
                 <tbody>
@@ -1951,11 +1986,11 @@ Respond without markdown. Be concise. Warm, helpful tone.`;
                 </tbody>
               </table>
             </div>
-            <div style={{ padding: '12px 20px', borderTop: `1px solid ${BORDER}`, fontSize: 10, color: SECONDARY, lineHeight: 1.6 }}>
+            <ChartNotes>
               Population, not registrations: vehicles on the road at each period end, excluding tax-exempt and off-the-road (RU) vehicles.
               2015{'–'}2025 from LTA Annual Vehicle Statistics (MVP01-4); 2026 is as at 31 {lastM} from LTA Monthly Vehicle Statistics (M09)
               and is a part-year position, not a year end. "Hybrid" combines petrol-electric and diesel-electric; "Plug-in hybrid" combines both plug-in variants.
-            </div>
+            </ChartNotes>
           </div>
         </div>
       </div>
