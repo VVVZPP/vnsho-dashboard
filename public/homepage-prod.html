@@ -125,6 +125,11 @@ p.sub{font-size:15.5px;color:var(--secondary);line-height:1.65;max-width:640px;m
   section{padding:40px 0}
   .insight{padding:28px 22px}
 }
+/* tighter spacing around closing CTA */
+section:has(+ section > .closing){padding-bottom:28px}
+section:has(> .closing){padding-top:28px;padding-bottom:0}
+.wrap{padding-bottom:28px}
+  
 </style></head><body><div class="wrap">
 <div class="page"><div class="inner">
 
@@ -298,7 +303,7 @@ p.sub{font-size:15.5px;color:var(--secondary);line-height:1.65;max-width:640px;m
       <p>Whether you're planning a fleet transition, evaluating a personal purchase, or tracking the market — let's talk about what you need.</p>
       <div class="btnrow">
         <a class="btn-primary" href="https://www.worldmobility-forum.com/contact" target="_top">Connect</a>
-        <a class="btn-secondary" href="https://www.worldmobility-forum.com/about" target="_top">Explore the data insights</a>
+        <a class="btn-secondary" href="https://www.worldmobility-forum.com//charging-insights" target="_top">Explore the data insights</a>
       </div>
     </div>
   </section>
