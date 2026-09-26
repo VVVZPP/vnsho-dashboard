@@ -305,4 +305,41 @@ p.sub{font-size:15.5px;color:var(--secondary);line-height:1.65;max-width:640px;m
 
 </div></div>
 </div>
+<script>
+/* Fit-to-Wix-box: scale the page to exactly fill the embed height (removes grey gap on wide screens) */
+(function () {
+  if (window.self === window.top) return;
+  var MIN_W = 1024, MAX_Z = 2;
+  var wrap = document.querySelector('.wrap');
+  if (!wrap) return;
+  var fit = document.createElement('div');
+  fit.id = 'wmf-fit';
+  wrap.parentNode.insertBefore(fit, wrap);
+  fit.appendChild(wrap);
+  function reset() {
+    fit.style.width = ''; fit.style.transform = ''; fit.style.transformOrigin = '';
+    document.body.style.height = ''; document.body.style.overflow = '';
+  }
+  function heightAt(z, W) { fit.style.width = (W / z) + 'px'; return fit.offsetHeight * z; }
+  function run() {
+    reset();
+    var W = document.documentElement.clientWidth, H = window.innerHeight;
+    if (W < MIN_W || fit.offsetHeight >= H) return;
+    var lo = 1, hi = MAX_Z;
+    if (heightAt(hi, W) <= H) lo = hi;
+    else for (var i = 0; i < 16; i++) { var mid = (lo + hi) / 2; if (heightAt(mid, W) <= H) lo = mid; else hi = mid; }
+    var h = heightAt(lo, W);
+    fit.style.transformOrigin = '0 0';
+    fit.style.transform = 'scale(' + lo + ')';
+    document.body.style.height = h + 'px';
+    document.body.style.overflow = 'hidden';
+  }
+  var raf;
+  function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(run); }
+  run();
+  window.addEventListener('resize', schedule);
+  window.addEventListener('load', schedule);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+})();
+</script>
 </body></html>
