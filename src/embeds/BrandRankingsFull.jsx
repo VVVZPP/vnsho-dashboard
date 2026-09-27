@@ -7,6 +7,7 @@ import {
   BLUE, BLUE_LIGHT, NAVY, NAVY_LIGHT, INK, SECONDARY, SURFACE, CARD, BORDER, DEEP_CYAN, SLATE, GREEN, YELLOW, YELLOW_LIGHT,
   getSegmentBrands, newRegByType, GoogleTooltip, MetricCard, ChartNotes,
 } from './shared.jsx';
+import EvVsIce from './EvVsIce.jsx';
 
 // Standalone /embed/brand-rankings-full page — the entire Brand Rankings
 // experience (highlight boxes, segment tabs, key stats, monthly trend,
@@ -124,9 +125,10 @@ export default function BrandRankingsFull() {
               </div>
               <span style={{ fontSize: 13, color: SECONDARY }}>Showing {limited.length} of {segBrands.length} brands · {rangeLabel} 2026</span>
             </div>
+            <EvVsIce seg={activeBrandFilter} months={rangeMonths} labels={rangeLabels} rangeLabel={rangeLabel} limitN={brandLimitN} />
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 16, marginBottom: 20 }}>
-              <MetricCard label={`Total EV - ${activeBrandFilter.toUpperCase()}`} value={limited.reduce((s,b)=>s+b.rangeUnit,0).toLocaleString()} delta={`${rangeLabel} 2026`} sub="New registrations" color={BLUE} bg={BLUE_LIGHT} icon="STAT"/>
+              <MetricCard label={`EVs - ${limited.length < segBrands.length ? `top ${limited.length} brands` : `all ${segBrands.length} brands`}`} value={limited.reduce((s,b)=>s+b.rangeUnit,0).toLocaleString()} delta={`${rangeLabel} 2026`} sub="New registrations" color={BLUE} bg={BLUE_LIGHT} icon="STAT"/>
               <MetricCard label="Top brand" value={topBrand ? topBrand.brand : '-'} delta={topBrand ? `${topBrand.rangeUnit.toLocaleString()} units` : ''} sub={`Ranked by ${rangeLabel} total`} color={NAVY} bg={NAVY_LIGHT} icon="TOP"/>
               <MetricCard label="Fastest growing" value={fastestGrowing ? fastestGrowing.brand : '-'} delta={fastestGrowing && rangeMonths.length > 1 ? `+${(fastestGrowing[rangeMonths[rangeMonths.length-1]] - fastestGrowing[rangeMonths[0]])} units (${rangeLabel})` : 'Select a range > 1 month'} sub="Within selected range" color={SLATE} bg={NAVY_LIGHT} icon="UP"/>
             </div>
@@ -172,7 +174,7 @@ export default function BrandRankingsFull() {
             </div>
 
             <div style={{ background: CARD, borderRadius: 20, padding: 24, border: `1px solid ${BORDER}` }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: '0 0 4px' }}>Accumulative total by brand</h3>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: INK, margin: '0 0 4px' }}>Cumulative total by brand</h3>
               <p style={{ fontSize: 14, color: SECONDARY, margin: '0 0 16px' }}>{rangeLabel} 2026, all brand names shown in full</p>
               <ResponsiveContainer width="100%" height={Math.max(240, limited.length * 32)}>
                 <BarChart data={limited} layout="vertical" margin={{ left: 8, right: 64 }}>
