@@ -17,8 +17,8 @@
   // How far each screen size may scale, and the narrowest layout width allowed.
   function limits(W) {
     if (W >= 1366) return { minL: 1000, maxZ: 2.5 };  // desktop: keep the desktop layout
-    if (W >= 1024) return { minL: 700,  maxZ: 1.8 };  // tablet landscape / small laptop
-    if (W >= 600)  return { minL: 360,  maxZ: 1.6 };  // tablet
+    if (W >= 1024) return { minL: 560,  maxZ: 2.2 };  // tablet landscape / small laptop
+    if (W >= 600)  return { minL: 320,  maxZ: 2.2 };  // tablet portrait
     return { minL: 320, maxZ: 1.3 };                   // phone: keep text growth modest
   }
 
@@ -68,7 +68,20 @@
       window.addEventListener(ev, function () { interacted = true; }, true);
     });
 
+    var spaced = [];
+    function unspace() { spaced.forEach(function (el) { el.style.marginBottom = ''; }); spaced = []; }
+    // If scaling alone can't fill the box (a layout breakpoint makes the page jump in
+    // height), spread the leftover space evenly below the page's top-level sections.
+    function space(extraPx) {
+      var secs = [].filter.call(fit.querySelectorAll('section'), function (el) {
+        return !el.parentElement.closest('section') && el.offsetHeight > 0;
+      });
+      if (!secs.length) return;
+      var each = extraPx / secs.length;
+      secs.forEach(function (el) { el.style.marginBottom = each + 'px'; spaced.push(el); });
+    }
     function reset() {
+      unspace();
       emulate(null);
       fit.style.width = ''; fit.style.transform = ''; fit.style.transformOrigin = '';
       document.body.style.height = ''; document.body.style.overflow = '';
@@ -96,6 +109,7 @@
         }
         if (lo > 1.001) {
           var h = heightAt(lo, W);
+          if (H - h > 2) { space((H - h - 1) / lo); h = fit.offsetHeight * lo; }
           z = lo;
           fit.style.transformOrigin = '0 0';
           fit.style.transform = 'scale(' + lo + ')';
