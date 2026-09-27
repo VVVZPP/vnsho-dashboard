@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import {
   BLUE, BLUE_LIGHT, NAVY, NAVY_LIGHT, INK, SECONDARY, SURFACE, CARD, BORDER, DEEP_CYAN, SLATE, GREEN, YELLOW, YELLOW_LIGHT,
-  getSegmentBrands, GoogleTooltip, MetricCard, ChartNotes,
+  getSegmentBrands, newRegByType, GoogleTooltip, MetricCard, ChartNotes,
 } from './shared.jsx';
 
 // Standalone /embed/brand-rankings-full page — the entire Brand Rankings
@@ -17,20 +17,12 @@ export default function BrandRankingsFull() {
   const [activeBrandFilter, setActiveBrandFilter] = useState('cars');
   const [brandLimit, setBrandLimit] = useState('top10');
   const [brandRangeFrom, setBrandRangeFrom] = useState('jan');
-  const [brandRangeTo, setBrandRangeTo] = useState('jul');
+  const [brandRangeTo, setBrandRangeTo] = useState('aug');
   const [lifeFrom, setLifeFrom] = useState(2023);
   const [lifeTo, setLifeTo] = useState(2026);
   const [lifeLimit, setLifeLimit] = useState('top10');
   const brandLimitN = brandLimit === 'top10' ? 10 : brandLimit === 'top20' ? 20 : 999;
 
-  const newRegByType = [
-    { type: 'Cars', segId: 'cars', ev: 20148, totalNew: 32097 },
-    { type: 'Motorcycle', segId: 'motorcycle', ev: 49, totalNew: 7547 },
-    { type: 'LGV', segId: 'lgv', ev: 788, totalNew: 1189 },
-    { type: 'HGV', segId: 'hgv', ev: 602, totalNew: 2111 },
-    { type: 'VHGV', segId: 'vhgv', ev: 0, totalNew: 1295 },
-    { type: 'Bus', segId: 'bus', ev: 175, totalNew: 319 },
-  ];
 
   const segBrands = getSegmentBrands(activeBrandFilter);
 
@@ -63,7 +55,7 @@ export default function BrandRankingsFull() {
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: BLUE, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>World Mobility Forum</div>
         <h2 style={{ fontSize: 22, fontWeight: 800, color: INK, margin: 0 }}>EV brand performance by vehicle type.</h2>
-        <p style={{ fontSize: 14, color: SECONDARY, margin: '4px 0 0' }}>Source: LTA M03 / M08 - New registrations, Jan-Jul 2026</p>
+        <p style={{ fontSize: 14, color: SECONDARY, margin: '4px 0 0' }}>Source: LTA M03 / M04 / M08 - New registrations, Jan-Aug 2026</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 10, marginBottom: 20 }}>
@@ -93,8 +85,8 @@ export default function BrandRankingsFull() {
           LTA does not publish brand-level registration data for this vehicle category. Fleet-level totals are shown in the highlight box above.
         </div>
       ) : (() => {
-        const monthOrder = ['jan','feb','mar','apr','may','jun','jul'];
-        const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul'];
+        const monthOrder = ['jan','feb','mar','apr','may','jun','jul','aug'];
+        const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
         const fromIdx = monthOrder.indexOf(brandRangeFrom);
         const toIdx = monthOrder.indexOf(brandRangeTo);
         const lo = Math.min(fromIdx, toIdx), hi = Math.max(fromIdx, toIdx);
@@ -200,70 +192,70 @@ export default function BrandRankingsFull() {
               {/* ===== Cumulative EV registrations by make, filterable by year ===== */}
       {(() => {
         const lifetimeByMake = [
-            { brand: 'BYD',            y2023:  1416, y2024:  6191, y2025: 10780, y2026:  7461 },
-            { brand: 'Tesla',          y2023:   941, y2024:  2384, y2025:  3476, y2026:  3260 },
-            { brand: 'B.M.W.',         y2023:   789, y2024:  1636, y2025:  1495, y2026:   724 },
-            { brand: 'M.G.',           y2023:   178, y2024:   461, y2025:   907, y2026:  1197 },
-            { brand: 'GAC',            y2023:     0, y2024:   310, y2025:  1050, y2026:  1073 },
-            { brand: 'Xpeng',          y2023:     0, y2024:   336, y2025:   940, y2026:   910 },
-            { brand: 'Chery',          y2023:     0, y2024:   113, y2025:   623, y2026:  1361 },
-            { brand: 'Hyundai',        y2023:   694, y2024:   708, y2025:   376, y2026:    91 },
-            { brand: 'Mercedes-Benz',  y2023:   537, y2024:   441, y2025:   574, y2026:   257 },
-            { brand: 'Zeekr',          y2023:     0, y2024:    99, y2025:   764, y2026:   830 },
-            { brand: 'Volvo',          y2023:   159, y2024:   319, y2025:   391, y2026:   244 },
-            { brand: 'Porsche',        y2023:   131, y2024:   225, y2025:   379, y2026:   159 },
-            { brand: 'Dongfeng',       y2023:     0, y2024:    22, y2025:   320, y2026:   378 },
-            { brand: 'Maxus',          y2023:    10, y2024:    90, y2025:   212, y2026:   358 },
-            { brand: 'Polestar',       y2023:   101, y2024:   140, y2025:   146, y2026:    51 },
-            { brand: 'Audi',           y2023:    61, y2024:   136, y2025:   155, y2026:    82 },
-            { brand: 'Avatr',          y2023:     0, y2024:     0, y2025:    76, y2026:   301 },
-            { brand: 'Deepal',         y2023:     0, y2024:     0, y2025:   135, y2026:   212 },
-            { brand: 'Volkswagen',     y2023:     2, y2024:   190, y2025:   123, y2026:    31 },
-            { brand: 'Great Wall',     y2023:    54, y2024:   147, y2025:    96, y2026:    40 },
-            { brand: 'Mini',           y2023:     9, y2024:   103, y2025:   134, y2026:    87 },
-            { brand: 'Toyota',         y2023:    43, y2024:    46, y2025:    19, y2026:   218 },
-            { brand: 'Opel',           y2023:   106, y2024:    38, y2025:    74, y2026:    71 },
-            { brand: 'Leapmotor',      y2023:     0, y2024:     0, y2025:    43, y2026:   214 },
-            { brand: 'Kia',            y2023:    53, y2024:    48, y2025:    82, y2026:    67 },
-            { brand: 'Geely',          y2023:     0, y2024:     0, y2025:    42, y2026:   189 },
-            { brand: 'Peugeot',        y2023:   119, y2024:    59, y2025:    20, y2026:     0 },
-            { brand: 'Citroen',        y2023:    20, y2024:    79, y2025:    39, y2026:    20 },
-            { brand: 'Smart',          y2023:     1, y2024:    41, y2025:    66, y2026:    40 },
-            { brand: 'Skoda',          y2023:     2, y2024:    38, y2025:    17, y2026:     5 },
-            { brand: 'Cupra',          y2023:     0, y2024:     0, y2025:    38, y2026:    23 },
-            { brand: 'Mazda',          y2023:    11, y2024:     4, y2025:     1, y2026:    35 },
-            { brand: 'Nissan',         y2023:    10, y2024:    11, y2025:    16, y2026:    14 },
-            { brand: 'Subaru',         y2023:     0, y2024:     0, y2025:     1, y2026:    39 },
-            { brand: 'NIO',            y2023:     0, y2024:     0, y2025:     1, y2026:    34 },
-            { brand: 'Lotus',          y2023:     1, y2024:    11, y2025:    14, y2026:     5 },
-            { brand: 'Hongqi',         y2023:     0, y2024:     0, y2025:     0, y2026:    30 },
-            { brand: 'EVeasy',         y2023:     0, y2024:     0, y2025:    17, y2026:    11 },
-            { brand: 'Skyworth',       y2023:     0, y2024:     0, y2025:    22, y2026:     6 },
-            { brand: 'Honda',          y2023:     8, y2024:     4, y2025:     2, y2026:     5 },
-            { brand: 'Rolls-Royce',    y2023:     0, y2024:    13, y2025:     4, y2026:     1 },
-            { brand: 'Jaguar',         y2023:     8, y2024:     2, y2025:     1, y2026:     1 },
-            { brand: 'Suzuki',         y2023:     0, y2024:     0, y2025:     0, y2026:    10 },
-            { brand: 'Seres',          y2023:     0, y2024:     1, y2025:     8, y2026:     0 },
-            { brand: 'Neta',           y2023:     0, y2024:     2, y2025:     3, y2026:     0 },
-            { brand: 'Fiat',           y2023:     4, y2024:     0, y2025:     0, y2026:     0 },
-            { brand: 'KGM',            y2023:     0, y2024:     0, y2025:     0, y2026:     3 },
-            { brand: 'SEAT',           y2023:     0, y2024:     0, y2025:     1, y2026:     0 },
-            { brand: 'SsangYong',      y2023:     0, y2024:     0, y2025:     1, y2026:     0 },
+            { brand: 'BYD',            y2023:  1416, y2024:  6191, y2025: 10780, y2026:   8318 },
+            { brand: 'Tesla',          y2023:   941, y2024:  2384, y2025:  3476, y2026:   3723 },
+            { brand: 'B.M.W.',         y2023:   789, y2024:  1636, y2025:  1495, y2026:     790 },
+            { brand: 'M.G.',           y2023:   178, y2024:   461, y2025:   907, y2026:   1419 },
+            { brand: 'GAC',            y2023:     0, y2024:   310, y2025:  1050, y2026:   1320 },
+            { brand: 'Xpeng',          y2023:     0, y2024:   336, y2025:   940, y2026:    1064 },
+            { brand: 'Chery',          y2023:     0, y2024:   113, y2025:   623, y2026:   1522 },
+            { brand: 'Hyundai',        y2023:   694, y2024:   708, y2025:   376, y2026:       94 },
+            { brand: 'Mercedes-Benz',  y2023:   537, y2024:   441, y2025:   574, y2026:     360 },
+            { brand: 'Zeekr',          y2023:     0, y2024:    99, y2025:   764, y2026:     975 },
+            { brand: 'Volvo',          y2023:   159, y2024:   319, y2025:   391, y2026:     284 },
+            { brand: 'Porsche',        y2023:   131, y2024:   225, y2025:   379, y2026:     184 },
+            { brand: 'Dongfeng',       y2023:     0, y2024:    22, y2025:   320, y2026:     410 },
+            { brand: 'Maxus',          y2023:    10, y2024:    90, y2025:   212, y2026:     419 },
+            { brand: 'Polestar',       y2023:   101, y2024:   140, y2025:   146, y2026:       54 },
+            { brand: 'Audi',           y2023:    61, y2024:   136, y2025:   155, y2026:       89 },
+            { brand: 'Avatr',          y2023:     0, y2024:     0, y2025:    76, y2026:     361 },
+            { brand: 'Deepal',         y2023:     0, y2024:     0, y2025:   135, y2026:     255 },
+            { brand: 'Volkswagen',     y2023:     2, y2024:   190, y2025:   123, y2026:       32 },
+            { brand: 'Great Wall',     y2023:    54, y2024:   147, y2025:    96, y2026:       60 },
+            { brand: 'Mini',           y2023:     9, y2024:   103, y2025:   134, y2026:       93 },
+            { brand: 'Toyota',         y2023:    43, y2024:    46, y2025:    19, y2026:     245 },
+            { brand: 'Opel',           y2023:   106, y2024:    38, y2025:    74, y2026:       71 },
+            { brand: 'Leapmotor',      y2023:     0, y2024:     0, y2025:    43, y2026:     254 },
+            { brand: 'Kia',            y2023:    53, y2024:    48, y2025:    82, y2026:       73 },
+            { brand: 'Geely',          y2023:     0, y2024:     0, y2025:    42, y2026:     217 },
+            { brand: 'Peugeot',        y2023:   119, y2024:    59, y2025:    20, y2026:         0 },
+            { brand: 'Citroen',        y2023:    20, y2024:    79, y2025:    39, y2026:       20 },
+            { brand: 'Smart',          y2023:     1, y2024:    41, y2025:    66, y2026:       54 },
+            { brand: 'Skoda',          y2023:     2, y2024:    38, y2025:    17, y2026:         6 },
+            { brand: 'Cupra',          y2023:     0, y2024:     0, y2025:    38, y2026:       23 },
+            { brand: 'Mazda',          y2023:    11, y2024:     4, y2025:     1, y2026:       54 },
+            { brand: 'Nissan',         y2023:    10, y2024:    11, y2025:    16, y2026:       15 },
+            { brand: 'Subaru',         y2023:     0, y2024:     0, y2025:     1, y2026:       44 },
+            { brand: 'NIO',            y2023:     0, y2024:     0, y2025:     1, y2026:       40 },
+            { brand: 'Lotus',          y2023:     1, y2024:    11, y2025:    14, y2026:         6 },
+            { brand: 'Hongqi',         y2023:     0, y2024:     0, y2025:     0, y2026:       38 },
+            { brand: 'EVeasy',         y2023:     0, y2024:     0, y2025:    17, y2026:       11 },
+            { brand: 'Skyworth',       y2023:     0, y2024:     0, y2025:    22, y2026:         6 },
+            { brand: 'Honda',          y2023:     8, y2024:     4, y2025:     2, y2026:         8 },
+            { brand: 'Rolls-Royce',    y2023:     0, y2024:    13, y2025:     4, y2026:         1 },
+            { brand: 'Jaguar',         y2023:     8, y2024:     2, y2025:     1, y2026:         1 },
+            { brand: 'Suzuki',         y2023:     0, y2024:     0, y2025:     0, y2026:       12 },
+            { brand: 'Seres',          y2023:     0, y2024:     1, y2025:     8, y2026:         0 },
+            { brand: 'Neta',           y2023:     0, y2024:     2, y2025:     3, y2026:         0 },
+            { brand: 'Fiat',           y2023:     4, y2024:     0, y2025:     0, y2026:         0 },
+            { brand: 'KGM',            y2023:     0, y2024:     0, y2025:     0, y2026:         3 },
+            { brand: 'SEAT',           y2023:     0, y2024:     0, y2025:     1, y2026:         0 },
+            { brand: 'SsangYong',      y2023:     0, y2024:     0, y2025:     1, y2026:         0 },
         ];
 
         const ALL_BANDS = [
           { key: 'y2023', year: 2023, label: '2023', color: NAVY },
           { key: 'y2024', year: 2024, label: '2024', color: SLATE },
           { key: 'y2025', year: 2025, label: '2025', color: DEEP_CYAN },
-          { key: 'y2026', year: 2026, label: '2026 (Jan–Jul)', color: BLUE },
+          { key: 'y2026', year: 2026, label: '2026 (Jan–Aug)', color: BLUE },
         ];
 
         const loY = Math.min(lifeFrom, lifeTo), hiY = Math.max(lifeFrom, lifeTo);
         const bands = ALL_BANDS.filter(b => b.year >= loY && b.year <= hiY);
         const fullRange = loY === 2023 && hiY === 2026;
         const yearLabel = loY === hiY
-          ? (loY === 2026 ? '2026 (Jan–Jul)' : String(loY))
-          : `${loY}–${hiY === 2026 ? '2026 (Jan–Jul)' : hiY}`;
+          ? (loY === 2026 ? '2026 (Jan–Aug)' : String(loY))
+          : `${loY}–${hiY === 2026 ? '2026 (Jan–Aug)' : hiY}`;
 
         const ranked = lifetimeByMake
           .map(b => ({ ...b, total: bands.reduce((s, bd) => s + b[bd.key], 0) }))
@@ -301,7 +293,7 @@ export default function BrandRankingsFull() {
             <p style={{ fontSize: 14, color: SECONDARY, margin: '0 0 16px', lineHeight: 1.5 }}>
               Bar length is every pure-electric car each make registered in the selected years; colour shows which year.
               {' '}<strong style={{ color: INK }}>{grandTotal.toLocaleString()}</strong> cars across {ranked.length} makes
-              {fullRange ? ', covering 92% of the 69,190 EV cars in the fleet today' : ''}
+              {fullRange ? ', covering 92% of the 72,067 EV cars in the fleet at end-August' : ''}
               {' · '}passenger cars only, independent of the filters above.
             </p>
 
@@ -356,7 +348,7 @@ export default function BrandRankingsFull() {
               Cumulative new registrations of pure-electric cars, not the registered fleet: vehicles registered before 2023 and those
               since deregistered are excluded. Authorised-dealer and parallel-import volumes are combined. Ranking and the Top 10 / 20 / All cut both recalculate for the
               selected years. 2023{'–'}2025 from LTA Annual Vehicle Statistics (MVP02-2, new cars by make); 2026 from LTA Monthly
-              Vehicle Statistics (M03), Jan{'–'}Jul.
+              Vehicle Statistics (M03), Jan{'–'}Aug.
             </ChartNotes>
           </div>
         );
